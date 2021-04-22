@@ -10,10 +10,10 @@ const STRATEGY_TYPE_DATA = Object.keys(STRATEGY_TYPE).map(key => STRATEGY_TYPE[k
 const FormItem = Form.Item;
 const formItemLayout = {
   labelCol: {
-    span: 8,
+    span: 6,
   },
   wrapperCol: {
-    span: 16,
+    span: 18,
   },
 };
 
@@ -72,13 +72,13 @@ class FormModal extends PureComponent {
         onOk={this.handlerFormSubmit}
       >
         <Form {...formItemLayout} layout="horizontal" style={{ margin: 24 }}>
-          <FormItem label="预算策略名称">
+          <FormItem label="策略名称">
             {getFieldDecorator('name', {
               initialValue: get(rowData, 'name'),
               rules: [
                 {
                   required: true,
-                  message: '预算策略名称不能为空',
+                  message: '策略名称不能为空',
                 },
               ],
             })(<Input autoComplete="off" />)}
@@ -86,6 +86,12 @@ class FormModal extends PureComponent {
           <FormItem label="策略类别">
             {getFieldDecorator('categoryName', {
               initialValue: this.getCategoryName(),
+              rules: [
+                {
+                  required: true,
+                  message: '策略类别不能为空',
+                },
+              ],
             })(<ComboList {...categoryNameProps} />)}
           </FormItem>
           <FormItem label="策略类路径">
