@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { get } from 'lodash';
 import { Form, Input } from 'antd';
 import { ExtModal, ComboList } from 'suid';
-import { constants } from '../../utils';
+import { constants } from '../../../utils';
 import styles from './index.less';
 
 const { SERVER_PATH, BUDGET_DIMENSION_UI_COMPONENT, STRATEGY_TYPE } = constants;

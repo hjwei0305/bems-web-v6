@@ -4,7 +4,7 @@ import cls from 'classnames';
 import { Button, Popconfirm } from 'antd';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
 import { ExtTable, ExtIcon } from 'suid';
-import { constants } from '../../utils';
+import { constants } from '../../../utils';
 import FormModal from './FormModal';
 import styles from './index.less';
 

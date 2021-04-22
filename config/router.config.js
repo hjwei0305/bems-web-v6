@@ -17,8 +17,8 @@ export default [
         path: '/budgetConfig',
         name: '预算配置',
         routes: [
-          { path: '/budgetConfig/budgetStrategy', component: './BudgetStrategy' },
-          { path: '/budgetConfig/budgetDimension', component: './BudgetDimension' },
+          { path: '/budgetConfig/budgetStrategy', component: './BackConfig/BudgetStrategy' },
+          { path: '/budgetConfig/budgetDimension', component: './BackConfig/BudgetDimension' },
         ],
       },
     ],
