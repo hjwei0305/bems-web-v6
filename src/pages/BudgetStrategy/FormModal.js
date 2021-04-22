@@ -62,6 +62,7 @@ class FormModal extends PureComponent {
         destroyOnClose
         onCancel={closeFormModal}
         visible={showModal}
+        maskClosable={false}
         centered
         width={420}
         wrapClassName={styles['form-modal-box']}

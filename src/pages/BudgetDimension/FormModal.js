@@ -12,10 +12,10 @@ const BUDGET_DIMENSION_UI_COMPONENT_DATA = Object.keys(BUDGET_DIMENSION_UI_COMPO
 const FormItem = Form.Item;
 const formItemLayout = {
   labelCol: {
-    span: 8,
+    span: 6,
   },
   wrapperCol: {
-    span: 16,
+    span: 18,
   },
 };
 
@@ -45,6 +45,7 @@ class FormModal extends PureComponent {
       store: {
         url: `${SERVER_PATH}/bems-v6/dimension/findAllCodes`,
       },
+      pagination: false,
       afterSelect: item => {
         const originCode = get(rowData, 'code');
         let name = get(rowData, 'name');
@@ -67,6 +68,8 @@ class FormModal extends PureComponent {
           category: STRATEGY_TYPE.DIMENSION.key,
         },
       },
+      showSearch: false,
+      pagination: false,
       field: ['strategyId'],
       reader: {
         name: 'name',
@@ -77,6 +80,7 @@ class FormModal extends PureComponent {
       form,
       name: 'uiComponent',
       dataSource: BUDGET_DIMENSION_UI_COMPONENT_DATA,
+      pagination: false,
       reader: {
         name: 'code',
         description: 'name',
@@ -87,6 +91,7 @@ class FormModal extends PureComponent {
         destroyOnClose
         onCancel={closeFormModal}
         visible={showModal}
+        maskClosable={false}
         centered
         width={420}
         wrapClassName={styles['form-modal-box']}
@@ -96,24 +101,24 @@ class FormModal extends PureComponent {
         onOk={this.handlerFormSubmit}
       >
         <Form {...formItemLayout} layout="horizontal" style={{ margin: 24 }}>
-          <FormItem label="预算维度代码">
+          <FormItem label="维度代码">
             {getFieldDecorator('code', {
               initialValue: get(rowData, 'code'),
               rules: [
                 {
                   required: true,
-                  message: '预算维度代码不能为空',
+                  message: '维度代码不能为空',
                 },
               ],
             })(<ComboList {...codeProps} />)}
           </FormItem>
-          <FormItem label="预算维度名称">
+          <FormItem label="维度名称">
             {getFieldDecorator('name', {
               initialValue: get(rowData, 'name'),
               rules: [
                 {
                   required: true,
-                  message: '预算维度名称不能为空',
+                  message: '维度名称不能为空',
                 },
               ],
             })(<Input autoComplete="off" />)}
