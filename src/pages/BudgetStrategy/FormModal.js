@@ -96,7 +96,7 @@ class FormModal extends PureComponent {
                   message: '策略类路径不能为空',
                 },
               ],
-            })(<Input />)}
+            })(<Input autoComplete="off" />)}
           </FormItem>
         </Form>
       </ExtModal>

@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-04-22 14:36:32
+ * @Last Modified time: 2021-04-22 15:50:54
  */
 import { base } from '../../public/app.config.json';
 
@@ -59,6 +59,14 @@ const STRATEGY_TYPE = {
   EXECUTION: { key: 'EXECUTION', title: '执行', color: '#87d068' },
 };
 
+/** 预算维度组件 */
+const BUDGET_DIMENSION_UI_COMPONENT = {
+  SUBJECT: { code: 'Subject', name: '科目' },
+  ORGANIZATION: { code: 'Organization', name: '组织机构' },
+  PROJECTLIST: { code: 'ProjectList', name: '项目(列表)' },
+  PERIOD: { code: 'Period', name: '期间' },
+};
+
 export default {
   APP_BASE,
   LOCAL_PATH,
@@ -66,4 +74,5 @@ export default {
   APP_MODULE_BTN_KEY,
   LOGIN_STATUS,
   STRATEGY_TYPE,
+  BUDGET_DIMENSION_UI_COMPONENT,
 };
