@@ -1,0 +1,53 @@
+@import '../../themes/vars.less';
+.action-menu-box {
+  :global {
+    .ant-dropdown-menu-item {
+      padding: 2px 16px;
+      .selected {
+        position: absolute;
+        left: 4px;
+        line-height: 42px;
+      }
+      .view-popover-box-trigger {
+        display: inline-block;
+        padding: 8px;
+      }
+      &.ant-dropdown-menu-item-selected {
+        background-color: @menu-item-active-bg;
+      }
+    }
+  }
+}
+
+.view-box {
+  position: relative;
+  display: inline-block;
+  margin-right: 16px;
+  cursor: pointer;
+  :global {
+    .view-label {
+      margin-right: 4px;
+      font-size: 14px;
+      i {
+        margin-right: 4px;
+      }
+      em {
+        font-style: normal;
+      }
+    }
+    .view-content {
+      margin-right: 8px;
+      color: fade(@black, 85%);
+      font-weight: 700;
+      font-size: 14px;
+    }
+  }
+}
+
+.filter-box {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.pop-confirm-box {
+  z-index: 1050;
+}
