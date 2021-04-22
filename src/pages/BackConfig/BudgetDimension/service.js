@@ -1,5 +1,5 @@
 import { utils } from 'suid';
-import { constants } from '../../../utils';
+import { constants } from '@/utils';
 
 const { request } = utils;
 

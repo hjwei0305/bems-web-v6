@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
+import { get } from 'lodash';
 import { Button, Popconfirm } from 'antd';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
 import { ExtTable, ExtIcon } from 'suid';
-import { StrategyType } from '@/components';
 import { constants } from '@/utils';
 import FormModal from './FormModal';
 import styles from './index.less';
 
 const { SERVER_PATH } = constants;
 
-@connect(({ budgetStrategy, loading }) => ({ budgetStrategy, loading }))
-class BudgetStrategy extends Component {
+@connect(({ budgetSubject, loading }) => ({ budgetSubject, loading }))
+class BudgetSubject extends Component {
   static tablRef;
 
   constructor(props) {
@@ -31,7 +31,7 @@ class BudgetStrategy extends Component {
   add = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'budgetStrategy/updateState',
+      type: 'budgetSubject/updateState',
       payload: {
         showModal: true,
         rowData: null,
@@ -42,7 +42,7 @@ class BudgetStrategy extends Component {
   edit = rowData => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'budgetStrategy/updateState',
+      type: 'budgetSubject/updateState',
       payload: {
         showModal: true,
         rowData,
@@ -53,14 +53,14 @@ class BudgetStrategy extends Component {
   save = data => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'budgetStrategy/save',
+      type: 'budgetSubject/save',
       payload: {
         ...data,
       },
       callback: res => {
         if (res.success) {
           dispatch({
-            type: 'budgetStrategy/updateState',
+            type: 'budgetSubject/updateState',
             payload: {
               showModal: false,
             },
@@ -79,7 +79,7 @@ class BudgetStrategy extends Component {
       },
       () => {
         dispatch({
-          type: 'budgetStrategy/del',
+          type: 'budgetSubject/del',
           payload: {
             id: record.id,
           },
@@ -99,7 +99,7 @@ class BudgetStrategy extends Component {
   closeFormModal = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'budgetStrategy/updateState',
+      type: 'budgetSubject/updateState',
       payload: {
         showModal: false,
         rowData: null,
@@ -110,15 +110,15 @@ class BudgetStrategy extends Component {
   renderDelBtn = row => {
     const { loading } = this.props;
     const { delRowId } = this.state;
-    if (loading.effects['budgetStrategy/del'] && delRowId === row.id) {
+    if (loading.effects['budgetSubject/del'] && delRowId === row.id) {
       return <ExtIcon className="del-loading" type="loading" antd />;
     }
     return <ExtIcon className="del" type="delete" antd />;
   };
 
   render() {
-    const { budgetStrategy, loading } = this.props;
-    const { showModal, rowData } = budgetStrategy;
+    const { budgetSubject, loading } = this.props;
+    const { showModal, rowData } = budgetSubject;
     const columns = [
       {
         title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
@@ -145,22 +145,22 @@ class BudgetStrategy extends Component {
         ),
       },
       {
-        title: '策略类别',
-        dataIndex: 'category',
-        width: 80,
-        required: true,
-        render: t => <StrategyType state={t} />,
-      },
-      {
-        title: '策略名称',
+        title: '科目名称',
         dataIndex: 'name',
-        width: 180,
+        width: 420,
         required: true,
+        render: (t, r) => {
+          const code = get(r, 'code');
+          if (code) {
+            return `${t}(${code})`;
+          }
+          return t;
+        },
       },
       {
-        title: '策略类路径',
-        dataIndex: 'classPath',
-        width: 380,
+        title: '执行策略',
+        dataIndex: 'strategyName',
+        width: 180,
         render: t => t || '-',
       },
     ];
@@ -169,7 +169,7 @@ class BudgetStrategy extends Component {
       rowData,
       showModal,
       closeFormModal: this.closeFormModal,
-      saving: loading.effects['budgetStrategy/save'],
+      saving: loading.effects['budgetSubject/save'],
     };
     const toolBarProps = {
       left: (
@@ -188,11 +188,13 @@ class BudgetStrategy extends Component {
       columns,
       searchWidth: 260,
       lineNumber: false,
-      searchPlaceHolder: '策略名称、策略类路径',
-      searchProperties: ['name', 'classPath'],
+      searchPlaceHolder: '输入科目名称关键字',
+      searchProperties: ['name'],
+      remotePaging: true,
       onTableRef: ref => (this.tablRef = ref),
       store: {
-        url: `${SERVER_PATH}/bems-v6/strategy/findAll`,
+        type: 'POST',
+        url: `${SERVER_PATH}/bems-v6/item/findByPage`,
       },
     };
     return (
@@ -204,4 +206,4 @@ class BudgetStrategy extends Component {
   }
 }
 
-export default BudgetStrategy;
+export default BudgetSubject;

@@ -5,8 +5,7 @@ import { ExtModal, ComboList } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
-const { STRATEGY_TYPE } = constants;
-const STRATEGY_TYPE_DATA = Object.keys(STRATEGY_TYPE).map(key => STRATEGY_TYPE[key]);
+const { SERVER_PATH, STRATEGY_TYPE } = constants;
 const FormItem = Form.Item;
 const formItemLayout = {
   labelCol: {
@@ -32,29 +31,26 @@ class FormModal extends PureComponent {
     });
   };
 
-  getCategoryName = () => {
-    const { rowData } = this.props;
-    const category = get(rowData, 'category') || '';
-    if (category) {
-      return get(STRATEGY_TYPE[category], 'title');
-    }
-    return '';
-  };
-
   render() {
     const { form, rowData, closeFormModal, saving, showModal } = this.props;
     const { getFieldDecorator } = form;
-    getFieldDecorator('category', { initialValue: get(rowData, 'category') });
-    const title = rowData ? '修改预算策略' : '新建预算策略';
-    const categoryNameProps = {
+    getFieldDecorator('strategyId', { initialValue: get(rowData, 'strategyId') });
+    const title = rowData ? '修改预算科目' : '新建预算科目';
+    const strategyProps = {
       form,
-      name: 'categoryName',
-      dataSource: STRATEGY_TYPE_DATA,
-      field: ['category'],
+      name: 'strategyName',
+      store: {
+        url: `${SERVER_PATH}/bems-v6/strategy/findByCategory`,
+        params: {
+          category: STRATEGY_TYPE.EXECUTION.key,
+        },
+      },
+      showSearch: false,
+      pagination: false,
+      field: ['strategyId'],
       reader: {
-        name: 'title',
-        field: ['key'],
-        description: 'key',
+        name: 'name',
+        field: ['id'],
       },
     };
     return (
@@ -72,38 +68,27 @@ class FormModal extends PureComponent {
         onOk={this.handlerFormSubmit}
       >
         <Form {...formItemLayout} layout="horizontal" style={{ margin: 24 }}>
-          <FormItem label="策略名称">
+          <FormItem label="科目名称">
             {getFieldDecorator('name', {
               initialValue: get(rowData, 'name'),
               rules: [
                 {
                   required: true,
-                  message: '策略名称不能为空',
+                  message: '维度名称不能为空',
                 },
               ],
             })(<Input autoComplete="off" />)}
           </FormItem>
-          <FormItem label="策略类别">
-            {getFieldDecorator('categoryName', {
-              initialValue: this.getCategoryName(),
+          <FormItem label="维度策略">
+            {getFieldDecorator('strategyName', {
+              initialValue: get(rowData, 'strategyName'),
               rules: [
                 {
                   required: true,
-                  message: '策略类别不能为空',
+                  message: '维度策略不能为空',
                 },
               ],
-            })(<ComboList {...categoryNameProps} />)}
-          </FormItem>
-          <FormItem label="策略类路径">
-            {getFieldDecorator('classPath', {
-              initialValue: get(rowData, 'classPath'),
-              rules: [
-                {
-                  required: true,
-                  message: '策略类路径不能为空',
-                },
-              ],
-            })(<Input autoComplete="off" />)}
+            })(<ComboList {...strategyProps} />)}
           </FormItem>
         </Form>
       </ExtModal>

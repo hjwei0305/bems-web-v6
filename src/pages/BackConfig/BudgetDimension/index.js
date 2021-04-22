@@ -4,7 +4,7 @@ import cls from 'classnames';
 import { Button, Popconfirm } from 'antd';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
 import { ExtTable, ExtIcon } from 'suid';
-import { constants } from '../../../utils';
+import { constants } from '@/utils';
 import FormModal from './FormModal';
 import styles from './index.less';
 
@@ -191,7 +191,7 @@ class BudgetDimension extends Component {
       columns,
       searchWidth: 260,
       lineNumber: false,
-      searchPlaceHolder: '维度代码、维度名称',
+      searchPlaceHolder: '输入维度代码、维度名称关键字',
       searchProperties: ['name', 'code'],
       onTableRef: ref => (this.tablRef = ref),
       store: {

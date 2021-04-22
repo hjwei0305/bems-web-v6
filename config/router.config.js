@@ -19,6 +19,7 @@ export default [
         routes: [
           { path: '/budgetConfig/budgetStrategy', component: './BackConfig/BudgetStrategy' },
           { path: '/budgetConfig/budgetDimension', component: './BackConfig/BudgetDimension' },
+          { path: '/budgetConfig/budgetSubject', component: './BackConfig/BudgetSubject' },
         ],
       },
     ],
