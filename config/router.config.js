@@ -14,9 +14,9 @@ export default [
       { path: '/', redirect: '/dashboard' },
       { path: '/dashboard', component: './Dashboard' },
       {
-        path: '/moduleName',
-        name: 'moduleName',
-        routes: [{ path: '/moduleName/demo', component: './Demo' }],
+        path: '/budgetConfig',
+        name: '预算配置',
+        routes: [{ path: '/budgetConfig/budgetStrategy', component: './BudgetStrategy' }],
       },
     ],
   },

@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2020-05-30 23:57:41
+ * @Last Modified time: 2021-04-22 14:36:32
  */
 import { base } from '../../public/app.config.json';
 
@@ -52,10 +52,18 @@ const APP_MODULE_BTN_KEY = {
   DELETE: `${APP_BASE}_DELETE`,
 };
 
+/** 策略类别 */
+const STRATEGY_TYPE = {
+  DIMENSION: { key: 'DIMENSION', title: '维度', color: '#108ee9' },
+  MANAGEMENT: { key: 'MANAGEMENT', title: '管理', color: '#2db7f5' },
+  EXECUTION: { key: 'EXECUTION', title: '执行', color: '#87d068' },
+};
+
 export default {
   APP_BASE,
   LOCAL_PATH,
   SERVER_PATH,
   APP_MODULE_BTN_KEY,
   LOGIN_STATUS,
+  STRATEGY_TYPE,
 };
