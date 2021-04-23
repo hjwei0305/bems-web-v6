@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
 import { get } from 'lodash';
-import { Button, Popconfirm } from 'antd';
+import { Button, Popconfirm, Card } from 'antd';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { ExtTable, ExtIcon } from 'suid';
+import { ExtTable, ExtIcon, BannerTitle } from 'suid';
 import { constants } from '@/utils';
 import FormModal from './FormModal';
 import styles from './index.less';
@@ -203,8 +203,13 @@ class BudgetSubject extends Component {
       },
     };
     return (
-      <div className={cls(styles['container-box'])}>
-        <ExtTable {...tableProps} />
+      <div className={cls(styles['contanter-box'])}>
+        <Card
+          title={<BannerTitle title={get(currentMaster, 'name')} subTitle="预算科目" />}
+          bordered={false}
+        >
+          <ExtTable {...tableProps} />
+        </Card>
         <FormModal {...formModalProps} />
       </div>
     );

@@ -253,9 +253,9 @@ class PeriodList extends Component {
       save: this.save,
     };
     return (
-      <div className={cls(styles['user-box'])}>
+      <div className={cls(styles['contanter-box'])}>
         <Card
-          title={<BannerTitle title={get(currentMaster, 'remark')} subTitle="预算期间" />}
+          title={<BannerTitle title={get(currentMaster, 'name')} subTitle="预算期间" />}
           bordered={false}
         >
           <ExtTable {...extTableProps} />
