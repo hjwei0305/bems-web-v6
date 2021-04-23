@@ -65,6 +65,7 @@ class FormModal extends PureComponent {
         bodyStyle={{ padding: 0 }}
         confirmLoading={saving}
         title={title}
+        cancelButtonProps={{ disabled: saving }}
         onOk={this.handlerFormSubmit}
       >
         <Form {...formItemLayout} layout="horizontal" style={{ margin: 24 }}>

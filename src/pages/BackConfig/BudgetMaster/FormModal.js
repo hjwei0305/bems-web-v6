@@ -35,27 +35,35 @@ class FormModal extends PureComponent {
     const { form, rowData, closeFormModal, saving, showModal } = this.props;
     const { getFieldDecorator } = form;
     getFieldDecorator('corporationCode', { initialValue: get(rowData, 'corporationCode') });
+    getFieldDecorator('currencyCode', { initialValue: get(rowData, 'currencyCode') });
     getFieldDecorator('orgCode', { initialValue: get(rowData, 'orgCode') });
     const title = rowData ? '修改预算科目' : '新建预算科目';
     const corporationProps = {
       form,
       name: 'corporationName',
       store: {
-        url: `${SERVER_PATH}/bems-v6/strategy/findByCategory`,
+        url: `${SERVER_PATH}/bems-v6/subject/findUserAuthorizedCorporations`,
       },
-      remotePaging: true,
+      remotePaging: false,
       searchProperties: [],
       field: ['corporationCode'],
+      afterSelect: item => {
+        form.setFieldsValue({
+          currencyName: get(item, 'baseCurrencyName'),
+          currencyCode: get(item, 'baseCurrencyCode'),
+        });
+      },
       reader: {
         name: 'name',
         field: ['code'],
+        description: 'code',
       },
     };
     const currencyProps = {
       form,
       name: 'currencyName',
       store: {
-        url: `${SERVER_PATH}/bems-v6/strategy/findByCategory`,
+        url: `${SERVER_PATH}/bems-v6/subject/findCurrencies`,
       },
       showSearch: false,
       pagination: false,
@@ -63,16 +71,15 @@ class FormModal extends PureComponent {
       reader: {
         name: 'name',
         field: ['code'],
+        description: 'code',
       },
     };
     const orgProps = {
       form,
       name: 'orgName',
       store: {
-        url: `${SERVER_PATH}/bems-v6/strategy/findByCategory`,
+        url: `${SERVER_PATH}/bems-v6/subject/findOrgTree`,
       },
-      showSearch: false,
-      pagination: false,
       field: ['orgCode'],
       reader: {
         name: 'name',
@@ -91,6 +98,7 @@ class FormModal extends PureComponent {
         bodyStyle={{ padding: 0 }}
         confirmLoading={saving}
         title={title}
+        cancelButtonProps={{ disabled: saving }}
         onOk={this.handlerFormSubmit}
       >
         <Form {...formItemLayout} layout="horizontal" style={{ margin: 24 }}>

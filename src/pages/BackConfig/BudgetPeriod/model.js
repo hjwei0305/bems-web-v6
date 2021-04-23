@@ -6,7 +6,7 @@ const { dvaModel } = utils;
 const { modelExtend, model } = dvaModel;
 
 export default modelExtend(model, {
-  namespace: 'budgetSubject',
+  namespace: 'budgetPeriod',
 
   state: {
     rowData: null,

@@ -1,0 +1,56 @@
+@import '../../../themes/vars.less';
+.user-box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  background-color: @page-background-color;
+  :global {
+    .ant-table-bordered.ant-table-empty .ant-table-placeholder {
+      border-right-color: transparent;
+      border-left-color: transparent;
+    }
+    .ant-card {
+      height: 100%;
+      .ant-card-head {
+        background-color: @white;
+      }
+      .ant-card-body {
+        height: calc(100% - 56px);
+        padding: 0;
+        .suid-panel {
+          height: 100%;
+          .panel-body {
+            width: 100%;
+            height: 100% !important;
+            max-height: 100% !important;
+            .left-box {
+              .ant-drawer-top.ant-drawer-open .ant-drawer-content-wrapper {
+                box-shadow: none;
+              }
+              .ant-drawer-body {
+                display: flex;
+                align-items: center;
+                height: 44px;
+                padding: 0;
+                line-height: 44px;
+                background-color: @white;
+                .select {
+                  display: inline-block;
+                  min-width: 120px;
+                  color: fade(@black, 65%);
+                }
+              }
+            }
+          }
+        }
+        .suid-tool-bar {
+          button {
+            margin-right: 8px;
+          }
+        }
+      }
+    }
+  }
+}

@@ -11,8 +11,8 @@ import styles from './index.less';
 
 const { SERVER_PATH } = constants;
 
-@connect(({ budgetMaster, loading }) => ({ budgetMaster, loading }))
-class BudgetMaster extends Component {
+@connect(({ budgetSubject, loading }) => ({ budgetSubject, loading }))
+class BudgetSubject extends Component {
   static tablRef;
 
   constructor(props) {
@@ -31,7 +31,7 @@ class BudgetMaster extends Component {
   add = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'budgetMaster/updateState',
+      type: 'budgetSubject/updateState',
       payload: {
         showModal: true,
         rowData: null,
@@ -42,7 +42,7 @@ class BudgetMaster extends Component {
   edit = rowData => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'budgetMaster/updateState',
+      type: 'budgetSubject/updateState',
       payload: {
         showModal: true,
         rowData,
@@ -51,16 +51,18 @@ class BudgetMaster extends Component {
   };
 
   save = data => {
-    const { dispatch } = this.props;
+    const { dispatch, budgetSubject } = this.props;
+    const { currentMaster } = budgetSubject;
     dispatch({
-      type: 'budgetMaster/save',
+      type: 'budgetSubject/save',
       payload: {
+        subjectId: get(currentMaster, 'id'),
         ...data,
       },
       callback: res => {
         if (res.success) {
           dispatch({
-            type: 'budgetMaster/updateState',
+            type: 'budgetSubject/updateState',
             payload: {
               showModal: false,
             },
@@ -79,7 +81,7 @@ class BudgetMaster extends Component {
       },
       () => {
         dispatch({
-          type: 'budgetMaster/del',
+          type: 'budgetSubject/del',
           payload: {
             id: record.id,
           },
@@ -99,7 +101,7 @@ class BudgetMaster extends Component {
   closeFormModal = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'budgetMaster/updateState',
+      type: 'budgetSubject/updateState',
       payload: {
         showModal: false,
         rowData: null,
@@ -110,15 +112,15 @@ class BudgetMaster extends Component {
   renderDelBtn = row => {
     const { loading } = this.props;
     const { delRowId } = this.state;
-    if (loading.effects['budgetMaster/del'] && delRowId === row.id) {
+    if (loading.effects['budgetSubject/del'] && delRowId === row.id) {
       return <ExtIcon className="del-loading" type="loading" antd />;
     }
     return <ExtIcon className="del" type="delete" antd />;
   };
 
   render() {
-    const { budgetMaster, loading } = this.props;
-    const { showModal, rowData } = budgetMaster;
+    const { budgetSubject, loading } = this.props;
+    const { showModal, rowData, currentMaster } = budgetSubject;
     const columns = [
       {
         title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
@@ -145,17 +147,12 @@ class BudgetMaster extends Component {
         ),
       },
       {
-        title: '预算主体名称',
+        title: '科目名称',
         dataIndex: 'name',
-        width: 360,
+        width: 420,
         required: true,
-      },
-      {
-        title: '币种',
-        dataIndex: 'currencyName',
-        width: 120,
         render: (t, r) => {
-          const code = get(r, 'currencyCode');
+          const code = get(r, 'code');
           if (code) {
             return `${t}(${code})`;
           }
@@ -163,24 +160,10 @@ class BudgetMaster extends Component {
         },
       },
       {
-        title: '公司代码',
-        dataIndex: 'corporationCode',
-        width: 90,
-      },
-      {
-        title: '公司名称',
-        dataIndex: 'corporationName',
-        width: 360,
-      },
-      {
-        title: '组织代码',
-        dataIndex: 'orgCode',
-        width: 90,
-      },
-      {
-        title: '组织名称',
-        dataIndex: 'orgName',
-        width: 220,
+        title: '执行策略',
+        dataIndex: 'strategyName',
+        width: 180,
+        render: t => t || '-',
       },
     ];
     const formModalProps = {
@@ -188,7 +171,7 @@ class BudgetMaster extends Component {
       rowData,
       showModal,
       closeFormModal: this.closeFormModal,
-      saving: loading.effects['budgetMaster/save'],
+      saving: loading.effects['budgetSubject/save'],
     };
     const toolBarProps = {
       left: (
@@ -207,13 +190,16 @@ class BudgetMaster extends Component {
       columns,
       searchWidth: 260,
       lineNumber: false,
-      searchPlaceHolder: '输入预算主体名称关键字',
+      searchPlaceHolder: '输入科目名称关键字',
       searchProperties: ['name'],
       remotePaging: true,
       onTableRef: ref => (this.tablRef = ref),
       store: {
         type: 'POST',
-        url: `${SERVER_PATH}/bems-v6/subject/findByPage`,
+        url: `${SERVER_PATH}/bems-v6/item/findByPage`,
+      },
+      cascadeParams: {
+        filters: [{ fieldName: 'subjectId', operator: 'EQ', value: get(currentMaster, 'id') }],
       },
     };
     return (
@@ -225,4 +211,4 @@ class BudgetMaster extends Component {
   }
 }
 
-export default BudgetMaster;
+export default BudgetSubject;

@@ -6,21 +6,21 @@ import { Input, Empty, Layout, Descriptions } from 'antd';
 import { ListCard } from 'suid';
 import empty from '@/assets/item_empty.svg';
 import { constants } from '@/utils';
-import SubjectList from './SubjectList';
+import PeriodList from './PeriodList';
 import styles from './index.less';
 
 const { Search } = Input;
 const { Sider, Content } = Layout;
 const { SERVER_PATH } = constants;
 
-@connect(({ budgetSubject, loading }) => ({ budgetSubject, loading }))
-class BudgetSubject extends Component {
+@connect(({ budgetPeriod, loading }) => ({ budgetPeriod, loading }))
+class BudgetPeriod extends Component {
   static listCardRef = null;
 
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'budgetSubject/updateState',
+      type: 'budgetPeriod/updateState',
       payload: {
         showModal: false,
         currentMaster: null,
@@ -33,7 +33,7 @@ class BudgetSubject extends Component {
     const { dispatch } = this.props;
     const currentMaster = keys.length === 1 ? items[0] : null;
     dispatch({
-      type: 'budgetSubject/updateState',
+      type: 'budgetPeriod/updateState',
       payload: {
         currentMaster,
       },
@@ -66,8 +66,8 @@ class BudgetSubject extends Component {
   );
 
   render() {
-    const { budgetSubject } = this.props;
-    const { currentMaster } = budgetSubject;
+    const { budgetPeriod } = this.props;
+    const { currentMaster } = budgetPeriod;
     const masterProps = {
       className: 'left-content',
       title: '预算主体列表',
@@ -76,7 +76,6 @@ class BudgetSubject extends Component {
       customTool: this.renderCustomTool,
       onListCardRef: ref => (this.listCardRef = ref),
       searchProperties: ['name'],
-      simplePagination: false,
       store: {
         type: 'POST',
         url: `${SERVER_PATH}/bems-v6/subject/findByPage`,
@@ -101,15 +100,15 @@ class BudgetSubject extends Component {
     return (
       <div className={cls(styles['container-box'])}>
         <Layout className="auto-height">
-          <Sider width={380} className="auto-height" theme="light">
+          <Sider width={320} className="auto-height" theme="light">
             <ListCard {...masterProps} />
           </Sider>
           <Content className={cls('main-content', 'auto-height')} style={{ paddingLeft: 4 }}>
             {currentMaster ? (
-              <SubjectList />
+              <PeriodList />
             ) : (
               <div className="blank-empty">
-                <Empty image={empty} description="可选择预算主体维护科目" />
+                <Empty image={empty} description="可选择预算主体进行相应的操作" />
               </div>
             )}
           </Content>
@@ -118,4 +117,4 @@ class BudgetSubject extends Component {
     );
   }
 }
-export default BudgetSubject;
+export default BudgetPeriod;
