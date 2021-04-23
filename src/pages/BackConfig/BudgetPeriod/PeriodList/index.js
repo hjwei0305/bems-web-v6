@@ -5,11 +5,12 @@ import { connect } from 'dva';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
 import { Button, Card, Popconfirm, Drawer } from 'antd';
 import { ExtTable, BannerTitle, ExtIcon } from 'suid';
+import { FilterView } from '@/components';
 import { constants } from '@/utils';
 import FormModal from './FormModal';
 import styles from './index.less';
 
-const { SERVER_PATH } = constants;
+const { SERVER_PATH, PERIOD_TYPE } = constants;
 
 @connect(({ budgetPeriod, loading }) => ({ budgetPeriod, loading }))
 class PeriodList extends Component {
@@ -139,11 +140,76 @@ class PeriodList extends Component {
     return <ExtIcon className="del" type="delete" antd />;
   };
 
+  saveCustomizePeriod = data => {
+    const { dispatch, budgetPeriod } = this.props;
+    const { currentMaster } = budgetPeriod;
+    dispatch({
+      type: 'budgetPeriod/saveCustomizePeriod',
+      payload: {
+        subjectId: get(currentMaster, 'id'),
+        ...data,
+      },
+      callback: res => {
+        if (res.success) {
+          dispatch({
+            type: 'budgetPeriod/updateState',
+            payload: {
+              showModal: false,
+            },
+          });
+          this.reloadData();
+        }
+      },
+    });
+  };
+
+  createNormalPeriod = data => {
+    const { dispatch, budgetPeriod } = this.props;
+    const { currentMaster } = budgetPeriod;
+    dispatch({
+      type: 'budgetPeriod/createNormalPeriod',
+      payload: {
+        subjectId: get(currentMaster, 'id'),
+        ...data,
+      },
+      callback: res => {
+        if (res.success) {
+          dispatch({
+            type: 'budgetPeriod/updateState',
+            payload: {
+              showModal: false,
+            },
+          });
+          this.reloadData();
+        }
+      },
+    });
+  };
+
+  handlerPeriodTypeChange = selectPeriodType => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'budgetPeriod/updateState',
+      payload: {
+        selectPeriodType,
+      },
+    });
+  };
+
+  getQueryPeriodType = () => {
+    const { budgetPeriod } = this.props;
+    const { selectPeriodType } = budgetPeriod;
+    if (selectPeriodType && selectPeriodType.key !== PERIOD_TYPE.ALL.key) {
+      return selectPeriodType.key;
+    }
+    return null;
+  };
+
   render() {
     const { selectedRowKeys } = this.state;
     const hasSelected = selectedRowKeys.length > 0;
     const { budgetPeriod, loading } = this.props;
-    const { currentMaster, showModal, rowData } = budgetPeriod;
+    const { currentMaster, showModal, rowData, selectPeriodType, periodTypeData } = budgetPeriod;
     const columns = [
       {
         title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
@@ -176,20 +242,20 @@ class PeriodList extends Component {
       },
       {
         title: '期间类型',
-        dataIndex: 'handleUserName',
+        dataIndex: 'type',
         width: 100,
         render: t => t || '-',
       },
       {
         title: '开始日期',
-        dataIndex: 'remark',
-        width: 260,
+        dataIndex: 'startDate',
+        width: 120,
         render: t => t || '-',
       },
       {
         title: '结束日期',
-        dataIndex: 'remark',
-        width: 260,
+        dataIndex: 'endDate',
+        width: 120,
         render: t => t || '-',
       },
     ];
@@ -197,6 +263,17 @@ class PeriodList extends Component {
     const toolBarProps = {
       left: (
         <>
+          <FilterView
+            title="期间类型"
+            style={{ marginRight: 16, minWidth: 120 }}
+            currentViewType={selectPeriodType}
+            viewTypeData={periodTypeData}
+            onAction={this.handlerPeriodTypeChange}
+            reader={{
+              title: 'title',
+              value: 'key',
+            }}
+          />
           <Button type="primary" onClick={this.add}>
             新建期间
           </Button>
@@ -237,20 +314,23 @@ class PeriodList extends Component {
       searchProperties: ['name'],
       searchWidth: 260,
       store: {
-        url: `${SERVER_PATH}/sei-manager/flow/definition/getTypeNode`,
+        url: `${SERVER_PATH}/bems-v6/period/findBySubject`,
       },
       lineNumber: false,
       cascadeParams: {
-        typeId: get(currentMaster, 'id'),
+        subjectId: get(currentMaster, 'id'),
+        type: this.getQueryPeriodType(),
       },
     };
     const formModalProps = {
       showModal,
       rowData,
-      currentMaster,
       closeFormModal: this.closeFormModal,
-      saving: loading.effects['budgetPeriod/save'],
-      save: this.save,
+      saving:
+        loading.effects['budgetPeriod/createNormalPeriod'] ||
+        loading.effects['budgetPeriod/saveCustomizePeriod'],
+      saveCustomizePeriod: this.saveCustomizePeriod,
+      createNormalPeriod: this.createNormalPeriod,
     };
     return (
       <div className={cls(styles['contanter-box'])}>

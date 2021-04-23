@@ -5,9 +5,9 @@ const { request } = utils;
 
 const { SERVER_PATH } = constants;
 
-/** 保存 */
-export async function save(data) {
-  const url = `${SERVER_PATH}/bems-v6/period/save`;
+/** 创建标准期间(创建后不能修改和删除) */
+export async function createNormalPeriod(data) {
+  const url = `${SERVER_PATH}/bems-v6/period/createNormalPeriod`;
   return request({
     url,
     method: 'POST',
@@ -15,11 +15,31 @@ export async function save(data) {
   });
 }
 
-/** 删除 */
+/** 保存自定义期间 */
+export async function saveCustomizePeriod(data) {
+  const url = `${SERVER_PATH}/bems-v6/period/saveCustomizePeriod`;
+  return request({
+    url,
+    method: 'POST',
+    data,
+  });
+}
+
+/** 删除自定义closePeriods */
 export async function del(params) {
   const url = `${SERVER_PATH}/bems-v6/period/delete/${params.id}`;
   return request({
     url,
     method: 'DELETE',
+  });
+}
+
+/** 关闭期间 */
+export async function closePeriods(data) {
+  const url = `${SERVER_PATH}/bems-v6/period/closePeriods`;
+  return request({
+    url,
+    method: 'POST',
+    data,
   });
 }

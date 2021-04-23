@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-04-22 15:50:54
+ * @Last Modified time: 2021-04-23 14:24:28
  */
 import { base } from '../../public/app.config.json';
 
@@ -67,6 +67,16 @@ const BUDGET_DIMENSION_UI_COMPONENT = {
   PERIOD: { code: 'Period', name: '期间' },
 };
 
+/** 期间类型 */
+const PERIOD_TYPE = {
+  ALL: { key: 'ALL', title: '全部' },
+  ANNUAL: { key: 'ANNUAL', title: '年度' },
+  SEMIANNUAL: { key: 'SEMIANNUAL', title: '半年度' },
+  QUARTER: { key: 'QUARTER', title: '季度' },
+  MONTHLY: { key: 'MONTHLY', title: '月度' },
+  CUSTOMIZE: { key: 'CUSTOMIZE', title: '自定义' },
+};
+
 export default {
   APP_BASE,
   LOCAL_PATH,
@@ -75,4 +85,5 @@ export default {
   LOGIN_STATUS,
   STRATEGY_TYPE,
   BUDGET_DIMENSION_UI_COMPONENT,
+  PERIOD_TYPE,
 };

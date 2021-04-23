@@ -100,7 +100,7 @@ class BudgetPeriod extends Component {
     return (
       <div className={cls(styles['container-box'])}>
         <Layout className="auto-height">
-          <Sider width={320} className="auto-height" theme="light">
+          <Sider width={380} className="auto-height" theme="light">
             <ListCard {...masterProps} />
           </Sider>
           <Content className={cls('main-content', 'auto-height')} style={{ paddingLeft: 4 }}>
@@ -108,7 +108,7 @@ class BudgetPeriod extends Component {
               <PeriodList />
             ) : (
               <div className="blank-empty">
-                <Empty image={empty} description="可选择预算主体进行相应的操作" />
+                <Empty image={empty} description="可选择预算主体来维护预算期间" />
               </div>
             )}
           </Content>
