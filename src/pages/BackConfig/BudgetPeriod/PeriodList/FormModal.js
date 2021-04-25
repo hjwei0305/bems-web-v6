@@ -221,7 +221,7 @@ class FormModal extends PureComponent {
                       validator: this.validateStartEndDate,
                     },
                   ],
-                })(<ScopeDatePicker limitStartDate={moment(Date.now())} allowClear={false} />)}
+                })(<ScopeDatePicker allowClear={false} />)}
               </FormItem>
             </>
           )}

@@ -1,7 +1,7 @@
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
 import { constants } from '@/utils';
-import { del, createNormalPeriod, saveCustomizePeriod, closePeriods } from './service';
+import { del, createNormalPeriod, saveCustomizePeriod, closeAndOpenPeriods } from './service';
 
 const { PERIOD_TYPE } = constants;
 const PERIOD_TYPE_DATA = Object.keys(PERIOD_TYPE).map(key => PERIOD_TYPE[key]);
@@ -44,8 +44,8 @@ export default modelExtend(model, {
         callback(re);
       }
     },
-    *closePeriods({ payload, callback }, { call }) {
-      const re = yield call(closePeriods, payload);
+    *closeAndOpenPeriods({ payload, callback }, { call }) {
+      const re = yield call(closeAndOpenPeriods, payload);
       message.destroy();
       if (re.success) {
         message.success('关闭成功');

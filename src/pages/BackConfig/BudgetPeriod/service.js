@@ -35,11 +35,12 @@ export async function del(params) {
 }
 
 /** 关闭期间 */
-export async function closePeriods(data) {
-  const url = `${SERVER_PATH}/bems-v6/period/closePeriods`;
+export async function closeAndOpenPeriods(data) {
+  const { id, status } = data;
+  const url = `${SERVER_PATH}/bems-v6/period/setPeriodStatus/${id}/${status}`;
   return request({
     url,
     method: 'POST',
-    data,
+    data: {},
   });
 }

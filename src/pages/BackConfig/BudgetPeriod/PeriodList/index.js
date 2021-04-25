@@ -3,7 +3,7 @@ import cls from 'classnames';
 import { get } from 'lodash';
 import { connect } from 'dva';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { Button, Card, Popconfirm, Drawer, Tag } from 'antd';
+import { Button, Card, Popconfirm, Tag } from 'antd';
 import { ExtTable, BannerTitle, ExtIcon } from 'suid';
 import { FilterView } from '@/components';
 import { constants } from '@/utils';
@@ -19,8 +19,7 @@ class PeriodList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedRowKeys: [],
-      delRowId: null,
+      rowId: null,
     };
   }
 
@@ -71,23 +70,11 @@ class PeriodList extends Component {
     });
   };
 
-  handlerSelectRow = selectedRowKeys => {
-    this.setState({
-      selectedRowKeys,
-    });
-  };
-
-  onCancelBatchClosing = () => {
-    this.setState({
-      selectedRowKeys: [],
-    });
-  };
-
   del = record => {
     const { dispatch } = this.props;
     this.setState(
       {
-        delRowId: record.id,
+        rowId: record.id,
       },
       () => {
         dispatch({
@@ -98,7 +85,7 @@ class PeriodList extends Component {
           callback: res => {
             if (res.success) {
               this.setState({
-                delRowId: null,
+                rowId: null,
               });
               this.reloadData();
             }
@@ -108,21 +95,31 @@ class PeriodList extends Component {
     );
   };
 
-  closePeriod = () => {
+  closeAndOpenPeriod = row => {
     const { dispatch } = this.props;
-    const { selectedRowKeys: ids } = this.state;
-    dispatch({
-      type: 'budgetPeriod/closePeriods',
-      payload: ids,
-      callback: res => {
-        if (res.success) {
-          this.setState({
-            selectedRowKeys: [],
-          });
-          this.reloadData();
-        }
+    const rowId = get(row, 'id');
+    this.setState(
+      {
+        rowId,
       },
-    });
+      () => {
+        dispatch({
+          type: 'budgetPeriod/closeAndOpenPeriods',
+          payload: {
+            id: rowId,
+            status: !get(row, 'closed'),
+          },
+          callback: res => {
+            if (res.success) {
+              this.setState({
+                rowId: null,
+              });
+              this.reloadData();
+            }
+          },
+        });
+      },
+    );
   };
 
   closeFormModal = () => {
@@ -138,13 +135,25 @@ class PeriodList extends Component {
 
   renderDelBtn = row => {
     const { loading } = this.props;
-    const { delRowId } = this.state;
-    if (loading.effects['budgetMaster/del'] && delRowId === row.id) {
+    const { rowId } = this.state;
+    if (loading.effects['budgetPeriod/del'] && rowId === row.id) {
       return <ExtIcon className="del-loading" type="loading" antd />;
     }
     return (
       <ExtIcon className={cls('del', { disabled: this.actionDisabled(row) })} type="delete" antd />
     );
+  };
+
+  renderCloseAndOpenBtn = row => {
+    const { loading } = this.props;
+    const { rowId } = this.state;
+    if (loading.effects['budgetPeriod/closeAndOpenPeriods'] && rowId === row.id) {
+      return <ExtIcon className="loading" type="loading" antd />;
+    }
+    if (row.closed) {
+      return <ExtIcon className="open" type="check-circle" antd />;
+    }
+    return <ExtIcon className="close" type="close-circle" antd />;
   };
 
   saveCustomizePeriod = data => {
@@ -239,15 +248,13 @@ class PeriodList extends Component {
   };
 
   render() {
-    const { selectedRowKeys } = this.state;
-    const hasSelected = selectedRowKeys.length > 0;
     const { budgetPeriod, loading } = this.props;
     const { currentMaster, showModal, rowData, selectPeriodType, periodTypeData } = budgetPeriod;
     const columns = [
       {
         title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
         key: 'operation',
-        width: 80,
+        width: 120,
         align: 'center',
         dataIndex: 'id',
         className: 'action',
@@ -271,6 +278,12 @@ class PeriodList extends Component {
             >
               {this.renderDelBtn(record)}
             </Popconfirm>
+            <Popconfirm
+              title={record.closed ? '确定要启用期间吗？' : '确定要停用期间吗？'}
+              onConfirm={() => this.closeAndOpenPeriod(record)}
+            >
+              {this.renderCloseAndOpenBtn(record)}
+            </Popconfirm>
           </span>
         ),
       },
@@ -293,7 +306,6 @@ class PeriodList extends Component {
         render: (t, r) => this.renderDisabled(t, r),
       },
     ];
-    const closing = loading.effects['budgetPeriod/closePeriod'];
     const toolBarProps = {
       left: (
         <>
@@ -314,37 +326,14 @@ class PeriodList extends Component {
           <Button onClick={this.reloadData}>
             <FormattedMessage id="global.refresh" defaultMessage="刷新" />
           </Button>
-          <Drawer
-            placement="top"
-            closable={false}
-            mask={false}
-            height={44}
-            getContainer={false}
-            style={{ position: 'absolute' }}
-            visible={hasSelected}
-          >
-            <Button onClick={this.onCancelBatchClosing} disabled={closing}>
-              取消
-            </Button>
-            <Popconfirm title="确定要关闭选择的期间吗？" onConfirm={this.closePeriod}>
-              <Button type="danger" loading={closing}>
-                {`关闭( ${selectedRowKeys.length} )`}
-              </Button>
-            </Popconfirm>
-          </Drawer>
         </>
       ),
     };
     const extTableProps = {
       toolBar: toolBarProps,
       columns,
-      checkbox: {
-        rowCheck: false,
-      },
-      selectedRowKeys,
-      onSelectRow: this.handlerSelectRow,
       onTableRef: ref => (this.tableRef = ref),
-      searchPlaceHolder: '期间名称关键字',
+      searchPlaceHolder: '输入期间名称关键字',
       searchProperties: ['name'],
       searchWidth: 260,
       store: {

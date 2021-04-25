@@ -26,24 +26,6 @@
             width: 100%;
             height: 100% !important;
             max-height: 100% !important;
-            .left-box {
-              .ant-drawer-top.ant-drawer-open .ant-drawer-content-wrapper {
-                box-shadow: none;
-              }
-              .ant-drawer-body {
-                display: flex;
-                align-items: center;
-                height: 44px;
-                padding: 0;
-                line-height: 44px;
-                background-color: @white;
-                .select {
-                  display: inline-block;
-                  min-width: 120px;
-                  color: fade(@black, 65%);
-                }
-              }
-            }
             .ant-table-tbody > tr > td {
               color: fade(@black, 65%);
               font-weight: normal;
@@ -53,6 +35,24 @@
                   display: inline-block;
                   height: 100%;
                   i {
+                    &.close {
+                      &.ant-dropdown-open,
+                      &:hover {
+                        color: @error-color;
+                        background-color: fade(@error-color, 5%);
+                      }
+                    }
+                    &.open {
+                      &:hover {
+                        color: #52c41a;
+                        background-color: fade(#52c41a, 5%);
+                      }
+                      &.ant-popover-open:hover,
+                      &.ant-popover-open {
+                        color: #52c41a;
+                        background-color: fade(#52c41a, 10%);
+                      }
+                    }
                     &.disabled,
                     &.disabled:hover {
                       color: fade(@black, 15%);
