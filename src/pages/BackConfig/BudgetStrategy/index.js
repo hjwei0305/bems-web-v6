@@ -147,7 +147,7 @@ class BudgetStrategy extends Component {
       {
         title: '策略类别',
         dataIndex: 'category',
-        width: 80,
+        width: 100,
         required: true,
         render: t => <StrategyType state={t} />,
       },
@@ -193,6 +193,9 @@ class BudgetStrategy extends Component {
       onTableRef: ref => (this.tablRef = ref),
       store: {
         url: `${SERVER_PATH}/bems-v6/strategy/findAll`,
+      },
+      sort: {
+        field: { category: 'asc', name: null, classPath: null },
       },
     };
     return (
