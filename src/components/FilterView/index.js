@@ -148,7 +148,7 @@ class FilterView extends PureComponent {
             overlayClassName={styles['filter-box']}
             onVisibleChange={this.onVisibleChange}
           >
-            <span className={cls(styles['view-box'])} style={style}>
+            <span className={cls('cmp-filter-view', styles['view-box'])} style={style}>
               <span className="view-label">
                 {iconType ? <ExtIcon type={iconType} antd /> : null}
                 <em>{title}</em>

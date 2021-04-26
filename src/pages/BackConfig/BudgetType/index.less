@@ -1,0 +1,32 @@
+@import '../../../themes/vars.less';
+.container-box {
+  position: relative;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  background-color: @page-background-color;
+  :global {
+    .box-header {
+      display: flex;
+      align-items: center;
+      height: 60px !important;
+      padding: 0 24px;
+      background-color: @white;
+      .cmp-filter-view {
+        i.anticon.anticon-down {
+          font-size: 14px;
+        }
+        .view-label {
+          font-size: 16px;
+        }
+        .view-content {
+          font-size: 18px;
+        }
+      }
+    }
+    .box-body {
+      height: calc(100% - 68px) !important;
+      margin-top: 8px;
+    }
+  }
+}

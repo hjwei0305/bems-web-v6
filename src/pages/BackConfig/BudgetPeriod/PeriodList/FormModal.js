@@ -141,6 +141,7 @@ class FormModal extends PureComponent {
           })(<YearPicker format="YYYY年" />)}
         </FormItem>
         <FormItem
+          required
           label="期间选项"
           help={this.normalKeys.length === 0 ? '至少选择一项' : ''}
           validateStatus={this.normalKeys.length === 0 ? 'error' : 'success'}

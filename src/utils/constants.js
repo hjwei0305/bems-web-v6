@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-04-23 14:24:28
+ * @Last Modified time: 2021-04-25 14:51:12
  */
 import { base } from '../../public/app.config.json';
 
@@ -77,6 +77,25 @@ const PERIOD_TYPE = {
   CUSTOMIZE: { key: 'CUSTOMIZE', title: '自定义' },
 };
 
+/** 预算类型分类 */
+const BUDGET_TYPE_CLASS = {
+  GENERAL: { key: 'GENERAL', title: '通用' },
+  CUSTOMIZE: { key: 'CUSTOMIZE', title: '公司级' },
+};
+
+/** 操作类型 */
+const ACTION_TYPE = {
+  GENERAL: { key: '', title: '下达' },
+  CUSTOMIZE: { key: '', title: '使用' },
+};
+
+/** 预算管理类型 */
+const ORDER_CATEGORY = {
+  INJECTION: { key: 'INJECTION', title: '下达', color: '#108ee9' },
+  ADJUSTMENT: { key: 'ADJUSTMENT', title: '调整', color: '#108ee9' },
+  SPLIT: { key: 'SPLIT', title: '分解', color: '#108ee9' },
+};
+
 export default {
   APP_BASE,
   LOCAL_PATH,
@@ -86,4 +105,7 @@ export default {
   STRATEGY_TYPE,
   BUDGET_DIMENSION_UI_COMPONENT,
   PERIOD_TYPE,
+  BUDGET_TYPE_CLASS,
+  ORDER_CATEGORY,
+  ACTION_TYPE,
 };
