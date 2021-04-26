@@ -83,10 +83,16 @@ export default modelExtend(model, {
         callback(re);
       }
     },
-    *assign({ payload, callback }, { call }) {
+    *assign({ payload, callback }, { call, put }) {
       const re = yield call(assign, payload);
       message.destroy();
       if (re.success) {
+        yield put({
+          type: 'budgetType/updateState',
+          payload: {
+            showAssign: false,
+          },
+        });
         message.success('维度分配成功');
       } else {
         message.error(re.message);
