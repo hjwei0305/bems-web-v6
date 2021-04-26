@@ -145,6 +145,7 @@ class AssignedDimension extends Component {
       toolBar: toolBarProps,
       lineNumber: false,
       columns,
+      checkbox: true,
       selectedRowKeys,
       onSelectRow: this.handlerSelectRow,
       rowKey: 'code',
