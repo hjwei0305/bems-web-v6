@@ -133,7 +133,7 @@ class AssignedDimension extends Component {
             </Button>
             <Popconfirm title="确定要移除选择的维度吗？" onConfirm={this.removeAssigned}>
               <Button type="danger" loading={removeLoading}>
-                {`移除维度( ${selectedRowKeys.length} )`}
+                {`移除维度(${selectedRowKeys.length})`}
               </Button>
             </Popconfirm>
           </Drawer>
@@ -145,9 +145,6 @@ class AssignedDimension extends Component {
       toolBar: toolBarProps,
       lineNumber: false,
       columns,
-      checkbox: {
-        rowCheck: false,
-      },
       selectedRowKeys,
       onSelectRow: this.handlerSelectRow,
       rowKey: 'code',
