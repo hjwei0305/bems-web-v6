@@ -3,12 +3,13 @@ import { connect } from 'dva';
 import { get } from 'lodash';
 import cls from 'classnames';
 import { formatMessage } from 'umi-plugin-react/locale';
-import { Input, Empty, Popconfirm, Layout, Tag, Descriptions } from 'antd';
+import { Input, Empty, Popconfirm, Layout, Tag, Avatar } from 'antd';
 import { ExtIcon, ListCard } from 'suid';
 import empty from '@/assets/item_empty.svg';
 import { constants } from '@/utils';
 import BudgetAdd from '../components/BudgetTypeForm/Add';
 import BudgetEdit from '../components/BudgetTypeForm/Edit';
+import AssignedDimension from '../AssignedDimension';
 import styles from './index.less';
 
 const { SERVER_PATH, BUDGET_TYPE_CLASS, ORDER_CATEGORY, PERIOD_TYPE } = constants;
@@ -19,11 +20,20 @@ const { Sider, Content } = Layout;
 class BudgetTypeList extends Component {
   static listCardRef = null;
 
+  static assignedRef;
+
   constructor(props) {
     super(props);
     this.state = {
       dealId: null,
     };
+  }
+
+  componentDidMount() {
+    const { onRef } = this.props;
+    if (onRef) {
+      onRef(this);
+    }
   }
 
   componentWillUnmount() {
@@ -36,14 +46,31 @@ class BudgetTypeList extends Component {
     });
   }
 
+  handlerAssignedRef = ref => {
+    this.assignedRef = ref;
+  };
+
   reloadData = () => {
     if (this.listCardRef) {
       this.listCardRef.remoteDataRefresh();
     }
   };
 
+  reloadAssignedList = () => {
+    if (this.assignedRef) {
+      this.assignedRef.reloadData();
+    }
+  };
+
   create = (data, handlerPopoverHide) => {
-    const { dispatch } = this.props;
+    const { dispatch, budgetType } = this.props;
+    const { selectBudgetTypeClass, currentMaster } = budgetType;
+    if (selectBudgetTypeClass.key === BUDGET_TYPE_CLASS.PRIVATE.key) {
+      Object.assign(data, {
+        subjectId: get(currentMaster, 'id'),
+        subjectName: get(currentMaster, 'name'),
+      });
+    }
     dispatch({
       type: 'budgetType/create',
       payload: {
@@ -100,13 +127,68 @@ class BudgetTypeList extends Component {
     );
   };
 
+  frozen = (data, e) => {
+    if (e) e.stopPropagation();
+    const { dispatch } = this.props;
+    this.setState(
+      {
+        dealId: data.id,
+      },
+      () => {
+        dispatch({
+          type: 'budgetType/frozen',
+          payload: {
+            id: data.id,
+            freezing: !get(data, 'frozen'),
+          },
+          callback: res => {
+            if (res.success) {
+              this.setState({
+                dealId: null,
+              });
+              this.reloadData();
+            }
+          },
+        });
+      },
+    );
+  };
+
+  privateReference = (data, e) => {
+    if (e) e.stopPropagation();
+    const { dispatch, budgetType } = this.props;
+    const { currentMaster } = budgetType;
+    this.setState(
+      {
+        dealId: data.id,
+      },
+      () => {
+        dispatch({
+          type: 'budgetType/privateReference',
+          payload: {
+            id: data.id,
+            subjectId: get(currentMaster, 'id'),
+          },
+          callback: res => {
+            if (res.success) {
+              this.setState({
+                dealId: null,
+              });
+              this.reloadData();
+            }
+          },
+        });
+      },
+    );
+  };
+
   handlerSelect = (keys, items) => {
     const { dispatch } = this.props;
-    const selectBudgetType = keys.length === 1 ? items[0] : null;
+    const selectedBudgetType = keys.length === 1 ? items[0] : null;
     dispatch({
       type: 'budgetType/updateState',
       payload: {
-        selectBudgetType,
+        selectedBudgetType,
       },
     });
   };
@@ -136,36 +218,118 @@ class BudgetTypeList extends Component {
     </>
   );
 
-  renderItemAction = item => {
-    const { loading } = this.props;
+  renderEditAndDelete = item => {
+    if (item.frozen) {
+      return null;
+    }
     const { dealId } = this.state;
+    const { loading } = this.props;
     const saving = loading.effects['budgetType/save'];
     return (
       <>
-        <div className="tool-action" onClick={e => e.stopPropagation()}>
-          <BudgetEdit saving={saving} save={this.save} rowData={item} />
-          <Popconfirm
-            title={formatMessage({
-              id: 'global.delete.confirm',
-              defaultMessage: '确定要删除吗?',
-            })}
-            onConfirm={e => this.del(item, e)}
-          >
-            {loading.effects['budgetType/del'] && dealId === item.id ? (
-              <ExtIcon className={cls('del', 'action-item', 'loading')} type="loading" antd />
-            ) : (
-              <ExtIcon className={cls('del', 'action-item')} type="delete" antd />
-            )}
-          </Popconfirm>
-        </div>
+        <BudgetEdit saving={saving} save={this.save} rowData={item} />
+        <Popconfirm
+          title={formatMessage({
+            id: 'global.delete.confirm',
+            defaultMessage: '确定要删除吗?',
+          })}
+          onConfirm={e => this.del(item, e)}
+        >
+          {loading.effects['budgetType/del'] && dealId === item.id ? (
+            <ExtIcon className={cls('del', 'action-item', 'loading')} type="loading" antd />
+          ) : (
+            <ExtIcon className={cls('del', 'action-item')} type="delete" antd />
+          )}
+        </Popconfirm>
       </>
     );
   };
 
+  renderItemAction = item => {
+    const { budgetType } = this.props;
+    const { selectBudgetTypeClass } = budgetType;
+    const { loading } = this.props;
+    const { dealId } = this.state;
+    if (selectBudgetTypeClass.key === BUDGET_TYPE_CLASS.GENERAL.key) {
+      return (
+        <>
+          <div className="tool-action" onClick={e => e.stopPropagation()}>
+            {this.renderEditAndDelete(item)}
+            <Popconfirm
+              title={item.frozen ? '确定要启用吗?' : '确定要停用吗?'}
+              onConfirm={e => this.frozen(item, e)}
+            >
+              {loading.effects['budgetType/frozen'] && dealId === item.id ? (
+                <ExtIcon className={cls('frozen', 'action-item', 'loading')} type="loading" antd />
+              ) : (
+                <ExtIcon
+                  className={cls('frozen', 'action-item')}
+                  type={item.frozen ? 'check-circle' : 'close-circle'}
+                  antd
+                />
+              )}
+            </Popconfirm>
+          </div>
+        </>
+      );
+    }
+    if (selectBudgetTypeClass.key === BUDGET_TYPE_CLASS.PRIVATE.key) {
+      const budgetTypeClass = BUDGET_TYPE_CLASS[get(item, 'type')];
+      return (
+        <>
+          <div className="tool-action" onClick={e => e.stopPropagation()}>
+            {budgetTypeClass.key === BUDGET_TYPE_CLASS.PRIVATE.key ? (
+              <>
+                {this.renderEditAndDelete(item)}
+                <Popconfirm
+                  title={item.frozen ? '确定要启用吗?' : '确定要停用吗?'}
+                  onConfirm={e => this.frozen(item, e)}
+                >
+                  {loading.effects['budgetType/frozen'] && dealId === item.id ? (
+                    <ExtIcon className={cls('del', 'action-item', 'loading')} type="loading" antd />
+                  ) : (
+                    <ExtIcon
+                      className={cls('del', 'action-item')}
+                      type={item.frozen ? 'check-circle' : 'close-circle'}
+                      antd
+                    />
+                  )}
+                </Popconfirm>
+              </>
+            ) : (
+              <Popconfirm
+                title="确定转成为私有预算类型吗?"
+                onConfirm={e => this.privateReference(item, e)}
+              >
+                {loading.effects['budgetType/privateReference'] && dealId === item.id ? (
+                  <ExtIcon
+                    className={cls('frozen', 'action-item', 'loading')}
+                    type="loading"
+                    antd
+                  />
+                ) : (
+                  <ExtIcon className={cls('frozen', 'action-item')} type="copy" antd />
+                )}
+              </Popconfirm>
+            )}
+          </div>
+        </>
+      );
+    }
+  };
+
   renderName = item => {
     const orderCategory = ORDER_CATEGORY[get(item, 'orderCategory')];
+    const frozen = get(item, 'frozen');
     if (orderCategory) {
-      return `${get(item, 'name')}(${orderCategory.title})`;
+      return (
+        <>
+          {`${get(item, 'name')}(${orderCategory.title})`}
+          {frozen === true ? (
+            <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
+          ) : null}
+        </>
+      );
     }
   };
 
@@ -173,12 +337,7 @@ class BudgetTypeList extends Component {
     const periodType = PERIOD_TYPE[get(item, 'periodType')];
     return (
       <>
-        <div>
-          <Descriptions bordered={false} size="small" column={2}>
-            <Descriptions.Item label="管理策略"> {item.strategyName}</Descriptions.Item>
-            <Descriptions.Item label="期间类型"> {get(periodType, 'title')}</Descriptions.Item>
-          </Descriptions>
-        </div>
+        <div style={{ marginBottom: 8 }}>{`期间类型为${get(periodType, 'title')}`}</div>
         <div>
           {item.roll ? <Tag color="magenta">可结转</Tag> : null}
           {item.use ? <Tag color="cyan">业务可用</Tag> : null}
@@ -187,11 +346,26 @@ class BudgetTypeList extends Component {
     );
   };
 
+  renderType = item => {
+    const budgetTypeClass = BUDGET_TYPE_CLASS[get(item, 'type')];
+    if (budgetTypeClass) {
+      return (
+        <Avatar
+          shape="square"
+          style={{ backgroundColor: budgetTypeClass.color, verticalAlign: 'middle' }}
+        >
+          {budgetTypeClass.alias}
+        </Avatar>
+      );
+    }
+    return '';
+  };
+
   render() {
     const { loading, budgetType } = this.props;
-    const { selectBudgetType } = budgetType;
+    const { selectBudgetTypeClass, selectedBudgetType, currentMaster } = budgetType;
     const saving = loading.effects['budgetType/save'];
-    const selectedKeys = selectBudgetType ? [selectBudgetType.id] : [];
+    const selectedKeys = selectedBudgetType ? [selectedBudgetType.id] : [];
     const deployTemplateProps = {
       className: 'left-content',
       title: '预算类型',
@@ -203,28 +377,38 @@ class BudgetTypeList extends Component {
       selectedKeys,
       extra: <BudgetAdd saving={saving} save={this.create} />,
       itemField: {
+        avatar: ({ item }) => this.renderType(item),
         title: item => this.renderName(item),
         description: item => this.renderDescription(item),
       },
-      remotePaging: true,
-      store: {
-        type: 'POST',
-        url: `${SERVER_PATH}/bems-v6/category/findByPage`,
-        params: {
-          filters: [{ fieldName: 'type', operator: 'EQ', value: BUDGET_TYPE_CLASS.GENERAL.key }],
-        },
-      },
       itemTool: this.renderItemAction,
     };
+    if (selectBudgetTypeClass.key === BUDGET_TYPE_CLASS.GENERAL.key) {
+      Object.assign(deployTemplateProps, {
+        store: {
+          url: `${SERVER_PATH}/bems-v6/category/findByGeneral`,
+        },
+      });
+    }
+    if (selectBudgetTypeClass.key === BUDGET_TYPE_CLASS.PRIVATE.key) {
+      Object.assign(deployTemplateProps, {
+        store: {
+          url: `${SERVER_PATH}/bems-v6/category/findBySubject`,
+        },
+        cascadeParams: {
+          subjectId: get(currentMaster, 'id'),
+        },
+      });
+    }
     return (
       <div className={cls(styles['container-box'])}>
         <Layout className="auto-height">
           <Sider width={380} className="auto-height" theme="light">
-            <ListCard {...deployTemplateProps} />
+            <ListCard key={selectBudgetTypeClass.key} {...deployTemplateProps} />
           </Sider>
           <Content className={cls('main-content', 'auto-height')} style={{ paddingLeft: 4 }}>
-            {selectBudgetType ? (
-              'aaa'
+            {selectedBudgetType ? (
+              <AssignedDimension onRef={this.handlerAssignedRef} />
             ) : (
               <div className="blank-empty">
                 <Empty image={empty} description="可选择预算类型配置预算维度" />

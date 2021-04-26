@@ -145,17 +145,17 @@ class BudgetStrategy extends Component {
         ),
       },
       {
+        title: '策略名称',
+        dataIndex: 'name',
+        width: 180,
+        required: true,
+      },
+      {
         title: '策略类别',
         dataIndex: 'category',
         width: 100,
         required: true,
         render: t => <StrategyType state={t} />,
-      },
-      {
-        title: '策略名称',
-        dataIndex: 'name',
-        width: 180,
-        required: true,
       },
       {
         title: '策略类路径',

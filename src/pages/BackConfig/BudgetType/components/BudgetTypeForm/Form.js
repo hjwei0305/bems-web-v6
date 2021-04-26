@@ -7,7 +7,7 @@ import { BannerTitle, ComboList, Space } from 'suid';
 import { constants } from '@/utils';
 import styles from './Form.less';
 
-const { ORDER_CATEGORY, SERVER_PATH, STRATEGY_TYPE, PERIOD_TYPE } = constants;
+const { ORDER_CATEGORY, PERIOD_TYPE } = constants;
 const periodTypeData = Object.keys(PERIOD_TYPE)
   .map(key => PERIOD_TYPE[key])
   .filter(t => t.key !== PERIOD_TYPE.ALL.key);
@@ -90,26 +90,8 @@ class BudgetTypeForm extends PureComponent {
   render() {
     const { form, rowData, saving } = this.props;
     const { getFieldDecorator } = form;
-    getFieldDecorator('strategyId', { initialValue: get(rowData, 'strategyId') });
     getFieldDecorator('periodType', { initialValue: get(rowData, 'periodType') });
     const title = rowData ? '编辑' : '新建';
-    const strategyProps = {
-      form,
-      name: 'strategyName',
-      store: {
-        url: `${SERVER_PATH}/bems-v6/strategy/findByCategory`,
-        params: {
-          category: STRATEGY_TYPE.MANAGEMENT.key,
-        },
-      },
-      showSearch: false,
-      pagination: false,
-      field: ['strategyId'],
-      reader: {
-        name: 'name',
-        field: ['id'],
-      },
-    };
     const periodTypeProps = {
       form,
       name: 'periodTypeName',
@@ -139,17 +121,6 @@ class BudgetTypeForm extends PureComponent {
                   },
                 ],
               })(<Input autoComplete="off" />)}
-            </FormItem>
-            <FormItem label="管理策略">
-              {getFieldDecorator('strategyName', {
-                initialValue: get(rowData, 'strategyName'),
-                rules: [
-                  {
-                    required: true,
-                    message: '管理策略不能为空',
-                  },
-                ],
-              })(<ComboList {...strategyProps} />)}
             </FormItem>
             <FormItem label="期间类型">
               {getFieldDecorator('periodTypeName', {
@@ -198,7 +169,7 @@ class BudgetTypeForm extends PureComponent {
                 </Checkbox.Group>
               )}
             </FormItem>
-            <FormItem required label="其它选项">
+            <FormItem required label="预算池选项">
               <Row>
                 <Col span={10}>
                   <FormItem {...formItemInlineLayout} style={{ marginBottom: 0 }} label="可结转">

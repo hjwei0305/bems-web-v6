@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-04-25 14:51:12
+ * @Last Modified time: 2021-04-26 17:03:07
  */
 import { base } from '../../public/app.config.json';
 
@@ -55,7 +55,6 @@ const APP_MODULE_BTN_KEY = {
 /** 策略类别 */
 const STRATEGY_TYPE = {
   DIMENSION: { key: 'DIMENSION', title: '维度', color: '#108ee9' },
-  MANAGEMENT: { key: 'MANAGEMENT', title: '管理', color: '#2db7f5' },
   EXECUTION: { key: 'EXECUTION', title: '执行', color: '#87d068' },
 };
 
@@ -79,8 +78,8 @@ const PERIOD_TYPE = {
 
 /** 预算类型分类 */
 const BUDGET_TYPE_CLASS = {
-  GENERAL: { key: 'GENERAL', title: '通用' },
-  CUSTOMIZE: { key: 'CUSTOMIZE', title: '公司级' },
+  GENERAL: { key: 'GENERAL', title: '通用', color: '#29b3f0', alias: '通用' },
+  PRIVATE: { key: 'PRIVATE', title: '公司级', color: '#fa8c15', alias: '私有' },
 };
 
 /** 操作类型 */

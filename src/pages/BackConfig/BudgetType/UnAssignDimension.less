@@ -1,0 +1,42 @@
+@import '../../../themes/vars.less';
+.unassign-box {
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  :global {
+    .ant-drawer-header {
+      border-color: transparent;
+    }
+    .ant-drawer-body {
+      height: calc(100% - 55px);
+      padding: 0;
+    }
+    .header-tool-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 42px;
+      padding: 0 24px;
+      line-height: 42px;
+      border-bottom: 1px solid @border-color;
+    }
+    .list-tool-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 42px;
+      padding: 0 24px;
+      line-height: 42px;
+    }
+    .list-body {
+      width: 100%;
+      height: calc(100% - 84px);
+      overflow: hidden;
+      .scrollbar-container {
+        width: 100%;
+      }
+    }
+  }
+}
