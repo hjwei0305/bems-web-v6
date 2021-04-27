@@ -20,6 +20,10 @@ export default [
           { path: '/budgetConfig/budgetStrategy', component: './BackConfig/BudgetStrategy' },
           { path: '/budgetConfig/budgetDimension', component: './BackConfig/BudgetDimension' },
           { path: '/budgetConfig/budgetSubject', component: './BackConfig/BudgetSubject' },
+          {
+            path: '/budgetConfig/budgetMasterSubject',
+            component: './BackConfig/BudgetMasterSubject',
+          },
           { path: '/budgetConfig/budgetMaster', component: './BackConfig/BudgetMaster' },
           { path: '/budgetConfig/budgetPeriod', component: './BackConfig/BudgetPeriod' },
           { path: '/budgetConfig/budgetType', component: './BackConfig/BudgetType' },

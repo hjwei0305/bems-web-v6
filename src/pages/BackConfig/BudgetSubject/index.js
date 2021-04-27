@@ -2,120 +2,203 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
 import { get } from 'lodash';
-import { Input, Empty, Layout, Descriptions } from 'antd';
-import { ListCard } from 'suid';
-import empty from '@/assets/item_empty.svg';
+import { Button, Popconfirm } from 'antd';
+import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
+import { ExtTable, ExtIcon } from 'suid';
 import { constants } from '@/utils';
-import SubjectList from './SubjectList';
+import FormModal from './FormModal';
 import styles from './index.less';
 
-const { Search } = Input;
-const { Sider, Content } = Layout;
 const { SERVER_PATH } = constants;
 
 @connect(({ budgetSubject, loading }) => ({ budgetSubject, loading }))
 class BudgetSubject extends Component {
-  static listCardRef = null;
+  static tablRef;
 
-  componentWillUnmount() {
+  constructor(props) {
+    super(props);
+    this.state = {
+      delRowId: null,
+    };
+  }
+
+  reloadData = () => {
+    if (this.tablRef) {
+      this.tablRef.remoteDataRefresh();
+    }
+  };
+
+  add = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'budgetSubject/updateState',
+      payload: {
+        showModal: true,
+        rowData: null,
+      },
+    });
+  };
+
+  edit = rowData => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'budgetSubject/updateState',
+      payload: {
+        showModal: true,
+        rowData,
+      },
+    });
+  };
+
+  save = data => {
+    const { dispatch, budgetSubject } = this.props;
+    const { currentMaster } = budgetSubject;
+    dispatch({
+      type: 'budgetSubject/save',
+      payload: {
+        subjectId: get(currentMaster, 'id'),
+        ...data,
+      },
+      callback: res => {
+        if (res.success) {
+          dispatch({
+            type: 'budgetSubject/updateState',
+            payload: {
+              showModal: false,
+            },
+          });
+          this.reloadData();
+        }
+      },
+    });
+  };
+
+  del = record => {
+    const { dispatch } = this.props;
+    this.setState(
+      {
+        delRowId: record.id,
+      },
+      () => {
+        dispatch({
+          type: 'budgetSubject/del',
+          payload: {
+            id: record.id,
+          },
+          callback: res => {
+            if (res.success) {
+              this.setState({
+                delRowId: null,
+              });
+              this.reloadData();
+            }
+          },
+        });
+      },
+    );
+  };
+
+  closeFormModal = () => {
     const { dispatch } = this.props;
     dispatch({
       type: 'budgetSubject/updateState',
       payload: {
         showModal: false,
-        currentMaster: null,
         rowData: null,
       },
     });
-  }
-
-  handlerSelect = (keys, items) => {
-    const { dispatch } = this.props;
-    const currentMaster = keys.length === 1 ? items[0] : null;
-    dispatch({
-      type: 'budgetSubject/updateState',
-      payload: {
-        currentMaster,
-      },
-    });
   };
 
-  handlerSearchChange = v => {
-    this.listCardRef.handlerSearchChange(v);
+  renderDelBtn = row => {
+    const { loading } = this.props;
+    const { delRowId } = this.state;
+    if (loading.effects['budgetSubject/del'] && delRowId === row.id) {
+      return <ExtIcon className="del-loading" type="loading" antd />;
+    }
+    return <ExtIcon className="del" type="delete" antd />;
   };
-
-  handlerPressEnter = () => {
-    this.listCardRef.handlerPressEnter();
-  };
-
-  handlerSearch = v => {
-    this.listCardRef.handlerSearch(v);
-  };
-
-  renderCustomTool = () => (
-    <>
-      <Search
-        allowClear
-        placeholder="输入预算主体名称关键字"
-        onChange={e => this.handlerSearchChange(e.target.value)}
-        onSearch={this.handlerSearch}
-        onPressEnter={this.handlerPressEnter}
-        style={{ width: '100%' }}
-      />
-    </>
-  );
 
   render() {
-    const { budgetSubject } = this.props;
-    const { currentMaster } = budgetSubject;
-    const masterProps = {
-      className: 'left-content',
-      title: '预算主体列表',
-      showSearch: false,
-      onSelectChange: this.handlerSelect,
-      customTool: this.renderCustomTool,
-      onListCardRef: ref => (this.listCardRef = ref),
-      searchProperties: ['name'],
-      simplePagination: false,
+    const { budgetSubject, loading } = this.props;
+    const { showModal, rowData } = budgetSubject;
+    const columns = [
+      {
+        title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
+        key: 'operation',
+        width: 100,
+        align: 'center',
+        dataIndex: 'id',
+        className: 'action',
+        required: true,
+        render: (text, record) => (
+          <span className={cls('action-box')}>
+            <ExtIcon className="edit" onClick={() => this.edit(record)} type="edit" antd />
+            <Popconfirm
+              placement="topLeft"
+              title={formatMessage({
+                id: 'global.delete.confirm',
+                defaultMessage: '确定要删除吗？提示：删除后不可恢复',
+              })}
+              onConfirm={() => this.del(record)}
+            >
+              {this.renderDelBtn(record)}
+            </Popconfirm>
+          </span>
+        ),
+      },
+      {
+        title: '科目代码',
+        dataIndex: 'code',
+        width: 120,
+        required: true,
+      },
+      {
+        title: '科目名称',
+        dataIndex: 'name',
+        width: 420,
+        required: true,
+      },
+    ];
+    const formModalProps = {
+      save: this.save,
+      rowData,
+      showModal,
+      closeFormModal: this.closeFormModal,
+      saving: loading.effects['budgetSubject/save'],
+    };
+    const toolBarProps = {
+      left: (
+        <>
+          <Button type="primary" onClick={this.add}>
+            <FormattedMessage id="global.add" defaultMessage="新建" />
+          </Button>
+          <Button onClick={this.reloadData}>
+            <FormattedMessage id="global.refresh" defaultMessage="刷新" />
+          </Button>
+        </>
+      ),
+    };
+    const tableProps = {
+      toolBar: toolBarProps,
+      columns,
+      searchWidth: 260,
+      lineNumber: false,
+      allowCustomColumns: false,
+      searchPlaceHolder: '输入科目代码、名称关键字',
+      remotePaging: true,
+      onTableRef: ref => (this.tablRef = ref),
       store: {
         type: 'POST',
-        url: `${SERVER_PATH}/bems-v6/subject/findByPage`,
-      },
-      remotePaging: true,
-      itemField: {
-        title: item => item.name,
-        description: item => (
-          <Descriptions column={1} bordered={false}>
-            <Descriptions.Item label="公司">{`${get(item, 'corporationName')}(${get(
-              item,
-              'corporationCode',
-            )})`}</Descriptions.Item>
-            <Descriptions.Item label="组织">{`${get(item, 'orgName')}(${get(
-              item,
-              'orgCode',
-            )})`}</Descriptions.Item>
-          </Descriptions>
-        ),
+        url: `${SERVER_PATH}/bems-v6/item/findByPage`,
       },
     };
     return (
-      <div className={cls(styles['container-box'])}>
-        <Layout className="auto-height">
-          <Sider width={380} className="auto-height" theme="light">
-            <ListCard {...masterProps} />
-          </Sider>
-          <Content className={cls('main-content', 'auto-height')} style={{ paddingLeft: 4 }}>
-            {currentMaster ? (
-              <SubjectList />
-            ) : (
-              <div className="blank-empty">
-                <Empty image={empty} description="可选择预算主体维护科目" />
-              </div>
-            )}
-          </Content>
-        </Layout>
+      <div className={cls(styles['contanter-box'])}>
+        <ExtTable {...tableProps} />
+        <FormModal {...formModalProps} />
       </div>
     );
   }
 }
+
 export default BudgetSubject;

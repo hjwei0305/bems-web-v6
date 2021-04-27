@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-04-27 08:53:08
+ * @Last Modified time: 2021-04-27 09:56:07
  */
 import { base } from '../../public/app.config.json';
 
@@ -79,7 +79,7 @@ const PERIOD_TYPE = {
 /** 主数据类型分类 */
 const TYPE_CLASS = {
   GENERAL: { key: 'GENERAL', title: '通用', color: '#29b3f0', alias: '通用' },
-  PRIVATE: { key: 'PRIVATE', title: '公司级', color: '#fa8c15', alias: '私有' },
+  PRIVATE: { key: 'PRIVATE', title: '私有', color: '#fa8c15', alias: '私有' },
 };
 
 /** 操作类型 */
@@ -95,6 +95,15 @@ const ORDER_CATEGORY = {
   SPLIT: { key: 'SPLIT', title: '分解', color: '#108ee9' },
 };
 
+/** 预算科目操作 */
+const BUDGET_SUBJECT_USER_ACTION = {
+  EDIT: 'edit',
+  DELETE: 'delete',
+  FROZEN: 'frozen',
+  UNFROZEN: 'unfrozen',
+  REFERENCE: 'reference',
+};
+
 export default {
   APP_BASE,
   LOCAL_PATH,
@@ -107,4 +116,5 @@ export default {
   TYPE_CLASS,
   ORDER_CATEGORY,
   ACTION_TYPE,
+  BUDGET_SUBJECT_USER_ACTION,
 };

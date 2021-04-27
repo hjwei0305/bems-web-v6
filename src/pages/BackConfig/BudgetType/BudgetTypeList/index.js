@@ -347,8 +347,10 @@ class BudgetTypeList extends Component {
   };
 
   renderType = item => {
+    const { budgetType } = this.props;
+    const { selectTypeClass } = budgetType;
     const budgetTypeClass = TYPE_CLASS[get(item, 'type')];
-    if (budgetTypeClass) {
+    if (budgetTypeClass && selectTypeClass.key === TYPE_CLASS.PRIVATE.key) {
       return (
         <Avatar
           shape="square"
@@ -358,7 +360,7 @@ class BudgetTypeList extends Component {
         </Avatar>
       );
     }
-    return '';
+    return null;
   };
 
   render() {

@@ -11,7 +11,7 @@ import styles from './index.less';
 
 const { SERVER_PATH } = constants;
 
-@connect(({ budgetSubject, loading }) => ({ budgetSubject, loading }))
+@connect(({ budgetMasterSubject, loading }) => ({ budgetMasterSubject, loading }))
 class BudgetSubject extends Component {
   static tablRef;
 
@@ -31,7 +31,7 @@ class BudgetSubject extends Component {
   add = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'budgetSubject/updateState',
+      type: 'budgetMasterSubject/updateState',
       payload: {
         showModal: true,
         rowData: null,
@@ -42,7 +42,7 @@ class BudgetSubject extends Component {
   edit = rowData => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'budgetSubject/updateState',
+      type: 'budgetMasterSubject/updateState',
       payload: {
         showModal: true,
         rowData,
@@ -51,10 +51,10 @@ class BudgetSubject extends Component {
   };
 
   save = data => {
-    const { dispatch, budgetSubject } = this.props;
-    const { currentMaster } = budgetSubject;
+    const { dispatch, budgetMasterSubject } = this.props;
+    const { currentMaster } = budgetMasterSubject;
     dispatch({
-      type: 'budgetSubject/save',
+      type: 'budgetMasterSubject/save',
       payload: {
         subjectId: get(currentMaster, 'id'),
         ...data,
@@ -62,7 +62,7 @@ class BudgetSubject extends Component {
       callback: res => {
         if (res.success) {
           dispatch({
-            type: 'budgetSubject/updateState',
+            type: 'budgetMasterSubject/updateState',
             payload: {
               showModal: false,
             },
@@ -81,7 +81,7 @@ class BudgetSubject extends Component {
       },
       () => {
         dispatch({
-          type: 'budgetSubject/del',
+          type: 'budgetMasterSubject/del',
           payload: {
             id: record.id,
           },
@@ -101,7 +101,7 @@ class BudgetSubject extends Component {
   closeFormModal = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'budgetSubject/updateState',
+      type: 'budgetMasterSubject/updateState',
       payload: {
         showModal: false,
         rowData: null,
@@ -112,15 +112,15 @@ class BudgetSubject extends Component {
   renderDelBtn = row => {
     const { loading } = this.props;
     const { delRowId } = this.state;
-    if (loading.effects['budgetSubject/del'] && delRowId === row.id) {
+    if (loading.effects['budgetMasterSubject/del'] && delRowId === row.id) {
       return <ExtIcon className="del-loading" type="loading" antd />;
     }
     return <ExtIcon className="del" type="delete" antd />;
   };
 
   render() {
-    const { budgetSubject, loading } = this.props;
-    const { showModal, rowData, currentMaster } = budgetSubject;
+    const { budgetMasterSubject, loading } = this.props;
+    const { showModal, rowData, currentMaster } = budgetMasterSubject;
     const columns = [
       {
         title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
@@ -171,7 +171,7 @@ class BudgetSubject extends Component {
       rowData,
       showModal,
       closeFormModal: this.closeFormModal,
-      saving: loading.effects['budgetSubject/save'],
+      saving: loading.effects['budgetMasterSubject/save'],
     };
     const toolBarProps = {
       left: (
