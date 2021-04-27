@@ -5,7 +5,7 @@ import { ExtModal, ComboList, ComboTree } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
-const { SERVER_PATH } = constants;
+const { SERVER_PATH, STRATEGY_TYPE } = constants;
 const FormItem = Form.Item;
 const formItemLayout = {
   labelCol: {
@@ -37,7 +37,8 @@ class FormModal extends PureComponent {
     getFieldDecorator('corporationCode', { initialValue: get(rowData, 'corporationCode') });
     getFieldDecorator('currencyCode', { initialValue: get(rowData, 'currencyCode') });
     getFieldDecorator('orgCode', { initialValue: get(rowData, 'orgCode') });
-    const title = rowData ? '修改预算科目' : '新建预算科目';
+    getFieldDecorator('strategyId', { initialValue: get(rowData, 'strategyId') });
+    const title = rowData ? '修改预算主体' : '新建预算主体';
     const corporationProps = {
       form,
       name: 'corporationName',
@@ -55,8 +56,8 @@ class FormModal extends PureComponent {
       },
       reader: {
         name: 'name',
-        field: ['code'],
-        description: 'code',
+        field: ['erpCode'],
+        description: 'erpCode',
       },
     };
     const currencyProps = {
@@ -84,6 +85,23 @@ class FormModal extends PureComponent {
       reader: {
         name: 'name',
         field: ['code'],
+      },
+    };
+    const strategyProps = {
+      form,
+      name: 'strategyName',
+      store: {
+        url: `${SERVER_PATH}/bems-v6/strategy/findByCategory`,
+        params: {
+          category: STRATEGY_TYPE.EXECUTION.key,
+        },
+      },
+      showSearch: false,
+      pagination: false,
+      field: ['strategyId'],
+      reader: {
+        name: 'name',
+        field: ['id'],
       },
     };
     return (
@@ -145,6 +163,17 @@ class FormModal extends PureComponent {
                 },
               ],
             })(<ComboTree {...orgProps} />)}
+          </FormItem>
+          <FormItem label="执行策略">
+            {getFieldDecorator('strategyName', {
+              initialValue: get(rowData, 'strategyName'),
+              rules: [
+                {
+                  required: true,
+                  message: '执行策略不能为空',
+                },
+              ],
+            })(<ComboList {...strategyProps} />)}
           </FormItem>
         </Form>
       </ExtModal>

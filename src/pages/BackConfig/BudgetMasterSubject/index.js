@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
 import { get } from 'lodash';
-import { Input, Empty, Layout, Descriptions } from 'antd';
+import { Input, Empty, Layout, Descriptions, Tag } from 'antd';
 import { ListCard } from 'suid';
 import empty from '@/assets/item_empty.svg';
 import { constants } from '@/utils';
@@ -25,6 +25,8 @@ class BudgetSubject extends Component {
         showModal: false,
         currentMaster: null,
         rowData: null,
+        showAssign: false,
+        showInit: false,
       },
     });
   }
@@ -76,7 +78,6 @@ class BudgetSubject extends Component {
       customTool: this.renderCustomTool,
       onListCardRef: ref => (this.listCardRef = ref),
       searchProperties: ['name'],
-      simplePagination: false,
       store: {
         type: 'POST',
         url: `${SERVER_PATH}/bems-v6/subject/findByPage`,
@@ -85,16 +86,27 @@ class BudgetSubject extends Component {
       itemField: {
         title: item => item.name,
         description: item => (
-          <Descriptions column={1} bordered={false}>
-            <Descriptions.Item label="公司">{`${get(item, 'corporationName')}(${get(
-              item,
-              'corporationCode',
-            )})`}</Descriptions.Item>
-            <Descriptions.Item label="组织">{`${get(item, 'orgName')}(${get(
-              item,
-              'orgCode',
-            )})`}</Descriptions.Item>
-          </Descriptions>
+          <>
+            <Descriptions column={1} bordered={false}>
+              <Descriptions.Item label="公司">{`${get(item, 'corporationName')}(${get(
+                item,
+                'corporationCode',
+              )})`}</Descriptions.Item>
+              <Descriptions.Item label="组织">{`${get(item, 'orgName')}(${get(
+                item,
+                'orgCode',
+              )})`}</Descriptions.Item>
+            </Descriptions>
+            <Descriptions column={2} bordered={false}>
+              <Descriptions.Item label="币种">{`${get(item, 'currencyName')}(${get(
+                item,
+                'currencyCode',
+              )})`}</Descriptions.Item>
+              <Descriptions.Item label="执行策略">
+                <Tag color="blue">{`${get(item, 'strategyName')}`}</Tag>
+              </Descriptions.Item>
+            </Descriptions>
+          </>
         ),
       },
     };

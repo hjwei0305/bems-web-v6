@@ -32,13 +32,13 @@ class FormModal extends PureComponent {
   };
 
   render() {
-    const { form, rowData, closeFormModal, saving, showModal } = this.props;
+    const { form, rowData, closeModal, saving, showModal } = this.props;
     const { getFieldDecorator } = form;
     getFieldDecorator('strategyId', { initialValue: get(rowData, 'strategyId') });
-    const title = rowData ? '修改预算科目' : '新建预算科目';
     const strategyProps = {
       form,
       name: 'strategyName',
+      allowClear: true,
       store: {
         url: `${SERVER_PATH}/bems-v6/strategy/findByCategory`,
         params: {
@@ -56,7 +56,7 @@ class FormModal extends PureComponent {
     return (
       <ExtModal
         destroyOnClose
-        onCancel={closeFormModal}
+        onCancel={closeModal}
         visible={showModal}
         maskClosable={false}
         centered
@@ -64,11 +64,22 @@ class FormModal extends PureComponent {
         wrapClassName={styles['form-modal-box']}
         bodyStyle={{ padding: 0 }}
         confirmLoading={saving}
-        title={title}
+        title="修改预算科目"
         cancelButtonProps={{ disabled: saving }}
         onOk={this.handlerFormSubmit}
       >
         <Form {...formItemLayout} layout="horizontal" style={{ margin: 24 }}>
+          <FormItem label="科目代码">
+            {getFieldDecorator('code', {
+              initialValue: get(rowData, 'code'),
+              rules: [
+                {
+                  required: true,
+                  message: '科目代码不能为空',
+                },
+              ],
+            })(<Input autoComplete="off" disabled />)}
+          </FormItem>
           <FormItem label="科目名称">
             {getFieldDecorator('name', {
               initialValue: get(rowData, 'name'),
@@ -78,14 +89,14 @@ class FormModal extends PureComponent {
                   message: '维度名称不能为空',
                 },
               ],
-            })(<Input autoComplete="off" />)}
+            })(<Input autoComplete="off" disabled />)}
           </FormItem>
           <FormItem label="维度策略">
             {getFieldDecorator('strategyName', {
               initialValue: get(rowData, 'strategyName'),
               rules: [
                 {
-                  required: true,
+                  required: false,
                   message: '维度策略不能为空',
                 },
               ],
