@@ -12,7 +12,7 @@ import BudgetEdit from '../components/BudgetTypeForm/Edit';
 import AssignedDimension from '../AssignedDimension';
 import styles from './index.less';
 
-const { SERVER_PATH, BUDGET_TYPE_CLASS, ORDER_CATEGORY, PERIOD_TYPE } = constants;
+const { SERVER_PATH, TYPE_CLASS, ORDER_CATEGORY, PERIOD_TYPE } = constants;
 const { Search } = Input;
 const { Sider, Content } = Layout;
 
@@ -64,8 +64,8 @@ class BudgetTypeList extends Component {
 
   create = (data, handlerPopoverHide) => {
     const { dispatch, budgetType } = this.props;
-    const { selectBudgetTypeClass, currentMaster } = budgetType;
-    if (selectBudgetTypeClass.key === BUDGET_TYPE_CLASS.PRIVATE.key) {
+    const { selectTypeClass, currentMaster } = budgetType;
+    if (selectTypeClass.key === TYPE_CLASS.PRIVATE.key) {
       Object.assign(data, {
         subjectId: get(currentMaster, 'id'),
         subjectName: get(currentMaster, 'name'),
@@ -247,10 +247,10 @@ class BudgetTypeList extends Component {
 
   renderItemAction = item => {
     const { budgetType } = this.props;
-    const { selectBudgetTypeClass } = budgetType;
+    const { selectTypeClass } = budgetType;
     const { loading } = this.props;
     const { dealId } = this.state;
-    if (selectBudgetTypeClass.key === BUDGET_TYPE_CLASS.GENERAL.key) {
+    if (selectTypeClass.key === TYPE_CLASS.GENERAL.key) {
       return (
         <>
           <div className="tool-action" onClick={e => e.stopPropagation()}>
@@ -273,12 +273,12 @@ class BudgetTypeList extends Component {
         </>
       );
     }
-    if (selectBudgetTypeClass.key === BUDGET_TYPE_CLASS.PRIVATE.key) {
-      const budgetTypeClass = BUDGET_TYPE_CLASS[get(item, 'type')];
+    if (selectTypeClass.key === TYPE_CLASS.PRIVATE.key) {
+      const budgetTypeClass = TYPE_CLASS[get(item, 'type')];
       return (
         <>
           <div className="tool-action" onClick={e => e.stopPropagation()}>
-            {budgetTypeClass.key === BUDGET_TYPE_CLASS.PRIVATE.key ? (
+            {budgetTypeClass.key === TYPE_CLASS.PRIVATE.key ? (
               <>
                 {this.renderEditAndDelete(item)}
                 <Popconfirm
@@ -347,7 +347,7 @@ class BudgetTypeList extends Component {
   };
 
   renderType = item => {
-    const budgetTypeClass = BUDGET_TYPE_CLASS[get(item, 'type')];
+    const budgetTypeClass = TYPE_CLASS[get(item, 'type')];
     if (budgetTypeClass) {
       return (
         <Avatar
@@ -363,7 +363,7 @@ class BudgetTypeList extends Component {
 
   render() {
     const { loading, budgetType } = this.props;
-    const { selectBudgetTypeClass, selectedBudgetType, currentMaster } = budgetType;
+    const { selectTypeClass, selectedBudgetType, currentMaster } = budgetType;
     const saving = loading.effects['budgetType/save'];
     const selectedKeys = selectedBudgetType ? [selectedBudgetType.id] : [];
     const deployTemplateProps = {
@@ -383,14 +383,14 @@ class BudgetTypeList extends Component {
       },
       itemTool: this.renderItemAction,
     };
-    if (selectBudgetTypeClass.key === BUDGET_TYPE_CLASS.GENERAL.key) {
+    if (selectTypeClass.key === TYPE_CLASS.GENERAL.key) {
       Object.assign(deployTemplateProps, {
         store: {
           url: `${SERVER_PATH}/bems-v6/category/findByGeneral`,
         },
       });
     }
-    if (selectBudgetTypeClass.key === BUDGET_TYPE_CLASS.PRIVATE.key) {
+    if (selectTypeClass.key === TYPE_CLASS.PRIVATE.key) {
       Object.assign(deployTemplateProps, {
         store: {
           url: `${SERVER_PATH}/bems-v6/category/findBySubject`,
@@ -404,7 +404,7 @@ class BudgetTypeList extends Component {
       <div className={cls(styles['container-box'])}>
         <Layout className="auto-height">
           <Sider width={380} className="auto-height" theme="light">
-            <ListCard key={selectBudgetTypeClass.key} {...deployTemplateProps} />
+            <ListCard key={selectTypeClass.key} {...deployTemplateProps} />
           </Sider>
           <Content className={cls('main-content', 'auto-height')} style={{ paddingLeft: 4 }}>
             {selectedBudgetType ? (

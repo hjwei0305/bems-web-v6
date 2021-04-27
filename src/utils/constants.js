@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-04-26 17:03:07
+ * @Last Modified time: 2021-04-27 08:53:08
  */
 import { base } from '../../public/app.config.json';
 
@@ -76,8 +76,8 @@ const PERIOD_TYPE = {
   CUSTOMIZE: { key: 'CUSTOMIZE', title: '自定义' },
 };
 
-/** 预算类型分类 */
-const BUDGET_TYPE_CLASS = {
+/** 主数据类型分类 */
+const TYPE_CLASS = {
   GENERAL: { key: 'GENERAL', title: '通用', color: '#29b3f0', alias: '通用' },
   PRIVATE: { key: 'PRIVATE', title: '公司级', color: '#fa8c15', alias: '私有' },
 };
@@ -104,7 +104,7 @@ export default {
   STRATEGY_TYPE,
   BUDGET_DIMENSION_UI_COMPONENT,
   PERIOD_TYPE,
-  BUDGET_TYPE_CLASS,
+  TYPE_CLASS,
   ORDER_CATEGORY,
   ACTION_TYPE,
 };

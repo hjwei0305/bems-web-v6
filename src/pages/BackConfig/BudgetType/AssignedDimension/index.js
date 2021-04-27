@@ -8,7 +8,7 @@ import { ExtTable, BannerTitle } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
-const { SERVER_PATH, BUDGET_TYPE_CLASS } = constants;
+const { SERVER_PATH, TYPE_CLASS } = constants;
 
 @connect(({ budgetType, loading }) => ({ budgetType, loading }))
 class AssignedDimension extends Component {
@@ -80,7 +80,7 @@ class AssignedDimension extends Component {
   render() {
     const { selectedRowKeys } = this.state;
     const { loading, budgetType } = this.props;
-    const { selectedBudgetType, selectBudgetTypeClass } = budgetType;
+    const { selectedBudgetType, selectTypeClass } = budgetType;
     const hasSelected = selectedRowKeys.length > 0;
     const columns = [
       {
@@ -109,8 +109,8 @@ class AssignedDimension extends Component {
           <Button
             type="primary"
             disabled={
-              selectBudgetTypeClass.key === BUDGET_TYPE_CLASS.PRIVATE.key &&
-              selectedBudgetType.type === BUDGET_TYPE_CLASS.GENERAL.key
+              selectTypeClass.key === TYPE_CLASS.PRIVATE.key &&
+              selectedBudgetType.type === TYPE_CLASS.GENERAL.key
             }
             onClick={this.showAssign}
           >

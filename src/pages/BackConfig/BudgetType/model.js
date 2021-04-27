@@ -3,11 +3,11 @@ import { utils, message } from 'suid';
 import { constants } from '@/utils';
 import { del, save, create, frozen, privateReference, assign, unassign } from './service';
 
-const { BUDGET_TYPE_CLASS } = constants;
-const BUDGET_TYPE_CLASS_DATA = Object.keys(BUDGET_TYPE_CLASS).map(key => BUDGET_TYPE_CLASS[key]);
+const { TYPE_CLASS } = constants;
+const TYPE_CLASS_DATA = Object.keys(TYPE_CLASS).map(key => TYPE_CLASS[key]);
 const { dvaModel } = utils;
 const { modelExtend, model } = dvaModel;
-const [defaultBudgetTypeClass] = BUDGET_TYPE_CLASS_DATA;
+const [defaultTypeClass] = TYPE_CLASS_DATA;
 
 export default modelExtend(model, {
   namespace: 'budgetType',
@@ -16,15 +16,15 @@ export default modelExtend(model, {
     rowData: null,
     showModal: false,
     currentMaster: null,
-    selectBudgetTypeClass: defaultBudgetTypeClass,
-    budgetTypeClassData: BUDGET_TYPE_CLASS_DATA,
+    selectTypeClass: defaultTypeClass,
+    typeClassData: TYPE_CLASS_DATA,
     selectedBudgetType: null,
     showAssign: false,
   },
   effects: {
     *create({ payload, callback }, { call, select }) {
-      const { selectBudgetTypeClass } = yield select(sel => sel.budgetType);
-      const re = yield call(create, { ...payload, type: selectBudgetTypeClass.key });
+      const { selectTypeClass } = yield select(sel => sel.budgetType);
+      const re = yield call(create, { ...payload, type: selectTypeClass.key });
       message.destroy();
       if (re.success) {
         message.success(formatMessage({ id: 'global.save-success', defaultMessage: '保存成功' }));

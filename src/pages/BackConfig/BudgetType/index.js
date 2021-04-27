@@ -10,7 +10,7 @@ import UnAssignDimension from './UnAssignDimension';
 import styles from './index.less';
 
 const { Sider, Content } = Layout;
-const { BUDGET_TYPE_CLASS } = constants;
+const { TYPE_CLASS } = constants;
 const BudgetTypeList = React.lazy(() => import('./BudgetTypeList'));
 const BudgetMasterList = React.lazy(() => import('./components/BudgetMasterList'));
 
@@ -32,12 +32,12 @@ class BudgetType extends Component {
     });
   }
 
-  handlerBudgetTypeClassChange = selectBudgetTypeClass => {
+  handlerBudgetTypeClassChange = selectTypeClass => {
     const { dispatch } = this.props;
     dispatch({
       type: 'budgetType/updateState',
       payload: {
-        selectBudgetTypeClass,
+        selectTypeClass,
         rowData: null,
         showModal: false,
         currentMaster: null,
@@ -49,13 +49,13 @@ class BudgetType extends Component {
 
   renderFilterView = () => {
     const {
-      budgetType: { selectBudgetTypeClass, budgetTypeClassData },
+      budgetType: { selectTypeClass, typeClassData },
     } = this.props;
     return (
       <FilterView
         title="预算类型视图"
-        currentViewType={selectBudgetTypeClass}
-        viewTypeData={budgetTypeClassData}
+        currentViewType={selectTypeClass}
+        viewTypeData={typeClassData}
         onAction={this.handlerBudgetTypeClassChange}
         reader={{
           title: 'title',
@@ -102,16 +102,16 @@ class BudgetType extends Component {
 
   renderBody = () => {
     const {
-      budgetType: { selectBudgetTypeClass, currentMaster },
+      budgetType: { selectTypeClass, currentMaster },
     } = this.props;
-    if (selectBudgetTypeClass.key === BUDGET_TYPE_CLASS.GENERAL.key) {
+    if (selectTypeClass.key === TYPE_CLASS.GENERAL.key) {
       return (
         <Suspense fallback={<PageLoader />}>
           <BudgetTypeList onRef={ref => (this.budgetListRef = ref)} />
         </Suspense>
       );
     }
-    if (selectBudgetTypeClass.key === BUDGET_TYPE_CLASS.PRIVATE.key) {
+    if (selectTypeClass.key === TYPE_CLASS.PRIVATE.key) {
       return (
         <Layout className="auto-height">
           <Sider width={380} className="auto-height" theme="light">
