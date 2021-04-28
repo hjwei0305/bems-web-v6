@@ -36,6 +36,7 @@ class FormModal extends PureComponent {
     const { getFieldDecorator } = form;
     getFieldDecorator('corporationCode', { initialValue: get(rowData, 'corporationCode') });
     getFieldDecorator('currencyCode', { initialValue: get(rowData, 'currencyCode') });
+    getFieldDecorator('orgId', { initialValue: get(rowData, 'orgId') });
     getFieldDecorator('orgCode', { initialValue: get(rowData, 'orgCode') });
     getFieldDecorator('strategyId', { initialValue: get(rowData, 'strategyId') });
     const title = rowData ? '修改预算主体' : '新建预算主体';
@@ -81,10 +82,10 @@ class FormModal extends PureComponent {
       store: {
         url: `${SERVER_PATH}/bems-v6/subject/findOrgTree`,
       },
-      field: ['orgCode'],
+      field: ['orgCode', 'orgId'],
       reader: {
         name: 'name',
-        field: ['code'],
+        field: ['code', 'id'],
       },
     };
     const strategyProps = {
