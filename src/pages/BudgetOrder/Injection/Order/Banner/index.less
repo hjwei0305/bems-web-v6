@@ -1,0 +1,46 @@
+@import '../../../../../themes/vars.less';
+
+.banner-box {
+  position: relative;
+  align-items: center;
+  height: 90px;
+  padding: 28px;
+  overflow: hidden;
+  background-color: @white;
+  border-bottom: 1px solid fade(@black, 10%);
+  :global {
+    .banner-detail {
+      position: relative;
+      top: 8px;
+      .title {
+        width: 100%;
+        color: @black;
+        font-weight: 700;
+        font-size: 24px;
+        .status {
+          margin-left: 4px;
+        }
+      }
+      .sub-title {
+        width: 100%;
+        font-size: 12px;
+        .title-item {
+          margin-right: 8px;
+          .label {
+            color: fade(@black, 45%);
+            &::after {
+              padding: 0 2px;
+              content: ':';
+            }
+          }
+        }
+      }
+    }
+    .banner-action {
+      display: flex;
+      button {
+        margin-right: 8px;
+      }
+    }
+  }
+}

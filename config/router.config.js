@@ -29,6 +29,11 @@ export default [
           { path: '/budgetConfig/budgetType', component: './BackConfig/BudgetType' },
         ],
       },
+      {
+        path: '/budgetOrder',
+        name: '预算单据',
+        routes: [{ path: '/budgetOrder/budgetInjection', component: './BudgetOrder/Injection' }],
+      },
     ],
   },
 ];

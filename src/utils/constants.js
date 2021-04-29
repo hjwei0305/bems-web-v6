@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-04-27 09:56:07
+ * @Last Modified time: 2021-04-28 14:53:09
  */
 import { base } from '../../public/app.config.json';
 
@@ -104,6 +104,33 @@ const BUDGET_SUBJECT_USER_ACTION = {
   REFERENCE: 'reference',
 };
 
+/** 预算申请流程状态 */
+const REQUEST_VIEW_STATUS = {
+  ALL: { key: 'ALL', title: '全部', color: '' },
+  DRAFT: { key: 'DRAFT', title: '草稿', color: '' },
+  PROCESSING: { key: 'PROCESSING', title: '审批中', color: 'blue' },
+  COMPLETED: { key: 'COMPLETED', title: '审批完成', color: 'green' },
+};
+
+/** 申请单操作 */
+const REQUEST_ORDER_ACTION = {
+  ADD: 'add',
+  EDIT: 'edit',
+  VIEW: 'view',
+  VIEW_APPROVE_FLOW: 'view_approve_flow',
+  UPDATE_APPROVE_FLOW: 'update_approve_flow',
+  LINK_VIEW: 'link_view',
+};
+
+const INJECTION_REQUEST_BTN_KEY = {
+  CREATE: 'BEMS-INJECTION-CJ',
+  EDIT: 'BEMS-INJECTION-XG',
+  VIEW: 'BEMS-INJECTION-XS',
+  DELETE: 'BEMS-INJECTION-SC',
+  START_FLOW: 'BEMS-INJECTION-QDLC',
+  FLOW_HISTORY: 'BEMS-INJECTION-LCLS',
+};
+
 export default {
   APP_BASE,
   LOCAL_PATH,
@@ -117,4 +144,7 @@ export default {
   ORDER_CATEGORY,
   ACTION_TYPE,
   BUDGET_SUBJECT_USER_ACTION,
+  REQUEST_VIEW_STATUS,
+  INJECTION_REQUEST_BTN_KEY,
+  REQUEST_ORDER_ACTION,
 };

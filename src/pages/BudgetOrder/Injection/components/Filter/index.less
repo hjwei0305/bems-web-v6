@@ -1,0 +1,28 @@
+@import '../../../../../themes/vars.less';
+
+.filter-box {
+  overflow: hidden;
+  cursor: pointer;
+  :global {
+    .ant-drawer-body {
+      padding: 0;
+    }
+    .ant-drawer-body,
+    .content {
+      height: calc(~'100% - 116px');
+    }
+    .content {
+      padding: 16px 24px;
+    }
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      height: 60px;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      button {
+        margin-right: 8px;
+      }
+    }
+  }
+}
