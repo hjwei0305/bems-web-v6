@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { get } from 'lodash';
 import { Form, Input } from 'antd';
-import { ExtModal, ComboList } from 'suid';
+import { ExtModal, ComboList, MoneyInput } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
@@ -145,6 +145,17 @@ class FormModal extends PureComponent {
                 },
               ],
             })(<ComboList {...uiComponentProps} />)}
+          </FormItem>
+          <FormItem label="序号">
+            {getFieldDecorator('rank', {
+              initialValue: get(rowData, 'rank'),
+              rules: [
+                {
+                  required: true,
+                  message: '序号不能为空',
+                },
+              ],
+            })(<MoneyInput textAlign="left" min={0} thousand={false} precision={0} />)}
           </FormItem>
         </Form>
       </ExtModal>

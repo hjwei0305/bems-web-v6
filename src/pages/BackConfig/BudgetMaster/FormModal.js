@@ -51,6 +51,8 @@ class FormModal extends PureComponent {
       field: ['corporationCode'],
       afterSelect: item => {
         form.setFieldsValue({
+          code: get(item, 'erpCode'),
+          name: get(item, 'name'),
           currencyName: get(item, 'baseCurrencyName'),
           currencyCode: get(item, 'baseCurrencyCode'),
         });
@@ -121,17 +123,6 @@ class FormModal extends PureComponent {
         onOk={this.handlerFormSubmit}
       >
         <Form {...formItemLayout} layout="horizontal" style={{ margin: 24 }}>
-          <FormItem label="主体名称">
-            {getFieldDecorator('name', {
-              initialValue: get(rowData, 'name'),
-              rules: [
-                {
-                  required: true,
-                  message: '主体名称不能为空',
-                },
-              ],
-            })(<Input autoComplete="off" />)}
-          </FormItem>
           <FormItem label="公司名称">
             {getFieldDecorator('corporationName', {
               initialValue: get(rowData, 'corporationName'),
@@ -142,6 +133,28 @@ class FormModal extends PureComponent {
                 },
               ],
             })(<ComboList {...corporationProps} />)}
+          </FormItem>
+          <FormItem label="主体代码">
+            {getFieldDecorator('code', {
+              initialValue: get(rowData, 'code'),
+              rules: [
+                {
+                  required: true,
+                  message: '主体代码不能为空',
+                },
+              ],
+            })(<Input autoComplete="off" />)}
+          </FormItem>
+          <FormItem label="主体名称">
+            {getFieldDecorator('name', {
+              initialValue: get(rowData, 'name'),
+              rules: [
+                {
+                  required: true,
+                  message: '主体名称不能为空',
+                },
+              ],
+            })(<Input autoComplete="off" />)}
           </FormItem>
           <FormItem label="币种">
             {getFieldDecorator('currencyName', {

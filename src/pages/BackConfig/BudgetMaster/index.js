@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
 import { get } from 'lodash';
-import { Button, Popconfirm, Tag } from 'antd';
+import { Button, Popconfirm, Tag, Badge } from 'antd';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
 import { ExtTable, ExtIcon } from 'suid';
 import { constants } from '@/utils';
@@ -145,7 +145,13 @@ class BudgetMaster extends Component {
         ),
       },
       {
-        title: '预算主体名称',
+        title: '主体代码',
+        dataIndex: 'code',
+        width: 100,
+        required: true,
+      },
+      {
+        title: '主体名称',
         dataIndex: 'name',
         width: 360,
         required: true,
@@ -154,7 +160,12 @@ class BudgetMaster extends Component {
         title: '执行策略',
         dataIndex: 'strategyName',
         width: 100,
-        render: t => <Tag>{t}</Tag>,
+        render: t => (
+          <Tag>
+            <Badge color="blue" />
+            {t}
+          </Tag>
+        ),
       },
       {
         title: '币种',

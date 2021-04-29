@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
-import { Button, Popconfirm } from 'antd';
+import { Button, Popconfirm, Tag, Badge } from 'antd';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { ExtTable, ExtIcon } from 'suid';
+import { ExtTable, ExtIcon, Space } from 'suid';
 import { constants } from '@/utils';
 import FormModal from './FormModal';
 import styles from './index.less';
@@ -144,6 +144,12 @@ class BudgetDimension extends Component {
         ),
       },
       {
+        title: '序号',
+        dataIndex: 'rank',
+        width: 80,
+        required: true,
+      },
+      {
         title: '维度代码',
         dataIndex: 'code',
         width: 120,
@@ -154,6 +160,20 @@ class BudgetDimension extends Component {
         dataIndex: 'name',
         width: 220,
         required: true,
+        render: (t, r) => {
+          if (r.required) {
+            return (
+              <Space>
+                {t}
+                <Tag style={{ marginRight: 0 }}>
+                  <Badge color="blue" />
+                  必需
+                </Tag>
+              </Space>
+            );
+          }
+          return t;
+        },
       },
       {
         title: '维度策略',
@@ -197,6 +217,7 @@ class BudgetDimension extends Component {
       store: {
         url: `${SERVER_PATH}/bems-v6/dimension/findAll`,
       },
+      sort: { field: { rank: 'asc' } },
     };
     return (
       <div className={cls(styles['container-box'])}>
