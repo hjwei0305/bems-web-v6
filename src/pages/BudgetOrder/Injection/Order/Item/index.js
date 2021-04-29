@@ -58,7 +58,7 @@ class RequestItem extends PureComponent {
           </Button>
           <Popconfirm title="确定要清除行项目吗?" onConfirm={this.handlerClearRequestItemCache}>
             <Button size="small" loading={clearing}>
-              清除行项目
+              清空明细
             </Button>
           </Popconfirm>
           <Button onClick={this.showBatchImport} type="primary" ghost size="small">
