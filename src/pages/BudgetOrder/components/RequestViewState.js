@@ -7,7 +7,7 @@ const { REQUEST_VIEW_STATUS } = constants;
 const RequestViewState = ({ enumName }) => {
   const status = REQUEST_VIEW_STATUS[enumName];
   if (status) {
-    if (enumName === REQUEST_VIEW_STATUS.INPROCESS.key) {
+    if (enumName === REQUEST_VIEW_STATUS.PROCESSING.key) {
       return (
         <Tag color={status.color}>
           <>
