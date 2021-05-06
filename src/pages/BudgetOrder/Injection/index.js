@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { get } from 'lodash';
 import cls from 'classnames';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import { ExtTable, ExtIcon, Money, PageLoader, Space } from 'suid';
 import { FilterView } from '@/components';
 import { constants } from '@/utils';
@@ -19,6 +19,8 @@ const { SERVER_PATH, INJECTION_REQUEST_BTN_KEY, REQUEST_VIEW_STATUS } = constant
 @connect(({ injectionRequestList, loading }) => ({ injectionRequestList, loading }))
 class InjectionRequestList extends Component {
   static tableRef;
+
+  static confirmModal;
 
   componentWillUnmount() {
     const { dispatch } = this.props;
@@ -73,22 +75,54 @@ class InjectionRequestList extends Component {
         });
         break;
       case INJECTION_REQUEST_BTN_KEY.DELETE:
-        dispatch({
-          type: 'injectionRequestList/del',
-          payload: {
-            headId: record.id,
-          },
-          callback: res => {
-            if (res.success) {
-              this.reloadData();
-            }
-          },
-        });
+        this.delConfirm(record);
         break;
       case INJECTION_REQUEST_BTN_KEY.START_FLOW:
         break;
       default:
     }
+  };
+
+  delConfirm = record => {
+    const { dispatch } = this.props;
+    const orderId = get(record, 'id');
+    this.confirmModal = Modal.confirm({
+      title: `删除确认`,
+      content: `提示：删除后不可恢复!`,
+      okButtonProps: { type: 'primary' },
+      style: { top: '20%' },
+      okText: '确定',
+      onOk: () => {
+        return new Promise(resolve => {
+          this.confirmModal.update({
+            okButtonProps: { type: 'primary', loading: true },
+            cancelButtonProps: { disabled: true },
+          });
+          dispatch({
+            type: 'injectionRequestList/del',
+            payload: {
+              id: orderId,
+            },
+            callback: res => {
+              if (res.success) {
+                resolve();
+                this.reloadData();
+              } else {
+                this.confirmModal.update({
+                  okButtonProps: { loading: false },
+                  cancelButtonProps: { disabled: false },
+                });
+              }
+            },
+          });
+        });
+      },
+      cancelText: '取消',
+      onCancel: () => {
+        this.confirmModal.destroy();
+        this.confirmModal = null;
+      },
+    });
   };
 
   addOrder = () => {
