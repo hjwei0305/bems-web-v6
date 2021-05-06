@@ -4,7 +4,7 @@ import { constants } from '@/utils';
 
 const { REQUEST_VIEW_STATUS } = constants;
 
-const RequestViewState = enumName => {
+const RequestViewState = ({ enumName }) => {
   const status = REQUEST_VIEW_STATUS[enumName];
   if (status) {
     if (enumName === REQUEST_VIEW_STATUS.INPROCESS.key) {
@@ -19,6 +19,7 @@ const RequestViewState = enumName => {
     }
     return <Tag color={status.color}>{status.title}</Tag>;
   }
+  return null;
 };
 
 export default RequestViewState;

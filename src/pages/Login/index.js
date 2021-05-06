@@ -170,7 +170,7 @@ class LoginForm extends PureComponent {
                 className="login-form-button"
                 onClick={this.handlerSubmit}
                 style={{ width: '100%' }}
-                loading={loading.global}
+                loading={loading.effects['global/login']}
               >
                 登录
               </Button>

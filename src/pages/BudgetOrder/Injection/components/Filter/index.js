@@ -146,56 +146,18 @@ class Filter extends PureComponent {
         field: ['id'],
       },
     };
-
-    const payerBankAccountComboListProps = {
-      placeholder: formatMessage({ id: 'global.all', defaultMessage: '全部' }),
-      allowClear: true,
-      rowKey: 'id',
-      form,
-      name: 'onlineBankAccount',
-      field: ['onlineBankAccountId'],
-      store: {
-        url: `${SERVER_PATH}/product-beis/onlineBankAccount/findByCorporationCode`,
-      },
-      cascadeParams: {
-        corporationCode,
-      },
-      reader: {
-        name: 'bankAccount',
-        description: 'accountName',
-        field: ['id'],
-      },
-      searchProperties: ['bankAccount', 'accountName'],
-    };
     return (
       <>
-        <FormItem
-          label={formatMessage({ id: 'paymentRequest.corporation', defaultMessage: '公司' })}
-        >
+        <FormItem label="公司">
           {getFieldDecorator('corporationName', {
             initialValue: get(filterData, 'corporationName', null),
           })(<ComboList {...corporationComboListProps} />)}
         </FormItem>
 
-        <FormItem
-          label={formatMessage({
-            id: 'paymentRequest.organization',
-            defaultMessage: '申请单位',
-          })}
-        >
+        <FormItem label="申请单位">
           {getFieldDecorator('organizationName', {
             initialValue: get(filterData, 'organizationName', null),
           })(<ComboTree {...organizationProps} />)}
-        </FormItem>
-        <FormItem
-          label={formatMessage({
-            id: 'paymentRequest.bankAccount',
-            defaultMessage: '付款账户',
-          })}
-        >
-          {getFieldDecorator('onlineBankAccount', {
-            initialValue: get(filterData, 'onlineBankAccount', null),
-          })(<ComboList {...payerBankAccountComboListProps} />)}
         </FormItem>
       </>
     );

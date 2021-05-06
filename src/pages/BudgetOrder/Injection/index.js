@@ -2,7 +2,7 @@ import React, { Component, Suspense } from 'react';
 import { connect } from 'dva';
 import { get } from 'lodash';
 import cls from 'classnames';
-import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
+import { FormattedMessage } from 'umi-plugin-react/locale';
 import { Button } from 'antd';
 import { ExtTable, ExtIcon, Money, PageLoader, Space } from 'suid';
 import { FilterView } from '@/components';
@@ -172,25 +172,39 @@ class InjectionRequestList extends Component {
       },
       {
         title: '单据编号',
-        dataIndex: 'orderNo',
+        dataIndex: 'code',
         width: 110,
       },
       {
         title: '单据状态',
-        dataIndex: 'requestViewStatusRemark',
+        dataIndex: 'status',
         width: 100,
-        render: (text, record) => {
-          return <RequestViewState state={record.requestViewStatus} remark={text} />;
+        render: t => {
+          return <RequestViewState enumName={t} />;
+        },
+      },
+      {
+        title: '预算类型',
+        dataIndex: 'categoryName',
+        width: 110,
+      },
+      {
+        title: '预算总金额',
+        dataIndex: 'applyAmount',
+        width: 140,
+        align: 'right',
+        render: (t, record) => {
+          return <Money value={t} prefix={get(record, 'currencyCode', '')} />;
         },
       },
       {
         title: '预算主体',
-        dataIndex: 'corporationName',
+        dataIndex: 'subjectName',
         width: 200,
       },
       {
         title: '申请单位',
-        dataIndex: 'organizationName',
+        dataIndex: 'applyOrgName',
         width: 200,
       },
       {
@@ -202,7 +216,7 @@ class InjectionRequestList extends Component {
       },
       {
         title: '备注说明',
-        dataIndex: 'orderNote',
+        dataIndex: 'remark',
         width: 150,
         render: text => text || '-',
       },
@@ -210,6 +224,12 @@ class InjectionRequestList extends Component {
         title: '创建时间',
         dataIndex: 'createdDate',
         width: 180,
+      },
+      {
+        title: '归口部门',
+        dataIndex: 'managerOrgName',
+        width: 220,
+        optional: true,
       },
       {
         title: '创建人',
@@ -269,10 +289,8 @@ class InjectionRequestList extends Component {
       remotePaging: true,
       showSearchTooltip: true,
       storageId: '58494acc-e17e-4189-ac76-af832e816cf2',
-      searchPlaceHolder: formatMessage({
-        id: 'paymentRequest.searchPlaceHolder',
-        defaultMessage: '单号、付款账户/说明',
-      }),
+      searchProperties: ['code', 'remark'],
+      searchPlaceHolder: '单据编号、备注说明',
       sort: {
         field: { createdDate: 'desc' },
       },
@@ -285,7 +303,7 @@ class InjectionRequestList extends Component {
       Object.assign(props, {
         store: {
           type: 'POST',
-          url: `${SERVER_PATH}/product-beis/paymentRequestHead/searchByPage`,
+          url: `${SERVER_PATH}/bems-v6/order/findInjectionByPage`,
         },
         cascadeParams: {
           requestViewStatus,

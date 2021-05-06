@@ -33,4 +33,8 @@ export default {
   'global.delete-success': '删除成功',
   'global.assign-success': '分配成功',
   'global.remove-success': '移除成功',
+  'global.reset': '重置',
+  'global.filter': '过滤',
+  'global.all': '全部',
+  'global.startFlow': '提交审批',
 };

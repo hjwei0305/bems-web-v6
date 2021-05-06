@@ -20,7 +20,7 @@ class Banner extends Component {
   renderStatus = () => {
     const { headData } = this.props;
     if (headData) {
-      return <RequestViewState enumName={get(headData, 'requestViewStatus')} />;
+      return <RequestViewState enumName={get(headData, 'status')} />;
     }
     return null;
   };

@@ -20,8 +20,6 @@ const { Content } = Layout;
 class RequestOrder extends Component {
   static requestHeadRef;
 
-  static requestItemRef;
-
   static needRefreshList;
 
   static propTypes = {
@@ -47,6 +45,7 @@ class RequestOrder extends Component {
       type: 'injectionOrder/updateState',
       payload: {
         headData: null,
+        showDimensionSelection: false,
       },
     });
   }
@@ -81,10 +80,6 @@ class RequestOrder extends Component {
 
   handlerHeadRef = ref => {
     this.requestHeadRef = ref;
-  };
-
-  handlerItemRef = ref => {
-    this.requestItemRef = ref;
   };
 
   closeOrder = () => {
@@ -178,14 +173,65 @@ class RequestOrder extends Component {
     });
   };
 
+  checkDimensionForSelect = () => {
+    const { isValid, data } = this.requestHeadRef.getHeaderData();
+    if (isValid) {
+      const { dispatch } = this.props;
+      dispatch({
+        type: 'injectionOrder/checkDimensionForSelect',
+        payload: {
+          headData: data,
+        },
+      });
+    }
+  };
+
+  clearItem = callBack => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'injectionOrder/clearOrderItems',
+      successCallback: callBack,
+    });
+  };
+
+  closeDimensionSelection = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'injectionOrder/updateState',
+      payload: {
+        showDimensionSelection: false,
+      },
+    });
+  };
+
+  handlerSaveItem = (data, successCallBack) => {
+    const { isValid, data: headData } = this.requestHeadRef.getHeaderData();
+    if (isValid) {
+      const { dispatch } = this.props;
+      dispatch({
+        type: 'injectionOrder/addOrderDetails',
+        payload: {
+          ...headData,
+          ...data,
+        },
+        callback: res => {
+          if (res.success && successCallBack && successCallBack instanceof Function) {
+            successCallBack();
+          }
+        },
+      });
+    }
+  };
+
   render() {
     const { action, title, loading, injectionOrder } = this.props;
-    const { headData } = injectionOrder;
+    const { headData, dimensionsData, showDimensionSelection } = injectionOrder;
     const bannerProps = {
       headData,
       title,
       actionProps: {
         action,
+        showDimensionSelection,
         saveOrder: this.saveOrder,
         saving: loading.effects['injectionOrder/save'],
         closeOrder: this.closeOrder,
@@ -195,6 +241,7 @@ class RequestOrder extends Component {
       },
     };
     const requestHeadProps = {
+      showDimensionSelection,
       onHeadRef: this.handlerHeadRef,
       action,
       headData,
@@ -202,7 +249,16 @@ class RequestOrder extends Component {
     const requestItemProps = {
       action,
       headData,
-      onItemRef: this.handlerItemRef,
+      checkDimensionForSelect: this.checkDimensionForSelect,
+      dimensionselectChecking: loading.effects['injectionOrder/checkDimensionForSelect'],
+      clearItem: this.clearItem,
+      clearing: loading.effects['injectionOrder/clearOrderItems'],
+      dimensionsData,
+      globalDisabled: loading.global,
+      showDimensionSelection,
+      closeDimensionSelection: this.closeDimensionSelection,
+      save: this.handlerSaveItem,
+      saving: loading.effects['injectionOrder/addOrderDetails'],
     };
     const headLoading = loading.effects['injectionOrder/getHead'];
     return (

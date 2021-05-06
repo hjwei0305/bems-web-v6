@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import cls from 'classnames';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import { Col, Form, Input, Row } from 'antd';
+import { Col, Form, Input, Row, Card, Tag } from 'antd';
 import { ComboTree, ComboList } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
-const { REQUEST_ORDER_ACTION, SERVER_PATH } = constants;
+const { REQUEST_ORDER_ACTION, SERVER_PATH, PERIOD_TYPE, ORDER_CATEGORY } = constants;
 const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTION[key]);
 const bindFormFields = [
   'subjectId',
@@ -18,6 +18,8 @@ const bindFormFields = [
   'managerOrgId',
   'managerOrgCode',
   'categoryId',
+  'orderCategory',
+  'periodType',
 ];
 const FormItem = Form.Item;
 const formItemLayout = {
@@ -41,11 +43,12 @@ const formItemRemarkLayout = {
 };
 
 @Form.create()
-class RequestHead extends Component {
+class RequestHead extends PureComponent {
   static propTypes = {
     onHeadRef: PropTypes.func,
     action: PropTypes.oneOf(ACTIONS).isRequired,
     headData: PropTypes.object,
+    showDimensionSelection: PropTypes.bool,
   };
 
   constructor(props) {
@@ -64,8 +67,8 @@ class RequestHead extends Component {
   }
 
   initGlobalAction = () => {
-    const { action } = this.props;
-    let globalDisabled = false;
+    const { action, showDimensionSelection } = this.props;
+    let globalDisabled = showDimensionSelection || false;
     switch (action) {
       case REQUEST_ORDER_ACTION.VIEW:
       case REQUEST_ORDER_ACTION.VIEW_APPROVE_FLOW:
@@ -103,13 +106,27 @@ class RequestHead extends Component {
     });
   };
 
+  renderDescription = item => {
+    const periodType = PERIOD_TYPE[get(item, 'periodType')];
+    return (
+      <>
+        <div style={{ marginBottom: 8 }}>{`期间类型为${get(periodType, 'title')}`}</div>
+        <div>
+          {item.roll ? <Tag color="magenta">可结转</Tag> : null}
+          {item.use ? <Tag color="cyan">业务可用</Tag> : null}
+        </div>
+      </>
+    );
+  };
+
   render() {
-    const { form, headData } = this.props;
+    const { form, headData, showDimensionSelection } = this.props;
     const { globalDisabled } = this.state;
     const { getFieldDecorator } = form;
+    const disabled = showDimensionSelection || globalDisabled;
     this.initBindFormFields();
     const subjectProps = {
-      disabled: globalDisabled,
+      disabled,
       placeholder: '请选择预算主体',
       form,
       name: 'subjectName',
@@ -126,12 +143,12 @@ class RequestHead extends Component {
       reader: {
         name: 'name',
         description: 'code',
-        field: ['id', 'baseCurrencyCode', 'baseCurrencyName'],
+        field: ['id', 'currencyCode', 'currencyName'],
       },
       searchProperties: ['code', 'name', 'erpCode'],
     };
     const applyOrgProps = {
-      disabled: globalDisabled,
+      disabled,
       form,
       name: 'applyOrgName',
       field: ['applyOrgId', 'applyOrgCode'],
@@ -140,11 +157,12 @@ class RequestHead extends Component {
       },
       reader: {
         name: 'name',
-        field: ['id', 'code', 'namePath'],
+        field: ['id', 'code'],
       },
     };
     const managerOrgProps = {
-      disabled: globalDisabled,
+      allowClear: true,
+      disabled,
       form,
       name: 'managerOrgName',
       field: ['managerOrgId', 'managerOrgCode'],
@@ -157,19 +175,27 @@ class RequestHead extends Component {
       },
     };
     const budgetTypeProps = {
-      disabled: globalDisabled,
+      disabled,
       form,
       name: 'categoryName',
-      field: ['categoryId'],
+      field: ['categoryId', 'orderCategory', 'periodType'],
       store: {
-        url: `${SERVER_PATH}/bems-v6/category/findBySubject`,
+        url: `${SERVER_PATH}/bems-v6/category/getByCategory`,
       },
       cascadeParams: {
+        category: ORDER_CATEGORY.INJECTION.key,
         subjectId: form.getFieldValue('subjectId'),
+      },
+      listProps: {
+        renderItem: item => {
+          return (
+            <Card.Meta key={item.id} title={item.name} description={this.renderDescription(item)} />
+          );
+        },
       },
       reader: {
         name: 'name',
-        field: ['id'],
+        field: ['id', 'orderCategory', 'periodType'],
       },
     };
     return (
@@ -204,8 +230,8 @@ class RequestHead extends Component {
             </Col>
             <Col span={12}>
               <FormItem label="预算类型">
-                {getFieldDecorator('budgetTypeName', {
-                  initialValue: get(headData, 'budgetTypeName'),
+                {getFieldDecorator('categoryName', {
+                  initialValue: get(headData, 'categoryName'),
                   rules: [
                     {
                       required: true,
@@ -226,7 +252,7 @@ class RequestHead extends Component {
               <FormItem label="备注说明" {...formItemRemarkLayout}>
                 {getFieldDecorator('remark', {
                   initialValue: get(headData, 'remark'),
-                })(<Input disabled={globalDisabled} />)}
+                })(<Input disabled={disabled} />)}
               </FormItem>
             </Col>
           </Row>

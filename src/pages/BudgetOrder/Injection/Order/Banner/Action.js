@@ -4,18 +4,10 @@ import { FormattedMessage } from 'umi-plugin-react/locale';
 import { Button, Icon, Popconfirm } from 'antd';
 import { WorkFlow } from 'suid';
 import { constants } from '@/utils';
+import Tip from '../../../components/Tip';
 
 const { REQUEST_ORDER_ACTION } = constants;
 const { StartFlow } = WorkFlow;
-
-const tip = (topic, description) => {
-  return (
-    <Fragment>
-      <div style={{ color: 'rgba(0,0,0,0.85)' }}>{topic}</div>
-      <div>{description}</div>
-    </Fragment>
-  );
-};
 
 const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTION[key]);
 
@@ -29,6 +21,7 @@ class ExtAction extends PureComponent {
     flowStatus: PropTypes.string,
     beforeStartFlow: PropTypes.func,
     handlerStartComlete: PropTypes.func,
+    showDimensionSelection: PropTypes.bool,
   };
 
   renderExtActions = () => {
@@ -40,6 +33,7 @@ class ExtAction extends PureComponent {
       saving,
       beforeStartFlow,
       handlerStartComlete,
+      showDimensionSelection,
     } = this.props;
     const startFlowProps = {
       businessModelCode: 'com.changhong.beis.entity.PaymentRequestHead',
@@ -47,13 +41,14 @@ class ExtAction extends PureComponent {
       beforeStart: beforeStartFlow,
       needStartConfirm: true,
     };
+    const disabled = showDimensionSelection || saving;
     switch (action) {
       case REQUEST_ORDER_ACTION.ADD:
         return (
           <Fragment>
             <StartFlow {...startFlowProps}>
               {loading => (
-                <Button type="default" disabled={loading || saving} loading={loading}>
+                <Button type="default" disabled={loading || disabled} loading={loading}>
                   <FormattedMessage id="global.startFlow" defaultMessage="提交审批" />
                 </Button>
               )}
@@ -62,12 +57,12 @@ class ExtAction extends PureComponent {
               icon={<Icon type="question-circle-o" />}
               placement="left"
               trigger="click"
-              title={tip('确定要退出创建吗？', '未保存的数据将会丢失!')}
+              title={<Tip topic="确定要退出创建吗？" description="未保存的数据将会丢失!" />}
               onConfirm={closeOrder}
             >
-              <Button disabled={saving}>退出创建</Button>
+              <Button disabled={disabled}>退出创建</Button>
             </Popconfirm>
-            <Button type="primary" disabled={saving} loading={saving} onClick={e => saveOrder(e)}>
+            <Button type="primary" disabled={disabled} loading={saving} onClick={e => saveOrder(e)}>
               保存
             </Button>
           </Fragment>
@@ -77,7 +72,7 @@ class ExtAction extends PureComponent {
           <Fragment>
             <StartFlow {...startFlowProps}>
               {loading => (
-                <Button type="default" disabled={loading || saving} loading={loading}>
+                <Button type="default" disabled={loading || disabled} loading={loading}>
                   <FormattedMessage id="global.startFlow" defaultMessage="提交审批" />
                 </Button>
               )}
@@ -86,12 +81,12 @@ class ExtAction extends PureComponent {
               icon={<Icon type="question-circle-o" />}
               placement="left"
               trigger="click"
-              title={tip('确定要退出编辑吗？', '未保存的数据将会丢失!')}
+              title={<Tip topic="确定要退出创建吗？" description="未保存的数据将会丢失!" />}
               onConfirm={closeOrder}
             >
-              <Button disabled={saving}>退出编辑</Button>
+              <Button disabled={disabled}>退出编辑</Button>
             </Popconfirm>
-            <Button type="primary" disabled={saving} loading={saving} onClick={e => saveOrder(e)}>
+            <Button type="primary" disabled={disabled} loading={saving} onClick={e => saveOrder(e)}>
               保存
             </Button>
           </Fragment>

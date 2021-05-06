@@ -254,7 +254,7 @@ class PeriodList extends Component {
       {
         title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
         key: 'operation',
-        width: 120,
+        width: 140,
         align: 'center',
         dataIndex: 'id',
         className: 'action',
@@ -340,6 +340,7 @@ class PeriodList extends Component {
         url: `${SERVER_PATH}/bems-v6/period/findBySubject`,
       },
       lineNumber: false,
+      allowCustomColumns: false,
       cascadeParams: {
         subjectId: get(currentMaster, 'id'),
         type: this.getQueryPeriodType(),
