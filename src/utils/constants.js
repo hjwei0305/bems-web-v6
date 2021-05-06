@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-06 17:11:53
+ * @Last Modified time: 2021-05-06 18:01:07
  */
 import { base } from '../../public/app.config.json';
 
@@ -109,6 +109,14 @@ const BUDGET_SUBJECT_USER_ACTION = {
   REFERENCE: 'reference',
 };
 
+/** 预算期间操作 */
+const BUDGET_PERIOD_USER_ACTION = {
+  EDIT: 'edit',
+  DELETE: 'delete',
+  FROZEN: 'frozen',
+  UNFROZEN: 'unfrozen',
+};
+
 /** 预算申请流程状态 */
 const REQUEST_VIEW_STATUS = {
   ALL: { key: 'ALL', title: '全部', color: '' },
@@ -153,4 +161,5 @@ export default {
   INJECTION_REQUEST_BTN_KEY,
   REQUEST_ORDER_ACTION,
   WSBaseUrl,
+  BUDGET_PERIOD_USER_ACTION,
 };

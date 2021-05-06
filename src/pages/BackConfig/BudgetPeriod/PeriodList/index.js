@@ -3,25 +3,21 @@ import cls from 'classnames';
 import { get } from 'lodash';
 import { connect } from 'dva';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { Button, Card, Popconfirm, Tag } from 'antd';
-import { ExtTable, BannerTitle, ExtIcon } from 'suid';
+import { Button, Card, Modal, Tag } from 'antd';
+import { ExtTable, BannerTitle } from 'suid';
 import { FilterView } from '@/components';
 import { constants } from '@/utils';
 import FormModal from './FormModal';
+import ExtAction from './ExtAction';
 import styles from './index.less';
 
-const { SERVER_PATH, PERIOD_TYPE } = constants;
+const { SERVER_PATH, PERIOD_TYPE, BUDGET_PERIOD_USER_ACTION } = constants;
 
 @connect(({ budgetPeriod, loading }) => ({ budgetPeriod, loading }))
 class PeriodList extends Component {
   static tableRef;
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      rowId: null,
-    };
-  }
+  static confirmModal;
 
   reloadData = () => {
     if (this.tableRef) {
@@ -41,10 +37,6 @@ class PeriodList extends Component {
   };
 
   edit = rowData => {
-    const disabled = this.actionDisabled(rowData);
-    if (disabled) {
-      return false;
-    }
     const { dispatch } = this.props;
     dispatch({
       type: 'budgetPeriod/updateState',
@@ -70,56 +62,88 @@ class PeriodList extends Component {
     });
   };
 
-  del = record => {
+  delConfirm = rowData => {
     const { dispatch } = this.props;
-    this.setState(
-      {
-        rowId: record.id,
-      },
-      () => {
-        dispatch({
-          type: 'budgetPeriod/del',
-          payload: {
-            id: record.id,
-          },
-          callback: res => {
-            if (res.success) {
-              this.setState({
-                rowId: null,
-              });
-              this.reloadData();
-            }
-          },
+    this.confirmModal = Modal.confirm({
+      title: `删除确认`,
+      content: `提示：删除后不可恢复!`,
+      okButtonProps: { type: 'primary' },
+      style: { top: '20%' },
+      okText: '确定',
+      onOk: () => {
+        return new Promise(resolve => {
+          this.confirmModal.update({
+            okButtonProps: { type: 'primary', loading: true },
+            cancelButtonProps: { disabled: true },
+          });
+          dispatch({
+            type: 'budgetPeriod/del',
+            payload: {
+              id: rowData.id,
+            },
+            callback: res => {
+              if (res.success) {
+                resolve();
+                this.reloadData();
+              } else {
+                this.confirmModal.update({
+                  okButtonProps: { loading: false },
+                  cancelButtonProps: { disabled: false },
+                });
+              }
+            },
+          });
         });
       },
-    );
+      cancelText: '取消',
+      onCancel: () => {
+        this.confirmModal.destroy();
+        this.confirmModal = null;
+      },
+    });
   };
 
-  closeAndOpenPeriod = row => {
+  frozen = rowData => {
     const { dispatch } = this.props;
-    const rowId = get(row, 'id');
-    this.setState(
-      {
-        rowId,
-      },
-      () => {
-        dispatch({
-          type: 'budgetPeriod/closeAndOpenPeriods',
-          payload: {
-            id: rowId,
-            status: !get(row, 'closed'),
-          },
-          callback: res => {
-            if (res.success) {
-              this.setState({
-                rowId: null,
-              });
-              this.reloadData();
-            }
-          },
+    const frozen = get(rowData, 'closed');
+    this.confirmModal = Modal.confirm({
+      title: frozen ? `启用科目【${get(rowData, 'name')}】` : `停用科目【${get(rowData, 'name')}】`,
+      content: frozen ? `确定要启用吗?` : `确定要停用吗?`,
+      okButtonProps: { type: 'primary' },
+      style: { top: '20%' },
+      okText: '确定',
+      onOk: () => {
+        return new Promise(resolve => {
+          this.confirmModal.update({
+            okButtonProps: { type: 'primary', loading: true },
+            cancelButtonProps: { disabled: true },
+          });
+          dispatch({
+            type: 'budgetPeriod/closeAndOpenPeriods',
+            payload: {
+              id: rowData.id,
+              status: !frozen,
+            },
+            callback: res => {
+              if (res.success) {
+                resolve();
+                this.reloadData();
+              } else {
+                this.confirmModal.update({
+                  okButtonProps: { loading: false },
+                  cancelButtonProps: { disabled: false },
+                });
+              }
+            },
+          });
         });
       },
-    );
+      cancelText: '取消',
+      onCancel: () => {
+        this.confirmModal.destroy();
+        this.confirmModal = null;
+      },
+    });
   };
 
   closeFormModal = () => {
@@ -133,27 +157,20 @@ class PeriodList extends Component {
     });
   };
 
-  renderDelBtn = row => {
-    const { loading } = this.props;
-    const { rowId } = this.state;
-    if (loading.effects['budgetPeriod/del'] && rowId === row.id) {
-      return <ExtIcon className="del-loading" type="loading" antd />;
+  handlerAction = (key, rowData) => {
+    switch (key) {
+      case BUDGET_PERIOD_USER_ACTION.EDIT:
+        this.edit(rowData);
+        break;
+      case BUDGET_PERIOD_USER_ACTION.DELETE:
+        this.delConfirm(rowData);
+        break;
+      case BUDGET_PERIOD_USER_ACTION.FROZEN:
+      case BUDGET_PERIOD_USER_ACTION.UNFROZEN:
+        this.frozen(rowData);
+        break;
+      default:
     }
-    return (
-      <ExtIcon className={cls('del', { disabled: this.actionDisabled(row) })} type="delete" antd />
-    );
-  };
-
-  renderCloseAndOpenBtn = row => {
-    const { loading } = this.props;
-    const { rowId } = this.state;
-    if (loading.effects['budgetPeriod/closeAndOpenPeriods'] && rowId === row.id) {
-      return <ExtIcon className="loading" type="loading" antd />;
-    }
-    if (row.closed) {
-      return <ExtIcon className="open" type="check-circle" antd />;
-    }
-    return <ExtIcon className="close" type="close-circle" antd />;
   };
 
   saveCustomizePeriod = data => {
@@ -240,13 +257,6 @@ class PeriodList extends Component {
     return t || '-';
   };
 
-  actionDisabled = row => {
-    if (row.type !== PERIOD_TYPE.CUSTOMIZE.key) {
-      return true;
-    }
-    return false;
-  };
-
   render() {
     const { budgetPeriod, loading } = this.props;
     const { currentMaster, showModal, rowData, selectPeriodType, periodTypeData } = budgetPeriod;
@@ -254,36 +264,14 @@ class PeriodList extends Component {
       {
         title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
         key: 'operation',
-        width: 140,
+        width: 80,
         align: 'center',
         dataIndex: 'id',
         className: 'action',
         required: true,
         render: (_text, record) => (
           <span className={cls('action-box')} onClick={e => e.stopPropagation()}>
-            <ExtIcon
-              className={cls('edit', { disabled: this.actionDisabled(record) })}
-              onClick={() => this.edit(record)}
-              type="edit"
-              antd
-            />
-            <Popconfirm
-              placement="topLeft"
-              title={formatMessage({
-                id: 'global.delete.confirm',
-                defaultMessage: '确定要删除吗？提示：删除后不可恢复',
-              })}
-              disabled={this.actionDisabled(record)}
-              onConfirm={() => this.del(record)}
-            >
-              {this.renderDelBtn(record)}
-            </Popconfirm>
-            <Popconfirm
-              title={record.closed ? '确定要启用期间吗？' : '确定要停用期间吗？'}
-              onConfirm={() => this.closeAndOpenPeriod(record)}
-            >
-              {this.renderCloseAndOpenBtn(record)}
-            </Popconfirm>
+            <ExtAction key={record.id} onAction={this.handlerAction} recordItem={record} />
           </span>
         ),
       },
