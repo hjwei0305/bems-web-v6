@@ -226,7 +226,7 @@ class PeriodList extends Component {
       return (
         <>
           <span style={{ color: 'rgba(0,0,0,0.35)' }}>{t}</span>
-          <Tag style={{ marginLeft: 4, color: 'rgba(0,0,0,0.35)' }}>已关闭</Tag>
+          <Tag style={{ marginLeft: 4, color: 'rgba(0,0,0,0.35)' }}>已停用</Tag>
         </>
       );
     }
