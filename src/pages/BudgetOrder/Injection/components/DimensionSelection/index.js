@@ -3,8 +3,9 @@ import cls from 'classnames';
 import { get } from 'lodash';
 import QueueAnim from 'rc-queue-anim';
 import PropTypes from 'prop-types';
-import { Button, Popconfirm, Tabs, Result } from 'antd';
+import { Button, Popconfirm, Tabs, Result, Empty } from 'antd';
 import { ExtIcon, Space } from 'suid';
+import empty from '@/assets/not_done.svg';
 import Tip from '../../../components/Tip';
 import Subject from '../../../components/Dimension/Subject';
 import Period from '../../../components/Dimension/Period';
@@ -44,7 +45,7 @@ class DimensionSelection extends PureComponent {
     const { show } = this.props;
     if (show === true) {
       this.setState({
-        zIndex: 1,
+        zIndex: 9,
       });
     }
   }
@@ -110,7 +111,9 @@ class DimensionSelection extends PureComponent {
               default:
                 return (
                   <TabPane tab={name} key={uiComponent}>
-                    未实现【{d.name}】维度组件
+                    <div className="blank-empty">
+                      <Empty image={empty} description={`未实现【${name}】维度组件`} />
+                    </div>
                   </TabPane>
                 );
             }
