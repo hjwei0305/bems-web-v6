@@ -84,14 +84,13 @@ class ExtAction extends PureComponent {
       return false;
     });
     switch (requestViewStatus) {
-      case REQUEST_VIEW_STATUS.INITIAL.name:
+      case REQUEST_VIEW_STATUS.DRAFT.name:
         menus.forEach(m => {
           if (m.key !== INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY) {
             Object.assign(m, { disabled: false });
           }
         });
         break;
-      case REQUEST_VIEW_STATUS.INPROCESS.name:
       case REQUEST_VIEW_STATUS.PROCESSING.name:
         menus.forEach(m => {
           if (
@@ -106,8 +105,7 @@ class ExtAction extends PureComponent {
         menus.forEach(m => {
           if (
             m.key === INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY ||
-            m.key === INJECTION_REQUEST_BTN_KEY.VIEW ||
-            m.key === INJECTION_REQUEST_BTN_KEY.SEND_TO_PAY
+            m.key === INJECTION_REQUEST_BTN_KEY.VIEW
           ) {
             Object.assign(m, { disabled: false });
           }

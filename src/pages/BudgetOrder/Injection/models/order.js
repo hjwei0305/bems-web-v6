@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-06 14:03:54
+ * @Last Modified time: 2021-05-06 17:03:56
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -39,14 +39,18 @@ export default modelExtend(model, {
         callback(re);
       }
     },
-    *addOrderDetails({ payload, callback }, { call, put }) {
+    *addOrderDetails({ payload, callback }, { call, put, select }) {
+      const { headData: originHeadData } = yield select(sel => sel.injectionOrder);
       const re = yield call(addOrderDetails, payload);
       message.destroy();
       if (re.success) {
         message.success(formatMessage({ id: 'global.save-success', defaultMessage: '保存成功' }));
+        const headData = { ...originHeadData };
+        Object.assign(headData, { id: re.data });
         yield put({
           type: 'updateState',
           payload: {
+            headData,
             showDimensionSelection: false,
             dimensionsData: [],
           },

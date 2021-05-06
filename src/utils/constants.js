@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-04-28 14:53:09
+ * @Last Modified time: 2021-05-06 17:11:53
  */
 import { base } from '../../public/app.config.json';
 
@@ -27,6 +27,11 @@ const getServerPath = () => {
   }
   return `${BASE_DOMAIN}${GATEWAY}`;
 };
+
+const WSBaseUrl =
+  process.env.NODE_ENV !== 'production'
+    ? 'ws://dsei.changhong.com'
+    : `ws://${window.location.host}`;
 
 /** 项目的站点基地址 */
 const APP_BASE = base;
@@ -147,4 +152,5 @@ export default {
   REQUEST_VIEW_STATUS,
   INJECTION_REQUEST_BTN_KEY,
   REQUEST_ORDER_ACTION,
+  WSBaseUrl,
 };
