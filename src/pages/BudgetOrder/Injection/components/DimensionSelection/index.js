@@ -35,6 +35,18 @@ class DimensionSelection extends PureComponent {
     dimensions.forEach(d => {
       this.dimensionData[d.code] = [];
     });
+    this.state = {
+      zIndex: -1,
+    };
+  }
+
+  componentDidUpdate() {
+    const { show } = this.props;
+    if (show === true) {
+      this.setState({
+        zIndex: 1,
+      });
+    }
   }
 
   handlerSelectChange = (key, items) => {
@@ -56,6 +68,12 @@ class DimensionSelection extends PureComponent {
       save(this.dimensionData, () => {
         this.dimensionData = {};
       });
+    }
+  };
+
+  handlerEnd = ({ type }) => {
+    if (type === 'leave') {
+      this.setState({ zIndex: -1 });
     }
   };
 
@@ -103,9 +121,14 @@ class DimensionSelection extends PureComponent {
   };
 
   render() {
+    const { zIndex } = this.state;
     const { show, onTriggerBack, dimensions, saving } = this.props;
     return (
-      <QueueAnim className={cls(styles['container-box'])} style={{ zIndex: show ? 1 : -1 }}>
+      <QueueAnim
+        className={cls(styles['container-box'])}
+        onEnd={this.handlerEnd}
+        style={{ zIndex }}
+      >
         {show
           ? [
               <div className="head-box" key="head">
