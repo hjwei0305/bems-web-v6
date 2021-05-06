@@ -225,6 +225,25 @@ class BudgetSubject extends Component {
     }
   };
 
+  renderSubjectName = (t, r) => {
+    if (r.frozen) {
+      return (
+        <>
+          <span style={{ color: 'rgba(0,0,0,0.35)' }}>{t}</span>
+          <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
+        </>
+      );
+    }
+    return t;
+  };
+
+  renderDisabled = (t, r) => {
+    if (r.frozen) {
+      return <span style={{ color: 'rgba(0,0,0,0.35)' }}>{t}</span>;
+    }
+    return t || '-';
+  };
+
   render() {
     const { budgetMasterSubject, loading } = this.props;
     const { showModal, rowData, currentMaster, showInit, showAssign } = budgetMasterSubject;
@@ -248,29 +267,20 @@ class BudgetSubject extends Component {
         dataIndex: 'code',
         width: 120,
         required: true,
+        render: (t, r) => this.renderDisabled(t, r),
       },
       {
         title: '科目名称',
         dataIndex: 'name',
         width: 420,
         required: true,
-        render: (t, r) => {
-          if (r.frozen) {
-            return (
-              <>
-                {t}
-                <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
-              </>
-            );
-          }
-          return t;
-        },
+        render: (t, r) => this.renderSubjectName(t, r),
       },
       {
         title: '执行策略',
         dataIndex: 'strategyName',
         width: 180,
-        render: t => t || '默认主体执行策略',
+        render: (t, r) => this.renderDisabled(t || '默认主体执行策略', r),
       },
     ];
     const formModalProps = {

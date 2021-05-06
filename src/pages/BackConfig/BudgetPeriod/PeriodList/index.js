@@ -3,7 +3,7 @@ import cls from 'classnames';
 import { get } from 'lodash';
 import { connect } from 'dva';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { Button, Card, Modal, Tag } from 'antd';
+import { Button, Card, Modal } from 'antd';
 import { ExtTable, BannerTitle } from 'suid';
 import { FilterView } from '@/components';
 import { constants } from '@/utils';
@@ -243,7 +243,7 @@ class PeriodList extends Component {
       return (
         <>
           <span style={{ color: 'rgba(0,0,0,0.35)' }}>{t}</span>
-          <Tag style={{ marginLeft: 4, color: 'rgba(0,0,0,0.35)' }}>已停用</Tag>
+          <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
         </>
       );
     }
