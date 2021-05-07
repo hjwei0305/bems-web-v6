@@ -98,7 +98,7 @@ class DetailItem extends PureComponent {
         remotePaging: true,
         store: {
           type: 'POST',
-          url: `${SERVER_PATH}/order/getOrderItems/${orderId}`,
+          url: `${SERVER_PATH}/bems-v6/order/getOrderItems/${orderId}`,
         },
       });
     }

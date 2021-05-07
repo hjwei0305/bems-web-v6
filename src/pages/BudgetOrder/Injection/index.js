@@ -192,7 +192,7 @@ class InjectionRequestList extends Component {
       {
         title: '操作',
         key: 'operation',
-        width: 60,
+        width: 80,
         align: 'center',
         dataIndex: 'id',
         className: 'action',
@@ -240,13 +240,6 @@ class InjectionRequestList extends Component {
         title: '申请单位',
         dataIndex: 'applyOrgName',
         width: 200,
-      },
-      {
-        title: '预算金额',
-        dataIndex: 'totalAmount',
-        width: 180,
-        align: 'right',
-        render: (text, record) => <Money prefix={record.currencyCode} value={text} />,
       },
       {
         title: '备注说明',
@@ -322,6 +315,7 @@ class InjectionRequestList extends Component {
       toolBar: toolBarProps,
       remotePaging: true,
       showSearchTooltip: true,
+      lineNumber: false,
       storageId: '58494acc-e17e-4189-ac76-af832e816cf2',
       searchProperties: ['code', 'remark'],
       searchPlaceHolder: '单据编号、备注说明',

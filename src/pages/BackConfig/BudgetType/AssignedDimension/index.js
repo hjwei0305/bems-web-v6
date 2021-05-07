@@ -8,7 +8,7 @@ import { ExtTable, BannerTitle } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
-const { SERVER_PATH, TYPE_CLASS } = constants;
+const { SERVER_PATH, TYPE_CLASS, ORDER_CATEGORY } = constants;
 
 @connect(({ budgetType, loading }) => ({ budgetType, loading }))
 class AssignedDimension extends Component {
@@ -75,6 +75,16 @@ class AssignedDimension extends Component {
         }
       },
     });
+  };
+
+  renderName = () => {
+    const { budgetType } = this.props;
+    const { selectedBudgetType } = budgetType;
+    const orderCategory = ORDER_CATEGORY[get(selectedBudgetType, 'orderCategory')];
+    if (orderCategory) {
+      return `${get(selectedBudgetType, 'name')}(${orderCategory.title})`;
+    }
+    return get(selectedBudgetType, 'name');
   };
 
   render() {
@@ -169,10 +179,7 @@ class AssignedDimension extends Component {
     };
     return (
       <div className={cls(styles['user-box'])}>
-        <Card
-          title={<BannerTitle title={get(selectedBudgetType, 'name')} subTitle="维度" />}
-          bordered={false}
-        >
+        <Card title={<BannerTitle title={this.renderName()} subTitle="维度" />} bordered={false}>
           <ExtTable {...extTableProps} />
         </Card>
       </div>
