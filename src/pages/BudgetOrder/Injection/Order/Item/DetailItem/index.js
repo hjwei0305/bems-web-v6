@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { Descriptions, Input, Tag } from 'antd';
+import { Descriptions, Input } from 'antd';
 import { ListCard } from 'suid';
 import { constants } from '@/utils';
+import styles from './index.less';
 
 const { SERVER_PATH, REQUEST_ORDER_ACTION } = constants;
 const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTION[key]);
@@ -57,6 +58,10 @@ class DetailItem extends PureComponent {
     </>
   );
 
+  renderMasterTitle = item => {
+    return `${item.periodName} ${item.itemName}`;
+  };
+
   render() {
     const { headData } = this.props;
     const orderId = get(headData, 'id');
@@ -64,13 +69,14 @@ class DetailItem extends PureComponent {
       simplePagination: false,
       showArrow: false,
       showSearch: false,
+      className: styles['detail-item-box'],
       onListCardRef: ref => (this.listCardRef = ref),
       customTool: this.renderCustomTool,
       itemField: {
-        title: item => item.name,
+        title: this.renderMasterTitle,
         description: item => (
           <>
-            <Descriptions column={1} bordered={false}>
+            <Descriptions column={3} bordered={false}>
               <Descriptions.Item label="公司">{`${get(item, 'corporationName')}(${get(
                 item,
                 'corporationCode',
@@ -79,15 +85,6 @@ class DetailItem extends PureComponent {
                 item,
                 'orgCode',
               )})`}</Descriptions.Item>
-            </Descriptions>
-            <Descriptions column={2} bordered={false}>
-              <Descriptions.Item label="币种">{`${get(item, 'currencyName')}(${get(
-                item,
-                'currencyCode',
-              )})`}</Descriptions.Item>
-              <Descriptions.Item label="执行策略">
-                <Tag color="blue">{`${get(item, 'strategyName')}`}</Tag>
-              </Descriptions.Item>
             </Descriptions>
           </>
         ),

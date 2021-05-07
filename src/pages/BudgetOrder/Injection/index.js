@@ -234,12 +234,12 @@ class InjectionRequestList extends Component {
       {
         title: '预算主体',
         dataIndex: 'subjectName',
-        width: 200,
+        width: 300,
       },
       {
         title: '申请单位',
         dataIndex: 'applyOrgName',
-        width: 200,
+        width: 320,
       },
       {
         title: '备注说明',
