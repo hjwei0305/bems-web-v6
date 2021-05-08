@@ -70,7 +70,7 @@ class DetailItem extends PureComponent {
       <span />
       <Search
         allowClear
-        placeholder="输入预算主体名称关键字"
+        placeholder="输入下达金额、维度关键字"
         onChange={e => this.handlerSearchChange(e.target.value)}
         onSearch={this.handlerSearch}
         onPressEnter={this.handlerPressEnter}
@@ -138,8 +138,18 @@ class DetailItem extends PureComponent {
       className: styles['detail-item-box'],
       onListCardRef: ref => (this.listCardRef = ref),
       customTool: this.renderCustomTool,
-      searchPlaceHolder: '',
-      searchProperties: ['itemName'],
+      searchProperties: [
+        'itemName',
+        'amount',
+        'periodName',
+        'projectName',
+        'orgName',
+        'udf1Name',
+        'udf2Name',
+        'udf3Name',
+        'udf4Name',
+        'udf5Name',
+      ],
       itemField: {
         title: this.renderMasterTitle,
         description: this.renderDescription,

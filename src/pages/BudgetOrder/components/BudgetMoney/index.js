@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Money, MoneyInput, ExtIcon, Space } from 'suid';
 import styles from './index.less';
 
-const BudgetMoney = ({ title, amount, onSave, saving }) => {
+const BudgetMoney = ({ title, amount, onSave, saving, allowEdit = true }) => {
   let money = amount;
 
   const [edit, setEdit] = useState(false);
@@ -64,15 +64,9 @@ const BudgetMoney = ({ title, amount, onSave, saving }) => {
             <ExtIcon className="btn cancel" onClick={handlerCancel} type="close" antd />
           </Space>
         ) : (
-          <Space>
+          <Space size={2}>
             <Money value={money} className={getClassName} />
-            <ExtIcon
-              style={{ marginLeft: 8 }}
-              className="btn"
-              onClick={handlerEdit}
-              type="edit"
-              antd
-            />
+            {allowEdit ? <ExtIcon className="btn" onClick={handlerEdit} type="edit" antd /> : null}
           </Space>
         )}
       </span>
