@@ -138,6 +138,8 @@ class DetailItem extends PureComponent {
       className: styles['detail-item-box'],
       onListCardRef: ref => (this.listCardRef = ref),
       customTool: this.renderCustomTool,
+      searchPlaceHolder: '',
+      searchProperties: ['itemName'],
       itemField: {
         title: this.renderMasterTitle,
         description: this.renderDescription,

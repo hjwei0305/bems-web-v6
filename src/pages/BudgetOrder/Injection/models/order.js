@@ -2,10 +2,11 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-08 11:45:57
+ * @Last Modified time: 2021-05-08 14:21:44
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
+import { get } from 'lodash-es';
 import {
   save,
   del,
@@ -76,15 +77,21 @@ export default modelExtend(model, {
         callback(re);
       }
     },
-    *clearOrderItems({ payload, successCallback }, { call }) {
-      const re = yield call(clearOrderItems, payload);
+    *clearOrderItems({ successCallback }, { call, select }) {
+      const { headData } = yield select(sel => sel.injectionOrder);
+      const orderId = get(headData, 'id');
       message.destroy();
-      if (re.success) {
-        if (successCallback && successCallback instanceof Function) {
-          successCallback(re);
+      if (orderId) {
+        const re = yield call(clearOrderItems, { orderId });
+        if (re.success) {
+          if (successCallback && successCallback instanceof Function) {
+            successCallback(re);
+          }
+        } else {
+          message.error(re.message);
         }
       } else {
-        message.error(re.message);
+        message.error('未获取到单据的Id');
       }
     },
     *checkDimensionForSelect({ payload, callback }, { call, put }) {
