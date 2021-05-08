@@ -1,0 +1,58 @@
+@import '../../../../themes/vars.less';
+.money-box {
+  position: relative;
+  display: inline-block;
+  padding: 0;
+  :global {
+    .btn {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      line-height: 34px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all ease-in 0.2s;
+      &:hover {
+        color: @primary-color;
+        background-color: fade(@black, 5%);
+      }
+      &.save {
+        color: #3b9c0b;
+      }
+      &.save:hover {
+        color: #3b9c0b;
+        background-color: fade(#3b9c0b, 5%);
+      }
+      &.cancel {
+        color: @error-color;
+      }
+      &.cancel:hover {
+        color: @error-color;
+        background-color: fade(@error-color, 15%);
+      }
+    }
+    .field-item {
+      display: inline-flex;
+      align-items: center;
+      .label {
+        color: fade(@black, 65%);
+        &::after {
+          margin: 0 4px;
+          content: ':';
+        }
+      }
+      .suid-money {
+        &.blue {
+          color: @primary-color;
+        }
+        &.red {
+          color: @error-color;
+        }
+      }
+      .suid-money-input {
+        top: auto;
+        width: 160px;
+      }
+    }
+  }
+}

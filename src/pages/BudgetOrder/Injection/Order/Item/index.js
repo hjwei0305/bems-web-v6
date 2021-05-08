@@ -2,22 +2,27 @@ import React, { PureComponent, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import cls from 'classnames';
 import { get } from 'lodash';
+import { PubSub } from 'pubsub-js';
 import { Button, Popconfirm, Tabs } from 'antd';
-import { Space, Attachment, ScrollBar, PageLoader } from 'suid';
-import { constants } from '@/utils';
+import { Space, Attachment, ScrollBar, PageLoader, message } from 'suid';
+import { constants, wsocket } from '@/utils';
 import Tip from '../../../components/Tip';
 import DetailItem from './DetailItem';
 import styles from './index.less';
 
-const DimensionSelection = React.lazy(() => import('../../components/DimensionSelection'));
+const DimensionSelection = React.lazy(() => import('../../../components/DimensionSelection'));
+const ProgressResult = React.lazy(() => import('../../../components/ProgressResult'));
 const { TabPane } = Tabs;
-const { REQUEST_ORDER_ACTION, SERVER_PATH } = constants;
+const { REQUEST_ORDER_ACTION, SERVER_PATH, WSBaseUrl } = constants;
 const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTION[key]);
+const { closeWebSocket, createWebSocket } = wsocket;
 
 class RequestItem extends PureComponent {
   static attachmentRef;
 
   static detailItemRef;
+
+  static messageSocket;
 
   static propTypes = {
     headData: PropTypes.object,
@@ -27,11 +32,13 @@ class RequestItem extends PureComponent {
     clearItem: PropTypes.func,
     clearing: PropTypes.bool,
     save: PropTypes.func,
-    saving: PropTypes.func,
+    saving: PropTypes.bool,
     dimensionsData: PropTypes.array,
     globalDisabled: PropTypes.bool,
     showDimensionSelection: PropTypes.bool,
+    showProgressResult: PropTypes.bool,
     closeDimensionSelection: PropTypes.func,
+    onItemCompleted: PropTypes.func,
   };
 
   constructor(props) {
@@ -39,12 +46,22 @@ class RequestItem extends PureComponent {
     const { action } = props;
     this.state = {
       activeKey: 'item',
+      progressData: null,
       allowEdit:
         action === REQUEST_ORDER_ACTION.ADD ||
         action === REQUEST_ORDER_ACTION.EDIT ||
         action === REQUEST_ORDER_ACTION.UPDATE_APPROVE_FLOW,
     };
   }
+
+  componentWillUnmount() {
+    this.closeSocket();
+  }
+
+  closeSocket = () => {
+    closeWebSocket();
+    PubSub.unsubscribe(this.messageSocket);
+  };
 
   handlerTabChange = activeKey => {
     this.setState({ activeKey });
@@ -77,14 +94,61 @@ class RequestItem extends PureComponent {
     }
   };
 
+  validJson = wsData => {
+    let valid = true;
+    if (wsData) {
+      try {
+        const str = wsData.replace(/[\r\n\s]/g, '');
+        JSON.parse(str);
+      } catch (e) {
+        valid = false;
+      }
+    }
+    return valid;
+  };
+
   handlerSave = (data, successCallBack) => {
-    const { save } = this.props;
+    const { save, onItemCompleted } = this.props;
     if (save && save instanceof Function) {
-      save(data, () => {
+      save(data, orderId => {
         successCallBack();
-        if (this.detailItemRef) {
-          this.detailItemRef.reloadData();
-        }
+        //  const id = '3EE0EFBF-AEE3-11EB-B4F6-F2E786642C8B';
+        const url = `${WSBaseUrl}/api-gateway/bems-v6/websocket/order/${orderId}`;
+        createWebSocket(url);
+        this.messageSocket = PubSub.subscribe('message', (topic, msgObj) => {
+          // message 为接收到的消息  这里进行业务处理
+          if (topic === 'message') {
+            const wsData = get(msgObj, 'wsData') || '';
+            if (this.validJson(wsData)) {
+              const str = wsData.replace(/[\r\n\s]/g, '');
+              const { success, message: msg, data: progressData } = JSON.parse(str);
+              if (success) {
+                this.setState({ progressData }, () => {
+                  const total = get(progressData, 'total') || 0;
+                  // todo 处理完成后断开socket连接，并展示明细信息
+                  if (total === 0 && onItemCompleted && onItemCompleted instanceof Function) {
+                    onItemCompleted(() => {
+                      this.closeSocket();
+                      if (this.detailItemRef) {
+                        setTimeout(() => {
+                          this.detailItemRef.reloadData();
+                        }, 500);
+                      }
+                    });
+                  }
+                });
+              } else {
+                this.closeSocket();
+                message.destroy();
+                message.error(msg);
+              }
+            } else {
+              this.closeSocket();
+              message.destroy();
+              message.error('返回的数据格式不正确');
+            }
+          }
+        });
       });
     }
   };
@@ -126,11 +190,12 @@ class RequestItem extends PureComponent {
   };
 
   render() {
-    const { activeKey } = this.state;
+    const { activeKey, progressData } = this.state;
     const {
       globalDisabled,
       action,
       showDimensionSelection,
+      showProgressResult,
       headData,
       dimensionsData,
       saving,
@@ -148,6 +213,7 @@ class RequestItem extends PureComponent {
     const detailItemProps = {
       action,
       headData,
+      tempDisabled: showProgressResult || showDimensionSelection,
       onDetailItemRef: ref => (this.detailItemRef = ref),
     };
     return (
@@ -177,6 +243,9 @@ class RequestItem extends PureComponent {
             save={this.handlerSave}
             saving={saving}
           />
+        </Suspense>
+        <Suspense fallback={<PageLoader />}>
+          <ProgressResult show={showProgressResult} progressData={progressData} />
         </Suspense>
       </div>
     );

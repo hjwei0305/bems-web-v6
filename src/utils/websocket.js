@@ -43,7 +43,7 @@ const createWebSocket = url => {
   ws.onmessage = event => {
     lockReconnect = true;
     // 把获取到的消息处理成字典，方便后期使用
-    const data = { buildLog: event.data };
+    const data = { wsData: event.data };
     PubSub.publish('message', data);
     // event 为服务端传输的消息，在这里可以处理
   };

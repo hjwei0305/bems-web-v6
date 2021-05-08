@@ -1,4 +1,4 @@
-@import '../../../../../themes/vars.less';
+@import '../../../../themes/vars.less';
 
 .container-box {
   position: absolute;
@@ -15,24 +15,12 @@
       align-items: center;
       justify-content: space-between;
       height: 46px;
-      padding-right: 24px;
+      padding: 0 24px;
       overflow: hidden;
       line-height: 46px;
       text-align: center;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
       .title-box {
-        .trigger-back {
-          position: relative;
-          width: 46px;
-          height: 46px;
-          font-weight: normal;
-          line-height: 48px;
-          cursor: pointer;
-          transition: all ease-in 0.2s;
-          &:hover {
-            color: @primary-color;
-            background-color: fade(@black, 2%);
-          }
-        }
         .title {
           color: fade(@black, 85%);
           font-weight: 700;
@@ -42,18 +30,23 @@
     }
     .body-content {
       position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
       height: calc(100% - 46px);
       background-color: @white;
-      .ant-tabs-nav-scroll {
-        text-align: center;
-      }
-      .tab-item-box {
-        height: 100%;
-        .ant-tabs-bar {
-          margin: 0;
-        }
-        .ant-tabs-content {
-          height: calc(100% - 44px);
+      .ant-result-title {
+        display: flex;
+        justify-content: center;
+        .suid-list-loader {
+          width: 48px;
+          &.spinning div {
+            position: relative;
+            top: 6px;
+            width: 6px;
+            height: 6px;
+          }
         }
       }
     }

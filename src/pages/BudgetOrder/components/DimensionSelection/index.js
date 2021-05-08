@@ -6,9 +6,9 @@ import PropTypes from 'prop-types';
 import { Button, Popconfirm, Tabs, Result, Empty } from 'antd';
 import { ExtIcon, Space } from 'suid';
 import empty from '@/assets/not_done.svg';
-import Tip from '../../../components/Tip';
-import Subject from '../../../components/Dimension/Subject';
-import Period from '../../../components/Dimension/Period';
+import Tip from '../Tip';
+import Subject from '../Dimension/Subject';
+import Period from '../Dimension/Period';
 import styles from './index.less';
 
 const { TabPane } = Tabs;
@@ -157,7 +157,7 @@ class DimensionSelection extends PureComponent {
                       </Button>
                     </Popconfirm>
                     <Button type="primary" size="small" loading={saving} onClick={this.handlerSave}>
-                      保存
+                      确定
                     </Button>
                   </Space>
                 </div>

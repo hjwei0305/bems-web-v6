@@ -186,7 +186,7 @@ class InjectionRequestList extends Component {
   };
 
   getExtTableProps = () => {
-    const { injectionRequestList, loading } = this.props;
+    const { injectionRequestList } = this.props;
     const { currentViewType, viewTypeData } = injectionRequestList;
     const columns = [
       {
@@ -284,7 +284,6 @@ class InjectionRequestList extends Component {
           <Button
             key={INJECTION_REQUEST_BTN_KEY.CREATE}
             onClick={this.addOrder}
-            loading={loading.effects['injectionRequestList/getDefaultHead']}
             icon="plus"
             type="primary"
           >

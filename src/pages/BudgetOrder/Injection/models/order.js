@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-06 17:03:56
+ * @Last Modified time: 2021-05-08 11:45:57
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -25,6 +25,7 @@ export default modelExtend(model, {
     headData: null,
     showDimensionSelection: false,
     dimensionsData: [],
+    showProgressResult: false,
   },
   effects: {
     *save({ payload, callback }, { call }) {
@@ -39,27 +40,28 @@ export default modelExtend(model, {
         callback(re);
       }
     },
-    *addOrderDetails({ payload, callback }, { call, put, select }) {
+    *addOrderDetails({ payload, successCallback }, { call, put, select }) {
       const { headData: originHeadData } = yield select(sel => sel.injectionOrder);
       const re = yield call(addOrderDetails, payload);
       message.destroy();
       if (re.success) {
-        message.success(formatMessage({ id: 'global.save-success', defaultMessage: '保存成功' }));
-        const headData = { ...originHeadData };
-        Object.assign(headData, { id: re.data });
+        const orderId = re.data;
+        const headData = { ...(originHeadData || {}) };
+        Object.assign(headData, { id: orderId });
         yield put({
           type: 'updateState',
           payload: {
             headData,
-            showDimensionSelection: false,
             dimensionsData: [],
+            showDimensionSelection: false,
+            showProgressResult: true,
           },
         });
+        if (successCallback && successCallback instanceof Function) {
+          successCallback(orderId);
+        }
       } else {
         message.error(re.message);
-      }
-      if (callback && callback instanceof Function) {
-        callback(re);
       }
     },
     *del({ payload, callback }, { call }) {

@@ -15,7 +15,7 @@ const { Item } = Menu;
 
 const menuData = () => [
   {
-    title: formatMessage({ id: 'paymentRequest.viewDetail', defaultMessage: '查看详情' }),
+    title: '查看详情',
     key: INJECTION_REQUEST_BTN_KEY.VIEW,
     disabled: true,
   },

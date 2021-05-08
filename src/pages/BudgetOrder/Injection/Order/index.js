@@ -46,6 +46,8 @@ class RequestOrder extends Component {
       payload: {
         headData: null,
         showDimensionSelection: false,
+        dimensionsData: [],
+        showProgressResult: false,
       },
     });
   }
@@ -214,24 +216,37 @@ class RequestOrder extends Component {
           ...headData,
           ...data,
         },
-        callback: res => {
-          if (res.success && successCallBack && successCallBack instanceof Function) {
-            successCallBack();
+        successCallback: resultData => {
+          if (successCallBack && successCallBack instanceof Function) {
+            successCallBack(resultData);
           }
         },
       });
     }
   };
 
+  handlerItemCompleted = callBack => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'injectionOrder/updateState',
+      payload: {
+        showProgressResult: false,
+      },
+    });
+    if (callBack && callBack instanceof Function) {
+      callBack();
+    }
+  };
+
   render() {
     const { action, title, loading, injectionOrder } = this.props;
-    const { headData, dimensionsData, showDimensionSelection } = injectionOrder;
+    const { headData, dimensionsData, showDimensionSelection, showProgressResult } = injectionOrder;
     const bannerProps = {
       headData,
       title,
       actionProps: {
         action,
-        showDimensionSelection,
+        tempDisabled: showDimensionSelection || showProgressResult,
         saveOrder: this.saveOrder,
         saving: loading.effects['injectionOrder/save'],
         closeOrder: this.closeOrder,
@@ -241,7 +256,7 @@ class RequestOrder extends Component {
       },
     };
     const requestHeadProps = {
-      showDimensionSelection,
+      tempDisabled: showDimensionSelection || showProgressResult,
       onHeadRef: this.handlerHeadRef,
       action,
       headData,
@@ -256,6 +271,8 @@ class RequestOrder extends Component {
       dimensionsData,
       globalDisabled: loading.global,
       showDimensionSelection,
+      showProgressResult,
+      onItemCompleted: this.handlerItemCompleted,
       closeDimensionSelection: this.closeDimensionSelection,
       save: this.handlerSaveItem,
       saving: loading.effects['injectionOrder/addOrderDetails'],

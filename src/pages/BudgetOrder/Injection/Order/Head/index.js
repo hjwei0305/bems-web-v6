@@ -48,7 +48,7 @@ class RequestHead extends PureComponent {
     onHeadRef: PropTypes.func,
     action: PropTypes.oneOf(ACTIONS).isRequired,
     headData: PropTypes.object,
-    showDimensionSelection: PropTypes.bool,
+    tempDisabled: PropTypes.bool,
   };
 
   constructor(props) {
@@ -67,8 +67,8 @@ class RequestHead extends PureComponent {
   }
 
   initGlobalAction = () => {
-    const { action, showDimensionSelection } = this.props;
-    let globalDisabled = showDimensionSelection || false;
+    const { action, tempDisabled } = this.props;
+    let globalDisabled = tempDisabled || false;
     switch (action) {
       case REQUEST_ORDER_ACTION.VIEW:
       case REQUEST_ORDER_ACTION.VIEW_APPROVE_FLOW:
@@ -120,10 +120,10 @@ class RequestHead extends PureComponent {
   };
 
   render() {
-    const { form, headData, showDimensionSelection } = this.props;
+    const { form, headData, tempDisabled } = this.props;
     const { globalDisabled } = this.state;
     const { getFieldDecorator } = form;
-    const disabled = showDimensionSelection || globalDisabled;
+    const disabled = tempDisabled || globalDisabled;
     this.initBindFormFields();
     const subjectProps = {
       disabled,

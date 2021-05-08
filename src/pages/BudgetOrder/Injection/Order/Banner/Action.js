@@ -21,7 +21,7 @@ class ExtAction extends PureComponent {
     flowStatus: PropTypes.string,
     beforeStartFlow: PropTypes.func,
     handlerStartComlete: PropTypes.func,
-    showDimensionSelection: PropTypes.bool,
+    tempDisabled: PropTypes.bool,
   };
 
   renderExtActions = () => {
@@ -33,7 +33,7 @@ class ExtAction extends PureComponent {
       saving,
       beforeStartFlow,
       handlerStartComlete,
-      showDimensionSelection,
+      tempDisabled,
     } = this.props;
     const startFlowProps = {
       businessModelCode: 'com.changhong.beis.entity.PaymentRequestHead',
@@ -41,7 +41,7 @@ class ExtAction extends PureComponent {
       beforeStart: beforeStartFlow,
       needStartConfirm: true,
     };
-    const disabled = showDimensionSelection || saving;
+    const disabled = tempDisabled || saving;
     switch (action) {
       case REQUEST_ORDER_ACTION.ADD:
         return (

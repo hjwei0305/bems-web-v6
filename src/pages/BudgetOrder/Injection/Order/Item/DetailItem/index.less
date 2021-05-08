@@ -5,5 +5,20 @@
     .ant-list-item-meta-title {
       color: fade(@black, 85%);
     }
+    .ant-list-item {
+      cursor: default;
+    }
+    .field-item {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 96px;
+      .label {
+        color: fade(@black, 65%);
+        &::after {
+          margin: 0 4px;
+          content: ':';
+        }
+      }
+    }
   }
 }

@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { Descriptions, Input } from 'antd';
-import { ListCard } from 'suid';
+import { Descriptions, Input, Tag } from 'antd';
+import { ListCard, Money } from 'suid';
 import { constants } from '@/utils';
+import BudgetMoney from '../../../../components/BudgetMoney';
 import styles from './index.less';
 
 const { SERVER_PATH, REQUEST_ORDER_ACTION } = constants;
@@ -13,11 +14,21 @@ const { Search } = Input;
 class DetailItem extends PureComponent {
   static listCardRef;
 
+  static itemEditData = {};
+
   static propTypes = {
     onDetailItemRef: PropTypes.func,
     action: PropTypes.oneOf(ACTIONS).isRequired,
     headData: PropTypes.object,
+    onSaveItemMoney: PropTypes.func,
+    saving: PropTypes.bool,
+    tempDisabled: PropTypes.bool,
   };
+
+  constructor(props) {
+    super(props);
+    this.itemEditData = {};
+  }
 
   componentDidMount() {
     const { onDetailItemRef } = this.props;
@@ -26,10 +37,20 @@ class DetailItem extends PureComponent {
     }
   }
 
+  componentWillUnmount() {
+    this.itemEditData = {};
+  }
+
   reloadData = () => {
     if (this.listCardRef) {
       this.listCardRef.remoteDataRefresh();
     }
+  };
+
+  handlerSaveMoney = (rowKey, amount) => {
+    this.itemEditData[rowKey] = amount;
+    this.forceUpdate();
+    console.log(this.itemEditData);
   };
 
   handlerSearchChange = v => {
@@ -59,11 +80,56 @@ class DetailItem extends PureComponent {
   );
 
   renderMasterTitle = item => {
-    return `${item.periodName} ${item.itemName}`;
+    const poolCode = get(item, 'poolCode');
+    if (poolCode) {
+      return (
+        <>
+          {`${item.periodName} ${item.itemName}`}
+          <Tag color="blue" style={{ marginRight: 0, marginLeft: 8 }}>
+            {poolCode}
+          </Tag>
+        </>
+      );
+    }
+    return `${item.periodName} ${item.itemName}(${item.item})`;
+  };
+
+  renderDescription = item => {
+    const { saving } = this.props;
+    const rowKey = get(item, 'id');
+    const amount = this.itemEditData[rowKey] || get(item, 'amount');
+    return (
+      <>
+        <Descriptions column={3} bordered={false}>
+          <Descriptions.Item label="公司">{`${get(item, 'corporationName')}(${get(
+            item,
+            'corporationCode',
+          )})`}</Descriptions.Item>
+          <Descriptions.Item label="组织">{`${get(item, 'orgName')}(${get(
+            item,
+            'orgCode',
+          )})`}</Descriptions.Item>
+        </Descriptions>
+        <div className="money-box">
+          <span className="field-item">
+            <span className="label">预算池余额</span>
+            <span>
+              <Money value={get(item, 'poolAmount')} />
+            </span>
+          </span>
+          <BudgetMoney
+            amount={amount}
+            title="下达金额"
+            onSave={money => this.handlerSaveMoney(rowKey, money)}
+            saving={saving}
+          />
+        </div>
+      </>
+    );
   };
 
   render() {
-    const { headData } = this.props;
+    const { headData, tempDisabled } = this.props;
     const orderId = get(headData, 'id');
     const listProps = {
       simplePagination: false,
@@ -74,23 +140,10 @@ class DetailItem extends PureComponent {
       customTool: this.renderCustomTool,
       itemField: {
         title: this.renderMasterTitle,
-        description: item => (
-          <>
-            <Descriptions column={3} bordered={false}>
-              <Descriptions.Item label="公司">{`${get(item, 'corporationName')}(${get(
-                item,
-                'corporationCode',
-              )})`}</Descriptions.Item>
-              <Descriptions.Item label="组织">{`${get(item, 'orgName')}(${get(
-                item,
-                'orgCode',
-              )})`}</Descriptions.Item>
-            </Descriptions>
-          </>
-        ),
+        description: this.renderDescription,
       },
     };
-    if (orderId) {
+    if (orderId && tempDisabled === false) {
       Object.assign(listProps, {
         remotePaging: true,
         store: {

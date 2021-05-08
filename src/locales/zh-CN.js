@@ -37,4 +37,5 @@ export default {
   'global.filter': '过滤',
   'global.all': '全部',
   'global.startFlow': '提交审批',
+  'global.flowHistory': '流程历史',
 };
