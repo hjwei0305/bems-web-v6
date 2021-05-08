@@ -148,7 +148,7 @@ class RequestHead extends PureComponent {
       searchProperties: ['code', 'name', 'erpCode'],
     };
     const applyOrgProps = {
-      disabled,
+      disabled: globalDisabled,
       form,
       name: 'applyOrgName',
       field: ['applyOrgId', 'applyOrgCode'],
@@ -162,7 +162,7 @@ class RequestHead extends PureComponent {
     };
     const managerOrgProps = {
       allowClear: true,
-      disabled,
+      disabled: globalDisabled,
       form,
       name: 'managerOrgName',
       field: ['managerOrgId', 'managerOrgCode'],
@@ -252,7 +252,7 @@ class RequestHead extends PureComponent {
               <FormItem label="备注说明" {...formItemRemarkLayout}>
                 {getFieldDecorator('remark', {
                   initialValue: get(headData, 'remark'),
-                })(<Input disabled={disabled} />)}
+                })(<Input disabled={globalDisabled} autoComplete="off" />)}
               </FormItem>
             </Col>
           </Row>

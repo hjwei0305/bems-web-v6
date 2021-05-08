@@ -57,10 +57,10 @@ class ExtAction extends PureComponent {
               icon={<Icon type="question-circle-o" />}
               placement="left"
               trigger="click"
-              title={<Tip topic="确定要退出创建吗？" description="未保存的数据将会丢失!" />}
+              title={<Tip topic="确定要返回吗？" description="未保存的数据将会丢失!" />}
               onConfirm={closeOrder}
             >
-              <Button disabled={disabled}>退出创建</Button>
+              <Button disabled={disabled}>返回</Button>
             </Popconfirm>
             <Button type="primary" disabled={disabled} loading={saving} onClick={e => saveOrder(e)}>
               保存
@@ -81,10 +81,10 @@ class ExtAction extends PureComponent {
               icon={<Icon type="question-circle-o" />}
               placement="left"
               trigger="click"
-              title={<Tip topic="确定要退出创建吗？" description="未保存的数据将会丢失!" />}
+              title={<Tip topic="确定要返回吗？" description="未保存的数据将会丢失!" />}
               onConfirm={closeOrder}
             >
-              <Button disabled={disabled}>退出编辑</Button>
+              <Button disabled={disabled}>返回</Button>
             </Popconfirm>
             <Button type="primary" disabled={disabled} loading={saving} onClick={e => saveOrder(e)}>
               保存

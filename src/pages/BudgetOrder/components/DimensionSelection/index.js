@@ -4,7 +4,7 @@ import { get } from 'lodash';
 import QueueAnim from 'rc-queue-anim';
 import PropTypes from 'prop-types';
 import { Button, Popconfirm, Tabs, Result, Empty } from 'antd';
-import { ExtIcon, Space } from 'suid';
+import { ExtIcon, Space, message } from 'suid';
 import empty from '@/assets/not_done.svg';
 import Tip from '../Tip';
 import Subject from '../Dimension/Subject';
@@ -14,7 +14,7 @@ import styles from './index.less';
 const { TabPane } = Tabs;
 
 class DimensionSelection extends PureComponent {
-  static dimensionData = {};
+  static dimensionData;
 
   static propTypes = {
     headData: PropTypes.object,
@@ -33,9 +33,7 @@ class DimensionSelection extends PureComponent {
     super(props);
     const { dimensions = [] } = props;
     this.dimensionData = {};
-    dimensions.forEach(d => {
-      this.dimensionData[d.code] = [];
-    });
+    this.initDimensionData(dimensions);
     this.state = {
       zIndex: -1,
     };
@@ -50,6 +48,12 @@ class DimensionSelection extends PureComponent {
     }
   }
 
+  initDimensionData = dimensions => {
+    dimensions.forEach(d => {
+      this.dimensionData[d.code] = [];
+    });
+  };
+
   handlerSelectChange = (key, items) => {
     this.dimensionData[key] = items;
     this.forceUpdate();
@@ -58,17 +62,32 @@ class DimensionSelection extends PureComponent {
   handlerTriggerBack = () => {
     const { onTriggerBack } = this.props;
     if (onTriggerBack && onTriggerBack instanceof Function) {
-      this.dimensionData = {};
       onTriggerBack();
+      this.dimensionData = {};
     }
   };
 
   handlerSave = () => {
-    const { save } = this.props;
+    const { save, dimensions } = this.props;
     if (save && save instanceof Function) {
-      save(this.dimensionData, () => {
-        this.dimensionData = {};
+      const check = { valid: true, dimension: null };
+      dimensions.forEach(d => {
+        if (
+          check.valid &&
+          (!this.dimensionData[d.code] || this.dimensionData[d.code].length === 0)
+        ) {
+          check.valid = false;
+          check.dimension = d;
+        }
       });
+      if (check.valid) {
+        save(this.dimensionData, () => {
+          this.dimensionData = {};
+        });
+      } else {
+        message.destroy();
+        message.warning(`维度 ${check.dimension ? check.dimension.name : ''} 不能为空`);
+      }
     }
   };
 
@@ -156,7 +175,13 @@ class DimensionSelection extends PureComponent {
                         返回
                       </Button>
                     </Popconfirm>
-                    <Button type="primary" size="small" loading={saving} onClick={this.handlerSave}>
+                    <Button
+                      type="primary"
+                      disabled={dimensions.length === 0}
+                      size="small"
+                      loading={saving}
+                      onClick={this.handlerSave}
+                    >
                       确定
                     </Button>
                   </Space>

@@ -10,6 +10,15 @@ import styles from './index.less';
 const { SERVER_PATH, REQUEST_ORDER_ACTION } = constants;
 const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTION[key]);
 const { Search } = Input;
+const subDimensionFields = [
+  { dimension: 'org', value: ['orgName'], title: '组织机构' },
+  { dimension: 'project', value: ['projectName'], title: '项目' },
+  { dimension: 'udf1', value: ['udf1Name'], title: '自定义1' },
+  { dimension: 'udf2', value: ['udf2Name'], title: '自定义2' },
+  { dimension: 'udf3', value: ['udf3Name'], title: '自定义3' },
+  { dimension: 'udf4', value: ['udf4Name'], title: '自定义4' },
+  { dimension: 'udf5', value: ['udf5Name'], title: '自定义5' },
+];
 
 class DetailItem extends PureComponent {
   static listCardRef;
@@ -85,22 +94,45 @@ class DetailItem extends PureComponent {
     return `${item.periodName} ${item.itemName}(${item.item})`;
   };
 
+  getDisplaySubDimensionFields = item => {
+    const fields = [];
+    subDimensionFields.forEach(f => {
+      if (get(item, f.dimension) !== 'none') {
+        fields.push(f);
+      }
+    });
+    return fields;
+  };
+
+  renderSubField = item => {
+    const subFields = this.getDisplaySubDimensionFields(item);
+    if (subFields.length > 0) {
+      return (
+        <Descriptions column={3} bordered={false}>
+          {subFields.map(f => {
+            let v = '';
+            if (f.value.length === 1) {
+              v = `${get(item, f.value[0])}`;
+            }
+            if (f.value.length === 2) {
+              v = `${get(item, f.value[0])}(${get(item, f.value[1])})`;
+            }
+            return <Descriptions.Item label={f.title}>{v}</Descriptions.Item>;
+          })}
+        </Descriptions>
+      );
+    }
+    return null;
+  };
+
   renderDescription = item => {
     const { saving, itemEditData } = this.props;
     const rowKey = get(item, 'id');
     const amount = itemEditData[rowKey] || get(item, 'amount');
+
     return (
       <>
-        <Descriptions column={3} bordered={false}>
-          <Descriptions.Item label="公司">{`${get(item, 'corporationName')}(${get(
-            item,
-            'corporationCode',
-          )})`}</Descriptions.Item>
-          <Descriptions.Item label="组织">{`${get(item, 'orgName')}(${get(
-            item,
-            'orgCode',
-          )})`}</Descriptions.Item>
-        </Descriptions>
+        {this.renderSubField(item)}
         <div className="money-box">
           <span className="field-item">
             <span className="label">预算池余额</span>
