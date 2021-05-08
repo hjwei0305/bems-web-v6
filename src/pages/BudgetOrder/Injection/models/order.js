@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-08 14:21:44
+ * @Last Modified time: 2021-05-08 14:37:59
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -27,6 +27,7 @@ export default modelExtend(model, {
     showDimensionSelection: false,
     dimensionsData: [],
     showProgressResult: false,
+    itemEditData: {},
   },
   effects: {
     *save({ payload, callback }, { call }) {

@@ -39,6 +39,8 @@ class RequestItem extends PureComponent {
     showProgressResult: PropTypes.bool,
     closeDimensionSelection: PropTypes.func,
     onItemCompleted: PropTypes.func,
+    itemEditData: PropTypes.object,
+    onSaveItemMoney: PropTypes.func,
   };
 
   constructor(props) {
@@ -91,6 +93,13 @@ class RequestItem extends PureComponent {
     const { closeDimensionSelection } = this.props;
     if (closeDimensionSelection && closeDimensionSelection instanceof Function) {
       closeDimensionSelection();
+    }
+  };
+
+  handlerSaveItemMoney = (orderId, amount) => {
+    const { onSaveItemMoney } = this.props;
+    if (onSaveItemMoney && onSaveItemMoney instanceof Function) {
+      onSaveItemMoney(orderId, amount);
     }
   };
 
@@ -199,6 +208,7 @@ class RequestItem extends PureComponent {
       headData,
       dimensionsData,
       saving,
+      itemEditData,
     } = this.props;
     const attachmentProps = {
       serviceHost: `${SERVER_PATH}/edm-service`,
@@ -215,6 +225,8 @@ class RequestItem extends PureComponent {
       headData,
       tempDisabled: showProgressResult || showDimensionSelection,
       onDetailItemRef: ref => (this.detailItemRef = ref),
+      itemEditData,
+      onSaveItemMoney: this.handlerSaveItemMoney,
     };
     return (
       <div className={cls(styles['item-box'])}>

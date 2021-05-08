@@ -14,8 +14,6 @@ const { Search } = Input;
 class DetailItem extends PureComponent {
   static listCardRef;
 
-  static itemEditData = {};
-
   static propTypes = {
     onDetailItemRef: PropTypes.func,
     action: PropTypes.oneOf(ACTIONS).isRequired,
@@ -23,22 +21,14 @@ class DetailItem extends PureComponent {
     onSaveItemMoney: PropTypes.func,
     saving: PropTypes.bool,
     tempDisabled: PropTypes.bool,
+    itemEditData: PropTypes.object,
   };
-
-  constructor(props) {
-    super(props);
-    this.itemEditData = {};
-  }
 
   componentDidMount() {
     const { onDetailItemRef } = this.props;
     if (onDetailItemRef) {
       onDetailItemRef(this);
     }
-  }
-
-  componentWillUnmount() {
-    this.itemEditData = {};
   }
 
   reloadData = () => {
@@ -48,9 +38,10 @@ class DetailItem extends PureComponent {
   };
 
   handlerSaveMoney = (rowKey, amount) => {
-    this.itemEditData[rowKey] = amount;
-    this.forceUpdate();
-    console.log(this.itemEditData);
+    const { onSaveItemMoney } = this.props;
+    if (onSaveItemMoney && onSaveItemMoney instanceof Function) {
+      onSaveItemMoney(rowKey, amount);
+    }
   };
 
   handlerSearchChange = v => {
@@ -95,9 +86,9 @@ class DetailItem extends PureComponent {
   };
 
   renderDescription = item => {
-    const { saving } = this.props;
+    const { saving, itemEditData } = this.props;
     const rowKey = get(item, 'id');
-    const amount = this.itemEditData[rowKey] || get(item, 'amount');
+    const amount = itemEditData[rowKey] || get(item, 'amount');
     return (
       <>
         <Descriptions column={3} bordered={false}>

@@ -48,6 +48,7 @@ class RequestOrder extends Component {
         showDimensionSelection: false,
         dimensionsData: [],
         showProgressResult: false,
+        itemEditData: {},
       },
     });
   }
@@ -238,9 +239,30 @@ class RequestOrder extends Component {
     }
   };
 
+  handlerSaveItemMoney = (orderId, amount) => {
+    const {
+      dispatch,
+      injectionOrder: { itemEditData: originItemEditData },
+    } = this.props;
+    const itemEditData = { ...originItemEditData };
+    Object.assign(itemEditData, { [orderId]: amount });
+    dispatch({
+      type: 'injectionOrder/updateState',
+      payload: {
+        itemEditData,
+      },
+    });
+  };
+
   render() {
     const { action, title, loading, injectionOrder } = this.props;
-    const { headData, dimensionsData, showDimensionSelection, showProgressResult } = injectionOrder;
+    const {
+      headData,
+      dimensionsData,
+      showDimensionSelection,
+      showProgressResult,
+      itemEditData,
+    } = injectionOrder;
     const bannerProps = {
       headData,
       title,
@@ -264,6 +286,7 @@ class RequestOrder extends Component {
     const requestItemProps = {
       action,
       headData,
+      itemEditData,
       checkDimensionForSelect: this.checkDimensionForSelect,
       dimensionselectChecking: loading.effects['injectionOrder/checkDimensionForSelect'],
       clearItem: this.clearItem,
@@ -276,6 +299,7 @@ class RequestOrder extends Component {
       closeDimensionSelection: this.closeDimensionSelection,
       save: this.handlerSaveItem,
       saving: loading.effects['injectionOrder/addOrderDetails'],
+      onSaveItemMoney: this.handlerSaveItemMoney,
     };
     const headLoading = loading.effects['injectionOrder/getHead'];
     return (
