@@ -8,15 +8,23 @@
     .ant-list-item {
       cursor: default !important;
     }
+    .suid-money {
+      font-size: 16px;
+    }
     .field-item {
-      display: inline-flex;
-      align-items: center;
-      margin-right: 96px;
       .label {
         color: fade(@black, 65%);
         &::after {
           margin: 0 4px;
           content: ':';
+        }
+      }
+    }
+    .inject-money {
+      .field-item {
+        .label {
+          width: 82px;
+          text-align: right;
         }
       }
     }

@@ -134,13 +134,14 @@ class DetailItem extends PureComponent {
       <>
         {this.renderSubField(item)}
         <div className="money-box">
-          <span className="field-item">
+          <div className="field-item">
             <span className="label">预算池余额</span>
             <span>
               <Money value={get(item, 'poolAmount')} />
             </span>
-          </span>
+          </div>
           <BudgetMoney
+            className="inject-money"
             amount={amount}
             title="下达金额"
             onSave={money => this.handlerSaveMoney(rowKey, money)}
@@ -158,6 +159,7 @@ class DetailItem extends PureComponent {
       simplePagination: false,
       showArrow: false,
       showSearch: false,
+      checkbox: true,
       className: styles['detail-item-box'],
       onListCardRef: ref => (this.listCardRef = ref),
       customTool: this.renderCustomTool,
