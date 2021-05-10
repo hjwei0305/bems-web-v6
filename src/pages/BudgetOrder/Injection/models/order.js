@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-10 15:25:41
+ * @Last Modified time: 2021-05-10 16:13:33
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -31,7 +31,7 @@ export default modelExtend(model, {
     itemEditData: {},
   },
   effects: {
-    *save({ payload, callback }, { call, select }) {
+    *save({ payload, callback }, { call, select, put }) {
       const { itemEditData } = yield select(sel => sel.injectionOrder);
       const orderDetails = [];
       Object.keys(itemEditData).forEach(id => {
@@ -43,6 +43,12 @@ export default modelExtend(model, {
       const re = yield call(save, { ...payload, orderDetails });
       message.destroy();
       if (re.success) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            headData: re.data,
+          },
+        });
         message.success(formatMessage({ id: 'global.save-success', defaultMessage: '保存成功' }));
       } else {
         message.error(re.message);
