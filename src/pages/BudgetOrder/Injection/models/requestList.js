@@ -17,7 +17,7 @@ export default modelExtend(model, {
     viewTypeData,
     currentViewType: defaultViewType,
     showCreate: false,
-    showEdit: false,
+    showUpdate: false,
     showView: false,
     showFilter: false,
     filterData: {},

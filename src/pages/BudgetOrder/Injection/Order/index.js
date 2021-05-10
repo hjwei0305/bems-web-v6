@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
-import { get } from 'lodash';
+import { get, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Layout, Modal } from 'antd';
 import { ListLoader, message } from 'suid';
@@ -36,6 +36,14 @@ class RequestOrder extends Component {
       onOrderRef(this);
     }
     this.needRefreshList = false;
+    this.getRequestHead();
+  }
+
+  componentDidUpdate(preProps) {
+    const { requestId } = this.props;
+    if (!isEqual(preProps.requestId, requestId)) {
+      this.getRequestHead();
+    }
   }
 
   componentWillUnmount() {
@@ -70,7 +78,7 @@ class RequestOrder extends Component {
       dispatch({
         type: 'injectionOrder/getHead',
         payload: {
-          headId: requestId,
+          id: requestId,
         },
         callback: res => {
           if (res.success === false) {
@@ -226,6 +234,19 @@ class RequestOrder extends Component {
     }
   };
 
+  removeOrderItems = (data, successCallBack) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'injectionOrder/removeOrderItems',
+      payload: data,
+      successCallback: () => {
+        if (successCallBack && successCallBack instanceof Function) {
+          successCallBack();
+        }
+      },
+    });
+  };
+
   handlerItemCompleted = callBack => {
     const { dispatch } = this.props;
     dispatch({
@@ -300,6 +321,8 @@ class RequestOrder extends Component {
       save: this.handlerSaveItem,
       saving: loading.effects['injectionOrder/addOrderDetails'],
       onSaveItemMoney: this.handlerSaveItemMoney,
+      removeOrderItems: this.removeOrderItems,
+      removing: loading.effects['injectionOrder/removeOrderItems'],
     };
     const headLoading = loading.effects['injectionOrder/getHead'];
     return (

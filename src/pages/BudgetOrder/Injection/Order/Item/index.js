@@ -41,6 +41,8 @@ class RequestItem extends PureComponent {
     onItemCompleted: PropTypes.func,
     itemEditData: PropTypes.object,
     onSaveItemMoney: PropTypes.func,
+    removeOrderItems: PropTypes.func,
+    removing: PropTypes.bool,
   };
 
   constructor(props) {
@@ -209,6 +211,8 @@ class RequestItem extends PureComponent {
       dimensionsData,
       saving,
       itemEditData,
+      removeOrderItems,
+      removing,
     } = this.props;
     const attachmentProps = {
       serviceHost: `${SERVER_PATH}/edm-service`,
@@ -227,6 +231,8 @@ class RequestItem extends PureComponent {
       onDetailItemRef: ref => (this.detailItemRef = ref),
       itemEditData,
       onSaveItemMoney: this.handlerSaveItemMoney,
+      onRemoveItem: removeOrderItems,
+      removing,
     };
     return (
       <div className={cls(styles['item-box'])}>

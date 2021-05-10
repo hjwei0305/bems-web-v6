@@ -16,17 +16,20 @@ const Period = ({ subjectId, periodType, onSelectChange }) => {
     }
   }, []);
 
-  const handerSelectChange = useCallback((_keys, items) => {
-    if (onSelectChange && onSelectChange instanceof Function) {
-      const data = items.map(it => {
-        return {
-          text: it.name,
-          value: it.id,
-        };
-      });
-      onSelectChange(data);
-    }
-  }, []);
+  const handerSelectChange = useCallback(
+    (_keys, items) => {
+      if (onSelectChange && onSelectChange instanceof Function) {
+        const data = items.map(it => {
+          return {
+            text: it.name,
+            value: it.id,
+          };
+        });
+        onSelectChange(data);
+      }
+    },
+    [onSelectChange],
+  );
 
   const tableProps = useMemo(() => {
     const columns = [
@@ -74,7 +77,7 @@ const Period = ({ subjectId, periodType, onSelectChange }) => {
         type: periodType,
       },
     };
-  }, [subjectId, periodType]);
+  }, [subjectId, periodType, handerSelectChange, reloadData]);
 
   return (
     <div className={styles['container-box']}>

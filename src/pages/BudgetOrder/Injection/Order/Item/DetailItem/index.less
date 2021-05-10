@@ -2,6 +2,29 @@
 
 .detail-item-box {
   :global {
+    .suid-list-card-tool-box {
+      position: relative;
+      overflow: hidden;
+      .ant-drawer-top.ant-drawer-open .ant-drawer-content-wrapper {
+        box-shadow: none;
+      }
+      .ant-drawer-body {
+        display: flex;
+        align-items: center;
+        height: 44px;
+        padding: 0 24px;
+        line-height: 44px;
+        background-color: @white;
+        button {
+          margin-right: 8px;
+        }
+        .select {
+          display: inline-block;
+          min-width: 120px;
+          color: fade(@black, 65%);
+        }
+      }
+    }
     .ant-list-item-meta-title {
       color: fade(@black, 85%);
     }

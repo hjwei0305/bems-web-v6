@@ -13,7 +13,8 @@ import RequestViewState from '../components/RequestViewState';
 import styles from './index.less';
 
 const CreateRequestOrder = React.lazy(() => import('./Request/CreateOrder'));
-
+const UpdateRequestOrder = React.lazy(() => import('./Request/UpdateOrder'));
+const ViewRequestOrder = React.lazy(() => import('./Request/ViewOrder'));
 const { SERVER_PATH, INJECTION_REQUEST_BTN_KEY, REQUEST_VIEW_STATUS } = constants;
 
 @connect(({ injectionRequestList, loading }) => ({ injectionRequestList, loading }))
@@ -29,7 +30,7 @@ class InjectionRequestList extends Component {
       payload: {
         recordItem: null,
         showCreate: false,
-        showEdit: false,
+        showUpdate: false,
         showView: false,
         showFilter: false,
         filterData: {},
@@ -172,7 +173,7 @@ class InjectionRequestList extends Component {
       type: 'injectionRequestList/updateState',
       payload: {
         showCreate: false,
-        showEdit: false,
+        showUpdate: false,
         showView: false,
       },
     });
@@ -343,7 +344,14 @@ class InjectionRequestList extends Component {
 
   render() {
     const { injectionRequestList } = this.props;
-    const { showFilter, filterData, showCreate } = injectionRequestList;
+    const {
+      showFilter,
+      filterData,
+      showCreate,
+      showUpdate,
+      showView,
+      recordItem,
+    } = injectionRequestList;
     const filterProps = {
       showFilter,
       filterData,
@@ -356,6 +364,20 @@ class InjectionRequestList extends Component {
         <Filter {...filterProps} />
         <Suspense fallback={<PageLoader />}>
           <CreateRequestOrder showCreate={showCreate} onCloseModal={this.handlerCancel} />
+        </Suspense>
+        <Suspense fallback={<PageLoader />}>
+          <UpdateRequestOrder
+            requestId={get(recordItem, 'id', null)}
+            showUpdate={showUpdate}
+            onCloseModal={this.handlerCancel}
+          />
+        </Suspense>
+        <Suspense fallback={<PageLoader />}>
+          <ViewRequestOrder
+            requestId={get(recordItem, 'id', null)}
+            showView={showView}
+            onCloseModal={this.handlerCancel}
+          />
         </Suspense>
       </div>
     );

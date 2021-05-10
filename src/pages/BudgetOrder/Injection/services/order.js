@@ -5,7 +5,7 @@ const { request } = utils;
 
 const { SERVER_PATH } = constants;
 
-/** 保存 */
+/** 保存单据 */
 export async function save(data) {
   const url = `${SERVER_PATH}/bems-v6/order/saveOrder`;
   return request({
@@ -15,12 +15,13 @@ export async function save(data) {
   });
 }
 
-/** 删除 */
-export async function del(params) {
-  const url = `${SERVER_PATH}/bems-v6/order/delete/${params.id}`;
+/** 删除行 */
+export async function removeOrderItems(data) {
+  const url = `${SERVER_PATH}/bems-v6/order/removeOrderItems`;
   return request({
     url,
     method: 'DELETE',
+    data,
   });
 }
 
@@ -71,5 +72,17 @@ export async function addOrderDetails(data) {
     url,
     method: 'POST',
     data,
+  });
+}
+
+/**
+ * 获取单据抬头
+ * @id
+ */
+export async function getHead(params) {
+  const url = `${SERVER_PATH}/bems-v6/order/findOne`;
+  return request({
+    url,
+    params,
   });
 }

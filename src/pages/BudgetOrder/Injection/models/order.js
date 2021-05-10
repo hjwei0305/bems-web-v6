@@ -2,18 +2,19 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-08 15:01:44
+ * @Last Modified time: 2021-05-10 15:25:41
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
 import { get } from 'lodash-es';
 import {
   save,
-  del,
+  removeOrderItems,
   checkDimension,
   getDimension,
   clearOrderItems,
   addOrderDetails,
+  getHead,
 } from '../services/order';
 
 const { dvaModel } = utils;
@@ -50,6 +51,24 @@ export default modelExtend(model, {
         callback(re);
       }
     },
+    *getHead({ payload, callback }, { call, put }) {
+      const res = yield call(getHead, payload);
+      if (res.success) {
+        const headData = res.data;
+        yield put({
+          type: 'updateState',
+          payload: {
+            headData,
+          },
+        });
+      } else {
+        message.destroy();
+        message.error(res.message);
+      }
+      if (callback && callback instanceof Function) {
+        callback(res);
+      }
+    },
     *addOrderDetails({ payload, successCallback }, { call, put, select }) {
       const { headData: originHeadData } = yield select(sel => sel.injectionOrder);
       const re = yield call(addOrderDetails, payload);
@@ -74,16 +93,16 @@ export default modelExtend(model, {
         message.error(re.message);
       }
     },
-    *del({ payload, callback }, { call }) {
-      const re = yield call(del, payload);
+    *removeOrderItems({ payload, successCallback }, { call }) {
+      const re = yield call(removeOrderItems, payload);
       message.destroy();
       if (re.success) {
+        if (successCallback && successCallback instanceof Function) {
+          successCallback(re);
+        }
         message.success(formatMessage({ id: 'global.delete-success', defaultMessage: '删除成功' }));
       } else {
         message.error(re.message);
-      }
-      if (callback && callback instanceof Function) {
-        callback(re);
       }
     },
     *clearOrderItems({ successCallback }, { call, select }) {

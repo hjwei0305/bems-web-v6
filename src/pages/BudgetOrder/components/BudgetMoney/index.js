@@ -53,7 +53,7 @@ const BudgetMoney = ({ title, amount, onSave, saving, allowEdit = true, style, c
     if (money < 0) {
       return 'red';
     }
-  }, [amount]);
+  }, [money]);
   return (
     <div className={cls(styles['money-box'], className)} style={style}>
       <span className="field-item">

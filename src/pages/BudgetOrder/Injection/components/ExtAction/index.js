@@ -15,7 +15,7 @@ const { Item } = Menu;
 
 const menuData = () => [
   {
-    title: '查看详情',
+    title: '查看',
     key: INJECTION_REQUEST_BTN_KEY.VIEW,
     disabled: true,
   },
@@ -67,31 +67,29 @@ class ExtAction extends PureComponent {
     if (!isEqual(prevProps.currentViewType, currentViewType)) {
       this.initActionMenus();
     }
-    if (
-      !isEqual((prevProps.recordItem || {}).requestViewStatus, (recordItem || {}).requestViewStatus)
-    ) {
+    if (!isEqual((prevProps.recordItem || {}).status, (recordItem || {}).status)) {
       this.initActionMenus();
     }
   }
 
   initActionMenus = () => {
     const { recordItem } = this.props;
-    const requestViewStatus = get(recordItem, 'requestViewStatus');
+    const status = get(recordItem, 'status');
     const menus = menuData().filter(action => {
       if (authAction(action)) {
         return action;
       }
       return false;
     });
-    switch (requestViewStatus) {
-      case REQUEST_VIEW_STATUS.DRAFT.name:
+    switch (status) {
+      case REQUEST_VIEW_STATUS.DRAFT.key:
         menus.forEach(m => {
           if (m.key !== INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY) {
             Object.assign(m, { disabled: false });
           }
         });
         break;
-      case REQUEST_VIEW_STATUS.PROCESSING.name:
+      case REQUEST_VIEW_STATUS.PROCESSING.key:
         menus.forEach(m => {
           if (
             m.key === INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY ||
@@ -101,7 +99,7 @@ class ExtAction extends PureComponent {
           }
         });
         break;
-      case REQUEST_VIEW_STATUS.COMPLETED.name:
+      case REQUEST_VIEW_STATUS.COMPLETED.key:
         menus.forEach(m => {
           if (
             m.key === INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY ||
