@@ -1,14 +1,18 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { Descriptions, Input, Tag, Drawer, Button, Popconfirm } from 'antd';
-import { ListCard, Money } from 'suid';
+import { Descriptions, Input, Button, Popconfirm, Checkbox, Alert } from 'antd';
+import { ListCard, Money, Space } from 'suid';
+import { FilterView } from '@/components';
 import { constants } from '@/utils';
 import BudgetMoney from '../../../../components/BudgetMoney';
 import styles from './index.less';
 
-const { SERVER_PATH, REQUEST_ORDER_ACTION } = constants;
+const { SERVER_PATH, REQUEST_ORDER_ACTION, REQUEST_ITEM_STATUS } = constants;
 const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTION[key]);
+const REQUEST_ITEM_STATUS_DATA = Object.keys(REQUEST_ITEM_STATUS).map(
+  key => REQUEST_ITEM_STATUS[key],
+);
 const { Search } = Input;
 const subDimensionFields = [
   { dimension: 'org', value: ['orgName'], title: '组织机构' },
@@ -23,23 +27,27 @@ const subDimensionFields = [
 class DetailItem extends PureComponent {
   static listCardRef;
 
+  static pagingData;
+
   static propTypes = {
     onDetailItemRef: PropTypes.func,
     action: PropTypes.oneOf(ACTIONS).isRequired,
     headData: PropTypes.object,
     onSaveItemMoney: PropTypes.func,
-    saving: PropTypes.bool,
+    itemMoneySaving: PropTypes.bool,
     tempDisabled: PropTypes.bool,
-    itemEditData: PropTypes.object,
     onRemoveItem: PropTypes.func,
     removing: PropTypes.bool,
   };
 
   constructor(props) {
     super(props);
+    const [itemStatus] = REQUEST_ITEM_STATUS_DATA;
+    this.pagingData = {};
     this.state = {
       selectedKeys: [],
       globalDisabled: false,
+      itemStatus,
     };
   }
 
@@ -49,6 +57,10 @@ class DetailItem extends PureComponent {
       onDetailItemRef(this);
     }
     this.initGlobalAction();
+  }
+
+  componentWillUnmount() {
+    this.pagingData = {};
   }
 
   initGlobalAction = () => {
@@ -71,10 +83,21 @@ class DetailItem extends PureComponent {
     }
   };
 
-  handlerSaveMoney = (rowKey, amount) => {
+  handlerSaveMoney = (rowItem, amount, callBack) => {
     const { onSaveItemMoney } = this.props;
     if (onSaveItemMoney && onSaveItemMoney instanceof Function) {
-      onSaveItemMoney(rowKey, amount);
+      const rowKey = get(rowItem, 'id');
+      const originAmount = get(this.pagingData[rowKey], 'amount');
+      if (originAmount !== amount) {
+        onSaveItemMoney(rowItem, amount, res => {
+          callBack();
+          if (res.success) {
+            this.pagingData[rowKey] = { ...res.data };
+          }
+        });
+      } else {
+        callBack();
+      }
     }
   };
 
@@ -110,47 +133,79 @@ class DetailItem extends PureComponent {
     this.setState({ selectedKeys });
   };
 
-  renderCustomTool = () => {
-    const { removing } = this.props;
-    const { selectedKeys, globalDisabled } = this.state;
-    const hasSelected = selectedKeys.length > 0;
-    if (hasSelected && !globalDisabled) {
-      return (
-        <Drawer
-          placement="top"
-          closable={false}
-          mask={false}
-          height={44}
-          getContainer={false}
-          style={{ position: 'absolute' }}
-          visible
-        >
-          <Button onClick={this.onCancelBatchRemove} disabled={removing}>
-            取消
-          </Button>
-          <Popconfirm
-            disabled={removing}
-            title="确定要删除吗？提示：删除后不能恢复"
-            onConfirm={this.handlerRemoveItem}
-          >
-            <Button type="danger" loading={removing}>
-              {`删除(${selectedKeys.length})`}
-            </Button>
-          </Popconfirm>
-        </Drawer>
-      );
+  handlerItemStatusChange = itemStatus => {
+    this.setState({ itemStatus });
+  };
+
+  handlerSelectAll = e => {
+    if (e.target.checked) {
+      this.setState({ selectedKeys: Object.keys(this.pagingData) });
+    } else {
+      this.setState({ selectedKeys: [] });
     }
+  };
+
+  renderCustomTool = ({ total }) => {
+    const { removing } = this.props;
+    const { selectedKeys, globalDisabled, itemStatus } = this.state;
+    const hasSelected = selectedKeys.length > 0;
+    const currentViewType = { ...itemStatus, title: `${get(itemStatus, 'title')}(${total}项)` };
+    const pagingKeys = Object.keys(this.pagingData);
+    const indeterminate = selectedKeys.length > 0 && selectedKeys.length < pagingKeys.length;
+    const checked = selectedKeys.length > 0 && selectedKeys.length === pagingKeys.length;
     return (
       <>
-        <span />
-        <Search
-          allowClear
-          placeholder="输入下达金额、维度关键字"
-          onChange={e => this.handlerSearchChange(e.target.value)}
-          onSearch={this.handlerSearch}
-          onPressEnter={this.handlerPressEnter}
-          style={{ width: 260 }}
-        />
+        <div>
+          <Space>
+            {!globalDisabled ? (
+              <Checkbox
+                checked={checked}
+                indeterminate={indeterminate}
+                onChange={this.handlerSelectAll}
+              >
+                全选
+              </Checkbox>
+            ) : null}
+            {hasSelected && !globalDisabled ? (
+              <>
+                <Button onClick={this.onCancelBatchRemove} disabled={removing}>
+                  取消
+                </Button>
+                <Popconfirm
+                  disabled={removing}
+                  title="确定要删除吗？提示：删除后不能恢复"
+                  onConfirm={this.handlerRemoveItem}
+                >
+                  <Button type="danger" loading={removing}>
+                    {`删除(${selectedKeys.length})`}
+                  </Button>
+                </Popconfirm>
+              </>
+            ) : null}
+          </Space>
+        </div>
+        <Space>
+          <FilterView
+            iconType={null}
+            title="明细状态"
+            showColor
+            currentViewType={currentViewType}
+            viewTypeData={REQUEST_ITEM_STATUS_DATA}
+            onAction={this.handlerItemStatusChange}
+            reader={{
+              title: 'title',
+              value: 'key',
+            }}
+          />
+          <Search
+            allowClear
+            placeholder="输入下达金额、维度关键字"
+            onChange={e => this.handlerSearchChange(e.target.value)}
+            onSearch={this.handlerSearch}
+            onPressEnter={this.handlerPressEnter}
+            style={{ width: 260 }}
+          />
+        </Space>
       </>
     );
   };
@@ -161,9 +216,10 @@ class DetailItem extends PureComponent {
       return (
         <>
           {`${item.periodName} ${item.itemName}`}
-          <Tag color="blue" style={{ marginRight: 0, marginLeft: 8 }}>
-            {poolCode}
-          </Tag>
+          <span className="pool-box">
+            <span className="title">池号</span>
+            <span className="no">{poolCode}</span>
+          </span>
         </>
       );
     }
@@ -178,6 +234,18 @@ class DetailItem extends PureComponent {
       }
     });
     return fields;
+  };
+
+  getFilters = () => {
+    const { itemStatus } = this.state;
+    const filters = [];
+    if (itemStatus.key === REQUEST_ITEM_STATUS.NORMAL.key) {
+      filters.push({ fieldName: 'hasErr', operator: 'EQ', value: false });
+    }
+    if (itemStatus.key === REQUEST_ITEM_STATUS.ERROR.key) {
+      filters.push({ fieldName: 'hasErr', operator: 'EQ', value: true });
+    }
+    return { filters };
   };
 
   renderSubField = item => {
@@ -203,16 +271,16 @@ class DetailItem extends PureComponent {
 
   renderDescription = item => {
     const { globalDisabled } = this.state;
-    const { saving, itemEditData } = this.props;
+    const { itemMoneySaving } = this.props;
     const rowKey = get(item, 'id');
-    const amount = itemEditData[rowKey] || get(item, 'amount');
-
+    const amount = get(this.pagingData[rowKey], 'amount') || get(item, 'amount');
+    const errMsg = get(this.pagingData[rowKey], 'errMsg') || '';
     return (
       <>
         {this.renderSubField(item)}
         <div className="money-box">
           <div className="field-item">
-            <span className="label">预算池余额</span>
+            <span className="label">预算余额</span>
             <span>
               <Money value={get(item, 'poolAmount')} />
             </span>
@@ -221,10 +289,12 @@ class DetailItem extends PureComponent {
             className="inject-money"
             amount={amount}
             title="下达金额"
+            rowItem={item}
+            loading={itemMoneySaving}
             allowEdit={!globalDisabled}
-            onSave={money => this.handlerSaveMoney(rowKey, money)}
-            saving={saving}
+            onSave={this.handlerSaveMoney}
           />
+          {errMsg ? <Alert type="error" message={errMsg} banner /> : null}
         </div>
       </>
     );
@@ -239,6 +309,14 @@ class DetailItem extends PureComponent {
       showArrow: false,
       showSearch: false,
       checkbox: !globalDisabled,
+      rowCheck: false,
+      pagination: {
+        pageSize: 50,
+        pageSizeOptions: ['50', '100', '200', '500'],
+      },
+      checkboxProps: () => {
+        return { tabIndex: -1 };
+      },
       selectedKeys,
       className: styles['detail-item-box'],
       onListCardRef: ref => (this.listCardRef = ref),
@@ -262,11 +340,21 @@ class DetailItem extends PureComponent {
       onSelectChange: this.handerSelectChange,
     };
     if (orderId && tempDisabled === false) {
+      const filters = this.getFilters();
       Object.assign(listProps, {
         remotePaging: true,
         store: {
           type: 'POST',
           url: `${SERVER_PATH}/bems-v6/order/getOrderItems/${orderId}`,
+          loaded: res => {
+            const data = get(res, 'data.rows') || [];
+            data.forEach(d => {
+              this.pagingData[d.id] = d;
+            });
+          },
+        },
+        cascadeParams: {
+          ...filters,
         },
       });
     }

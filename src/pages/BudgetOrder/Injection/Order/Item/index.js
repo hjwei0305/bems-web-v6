@@ -39,8 +39,8 @@ class RequestItem extends PureComponent {
     showProgressResult: PropTypes.bool,
     closeDimensionSelection: PropTypes.func,
     onItemCompleted: PropTypes.func,
-    itemEditData: PropTypes.object,
     onSaveItemMoney: PropTypes.func,
+    itemMoneySaving: PropTypes.bool,
     removeOrderItems: PropTypes.func,
     removing: PropTypes.bool,
   };
@@ -98,10 +98,10 @@ class RequestItem extends PureComponent {
     }
   };
 
-  handlerSaveItemMoney = (orderId, amount) => {
+  handlerSaveItemMoney = (rowItem, amount, callBack) => {
     const { onSaveItemMoney } = this.props;
     if (onSaveItemMoney && onSaveItemMoney instanceof Function) {
-      onSaveItemMoney(orderId, amount);
+      onSaveItemMoney(rowItem, amount, callBack);
     }
   };
 
@@ -210,7 +210,7 @@ class RequestItem extends PureComponent {
       headData,
       dimensionsData,
       saving,
-      itemEditData,
+      itemMoneySaving,
       removeOrderItems,
       removing,
     } = this.props;
@@ -229,7 +229,7 @@ class RequestItem extends PureComponent {
       headData,
       tempDisabled: showProgressResult || showDimensionSelection,
       onDetailItemRef: ref => (this.detailItemRef = ref),
-      itemEditData,
+      itemMoneySaving,
       onSaveItemMoney: this.handlerSaveItemMoney,
       onRemoveItem: removeOrderItems,
       removing,

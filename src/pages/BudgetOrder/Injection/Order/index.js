@@ -56,7 +56,6 @@ class RequestOrder extends Component {
         showDimensionSelection: false,
         dimensionsData: [],
         showProgressResult: false,
-        itemEditData: {},
       },
     });
   }
@@ -260,30 +259,24 @@ class RequestOrder extends Component {
     }
   };
 
-  handlerSaveItemMoney = (orderId, amount) => {
-    const {
-      dispatch,
-      injectionOrder: { itemEditData: originItemEditData },
-    } = this.props;
-    const itemEditData = { ...originItemEditData };
-    Object.assign(itemEditData, { [orderId]: amount });
+  handlerSaveItemMoney = (rowItem, amount, callBack) => {
+    const { dispatch } = this.props;
     dispatch({
-      type: 'injectionOrder/updateState',
+      type: 'injectionOrder/saveItemMoney',
       payload: {
-        itemEditData,
+        rowItem: { ...rowItem, amount },
+      },
+      callback: res => {
+        if (callBack && callBack instanceof Function) {
+          callBack(res);
+        }
       },
     });
   };
 
   render() {
     const { action, title, loading, injectionOrder } = this.props;
-    const {
-      headData,
-      dimensionsData,
-      showDimensionSelection,
-      showProgressResult,
-      itemEditData,
-    } = injectionOrder;
+    const { headData, dimensionsData, showDimensionSelection, showProgressResult } = injectionOrder;
     const bannerProps = {
       headData,
       title,
@@ -307,7 +300,6 @@ class RequestOrder extends Component {
     const requestItemProps = {
       action,
       headData,
-      itemEditData,
       checkDimensionForSelect: this.checkDimensionForSelect,
       dimensionselectChecking: loading.effects['injectionOrder/checkDimensionForSelect'],
       clearItem: this.clearItem,
@@ -321,6 +313,7 @@ class RequestOrder extends Component {
       save: this.handlerSaveItem,
       saving: loading.effects['injectionOrder/addOrderDetails'],
       onSaveItemMoney: this.handlerSaveItemMoney,
+      itemMoneySaving: loading.effects['injectionOrder/saveItemMoney'],
       removeOrderItems: this.removeOrderItems,
       removing: loading.effects['injectionOrder/removeOrderItems'],
     };

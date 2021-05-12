@@ -1,51 +1,54 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useCallback } from 'react';
 import cls from 'classnames';
-import { Money, MoneyInput, ExtIcon, Space } from 'suid';
+import { get } from 'lodash';
+import { Money, MoneyInput, Space, ExtIcon } from 'suid';
 import styles from './index.less';
 
-const BudgetMoney = ({ title, amount, onSave, saving, allowEdit = true, style, className }) => {
+const BudgetMoney = ({
+  title,
+  amount,
+  onSave,
+  allowEdit = true,
+  rowItem,
+  style,
+  className,
+  loading,
+}) => {
   let money = amount;
+
+  const inputRef = useRef();
+
+  const [rowKey, setRowKey] = useState('');
 
   const [edit, setEdit] = useState(false);
 
-  const handlerCancel = () => {
-    setEdit(false);
-  };
-
-  const handlerEdit = () => {
-    setEdit(true);
-  };
+  const handlerEdit = useCallback(() => {
+    if (allowEdit) {
+      setRowKey(get(rowItem, 'id'));
+      setEdit(true);
+      setTimeout(() => {
+        if (inputRef) {
+          inputRef.current.handlerFocus();
+        }
+      }, 10);
+    }
+  }, [allowEdit, rowItem]);
 
   const parser = value => {
     const reg = new RegExp(',', 'g');
     return `${value}`.replace(reg, '') || 0;
   };
 
-  const handlerBlur = e => {
+  const handlerBlurAutoSave = e => {
     money = Number(parser(e.target.value));
-  };
-
-  const handlerSave = () => {
     if (onSave && onSave instanceof Function) {
-      onSave(money);
+      onSave(rowItem, money, () => {
+        setRowKey('');
+      });
       setEdit(false);
     }
   };
 
-  const renderSaveBtn = () => {
-    if (saving) {
-      return <ExtIcon style={{ marginLeft: 8 }} className="btn" type="loading" antd />;
-    }
-    return (
-      <ExtIcon
-        style={{ marginLeft: 8 }}
-        className="btn save"
-        onClick={handlerSave}
-        type="check"
-        antd
-      />
-    );
-  };
   const getClassName = useMemo(() => {
     if (money > 0) {
       return 'blue';
@@ -54,20 +57,38 @@ const BudgetMoney = ({ title, amount, onSave, saving, allowEdit = true, style, c
       return 'red';
     }
   }, [money]);
+
+  const renderMoney = useMemo(() => {
+    if (loading && rowKey === get(rowItem, 'id')) {
+      return (
+        <div className="allow-edit">
+          <ExtIcon type="loading" antd spin />
+        </div>
+      );
+    }
+    return (
+      <div onClick={handlerEdit} className={allowEdit ? 'allow-edit' : 'only-read'}>
+        <Money value={money} className={getClassName} />
+      </div>
+    );
+  }, [money, rowItem, loading, rowKey, allowEdit, getClassName, handlerEdit]);
+
   return (
     <div className={cls(styles['money-box'], className)} style={style}>
       <span className="field-item">
         <span className="label">{title}</span>
         {edit ? (
           <Space size={0} onClick={e => e.stopPropagation()}>
-            <MoneyInput textAlign="left" value={money} onBlur={handlerBlur} />
-            {renderSaveBtn()}
-            <ExtIcon className="btn cancel" onClick={handlerCancel} type="close" antd />
+            <MoneyInput
+              ref={inputRef}
+              textAlign="left"
+              value={money}
+              onBlur={handlerBlurAutoSave}
+            />
           </Space>
         ) : (
           <Space size={2} onClick={e => e.stopPropagation()}>
-            <Money value={money} className={getClassName} />
-            {allowEdit ? <ExtIcon className="btn" onClick={handlerEdit} type="edit" antd /> : null}
+            {renderMoney}
           </Space>
         )}
       </span>

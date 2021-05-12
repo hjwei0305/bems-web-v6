@@ -15,6 +15,20 @@ export async function save(data) {
   });
 }
 
+/** 保存行金额
+ * @detailId
+ * @amount
+ */
+export async function saveItemMoney(params) {
+  const url = `${SERVER_PATH}/bems-v6/order/updateDetailAmount`;
+  return request({
+    url,
+    method: 'POST',
+    params,
+    data: {},
+  });
+}
+
 /** 删除行 */
 export async function removeOrderItems(data) {
   const url = `${SERVER_PATH}/bems-v6/order/removeOrderItems`;

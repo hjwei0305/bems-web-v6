@@ -2,11 +2,11 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-10 16:13:33
+ * @Last Modified time: 2021-05-11 17:15:50
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
-import { get } from 'lodash-es';
+import { get } from 'lodash';
 import {
   save,
   removeOrderItems,
@@ -15,6 +15,7 @@ import {
   clearOrderItems,
   addOrderDetails,
   getHead,
+  saveItemMoney,
 } from '../services/order';
 
 const { dvaModel } = utils;
@@ -28,19 +29,10 @@ export default modelExtend(model, {
     showDimensionSelection: false,
     dimensionsData: [],
     showProgressResult: false,
-    itemEditData: {},
   },
   effects: {
-    *save({ payload, callback }, { call, select, put }) {
-      const { itemEditData } = yield select(sel => sel.injectionOrder);
-      const orderDetails = [];
-      Object.keys(itemEditData).forEach(id => {
-        orderDetails.push({
-          id,
-          amount: itemEditData[id],
-        });
-      });
-      const re = yield call(save, { ...payload, orderDetails });
+    *save({ payload, callback }, { call, put }) {
+      const re = yield call(save, payload);
       message.destroy();
       if (re.success) {
         yield put({
@@ -99,8 +91,25 @@ export default modelExtend(model, {
         message.error(re.message);
       }
     },
+    *saveItemMoney({ payload, callback }, { call }) {
+      const { rowItem } = payload;
+      const re = yield call(saveItemMoney, {
+        detailId: get(rowItem, 'id'),
+        amount: get(rowItem, 'amount'),
+      });
+      message.destroy();
+      if (re.success) {
+        message.success(formatMessage({ id: 'global.save-success', defaultMessage: '保存成功' }));
+      } else {
+        message.error(re.message);
+      }
+      if (callback && callback instanceof Function) {
+        callback(re);
+      }
+    },
     *removeOrderItems({ payload, successCallback }, { call }) {
-      const re = yield call(removeOrderItems, payload);
+      const ids = [...payload];
+      const re = yield call(removeOrderItems, ids);
       message.destroy();
       if (re.success) {
         if (successCallback && successCallback instanceof Function) {

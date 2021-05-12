@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import cls from 'classnames';
 import PropTypes from 'prop-types';
-import { get, isEqual, findIndex } from 'lodash';
-import { Dropdown, Menu, Tag } from 'antd';
+import { get, isEqual } from 'lodash';
+import { Dropdown, Menu, Tag, Badge } from 'antd';
 import { utils, ExtIcon } from 'suid';
 import styles from './index.less';
 
@@ -18,7 +18,9 @@ class FilterView extends PureComponent {
     onAction: PropTypes.func,
     iconType: PropTypes.string,
     extra: PropTypes.node,
+    showColor: PropTypes.bool,
     extraTitle: PropTypes.string,
+    rowKey: PropTypes.string,
     reader: PropTypes.shape({
       title: PropTypes.string,
       value: PropTypes.string,
@@ -28,6 +30,7 @@ class FilterView extends PureComponent {
   static defaultProps = {
     extra: null,
     iconType: 'eye',
+    rowKey: 'key',
     title: '视图',
     reader: {
       title: 'title',
@@ -37,25 +40,20 @@ class FilterView extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { viewTypeData, currentViewType } = props;
+    const { viewTypeData, currentViewType, rowKey } = props;
+    const selectedKey = get(currentViewType, rowKey);
     this.state = {
       menuShow: false,
-      selectedKey: findIndex(viewTypeData, currentViewType),
+      selectedKey,
       menusData: viewTypeData,
     };
   }
 
   componentDidUpdate(prevProps) {
-    const { viewTypeData, currentViewType } = this.props;
+    const { viewTypeData } = this.props;
     if (!isEqual(prevProps.viewTypeData, viewTypeData)) {
       this.setState({
         menusData: viewTypeData,
-        selectedKey: findIndex(viewTypeData, currentViewType),
-      });
-    }
-    if (!isEqual(prevProps.currentViewType, currentViewType)) {
-      this.setState({
-        selectedKey: findIndex(viewTypeData, currentViewType),
       });
     }
   }
@@ -71,10 +69,10 @@ class FilterView extends PureComponent {
         selectedKey: e.key,
         menuShow: false,
       });
-      const { onAction } = this.props;
+      const { onAction, rowKey } = this.props;
       if (onAction) {
         const { menusData } = this.state;
-        const currentViewType = menusData[e.key];
+        const [currentViewType] = menusData.filter(f => get(f, rowKey) === e.key);
         onAction(currentViewType);
       }
     }
@@ -82,7 +80,7 @@ class FilterView extends PureComponent {
 
   getMenu = menus => {
     const { selectedKey } = this.state;
-    const { reader, extra } = this.props;
+    const { reader, extra, showColor, rowKey } = this.props;
     const menuId = getUUID();
     return (
       <Menu
@@ -92,12 +90,14 @@ class FilterView extends PureComponent {
         selectedKeys={[`${selectedKey}`]}
       >
         {extra ? <Item key="extra">{extra}</Item> : null}
-        {menus.map((m, index) => {
+        {menus.map(m => {
+          const itemKey = get(m, rowKey);
           return (
-            <Item key={index.toString()}>
-              {index.toString() === selectedKey.toString() ? (
+            <Item key={itemKey}>
+              {itemKey === selectedKey.toString() ? (
                 <ExtIcon type="check" className="selected" antd />
               ) : null}
+              {showColor ? <Badge color={m.color === '' ? '#d9d9d9' : m.color} /> : null}
               <span className="view-popover-box-trigger">{m[get(reader, 'title')]}</span>
             </Item>
           );
@@ -107,15 +107,13 @@ class FilterView extends PureComponent {
   };
 
   onVisibleChange = v => {
-    const { selectedKeys } = this.state;
     this.setState({
       menuShow: v,
-      selectedKeys: !v ? '' : selectedKeys,
     });
   };
 
   render() {
-    const { currentViewType, reader, title, iconType, extraTitle, style } = this.props;
+    const { currentViewType, reader, title, iconType, extraTitle, style, showColor } = this.props;
     const { menuShow, menusData } = this.state;
     let currentViewTitle = `${get(currentViewType, get(reader, 'title')) || '无可用视图'}`;
     if (extraTitle) {
@@ -125,6 +123,14 @@ class FilterView extends PureComponent {
           <Tag style={{ marginLeft: 8, cursor: 'pointer' }} color="blue">
             {extraTitle}
           </Tag>
+        </>
+      );
+    }
+    if (showColor) {
+      currentViewTitle = (
+        <>
+          <Badge color={currentViewType.color === '' ? '#d9d9d9' : currentViewType.color} />
+          {currentViewTitle}
         </>
       );
     }

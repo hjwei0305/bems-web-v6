@@ -27,6 +27,7 @@ export default [
           { path: '/budgetConfig/budgetMaster', component: './BackConfig/BudgetMaster' },
           { path: '/budgetConfig/budgetPeriod', component: './BackConfig/BudgetPeriod' },
           { path: '/budgetConfig/budgetType', component: './BackConfig/BudgetType' },
+          { path: '/budgetConfig/budgetEvent', component: './BackConfig/BudgetEvent' },
         ],
       },
       {

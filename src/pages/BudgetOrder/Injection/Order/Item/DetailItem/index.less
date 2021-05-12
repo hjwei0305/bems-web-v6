@@ -2,27 +2,29 @@
 
 .detail-item-box {
   :global {
-    .suid-list-card-tool-box {
-      position: relative;
-      overflow: hidden;
-      .ant-drawer-top.ant-drawer-open .ant-drawer-content-wrapper {
-        box-shadow: none;
+    .pool-box {
+      display: inline-block;
+      height: auto;
+      margin: 0;
+      margin-left: 4px;
+      font-size: 12px;
+      font-variant: tabular-nums;
+      line-height: 20px;
+      white-space: nowrap;
+      background-color: @white;
+      cursor: default;
+      transition: all 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+      font-feature-settings: 'tnum';
+      .title {
+        padding: 2px;
+        color: #fff;
+        font-size: inherit;
+        background-color: #2db7f5;
       }
-      .ant-drawer-body {
-        display: flex;
-        align-items: center;
-        height: 44px;
-        padding: 0 24px;
-        line-height: 44px;
-        background-color: @white;
-        button {
-          margin-right: 8px;
-        }
-        .select {
-          display: inline-block;
-          min-width: 120px;
-          color: fade(@black, 65%);
-        }
+      .no {
+        display: inline-block;
+        margin: 0 4px;
+        color: #47acea;
       }
     }
     .ant-list-item-meta-title {
@@ -32,6 +34,7 @@
       cursor: default !important;
     }
     .suid-money {
+      padding-left: 8px;
       font-size: 16px;
     }
     .field-item {
@@ -46,7 +49,6 @@
     .inject-money {
       .field-item {
         .label {
-          width: 82px;
           text-align: right;
         }
       }

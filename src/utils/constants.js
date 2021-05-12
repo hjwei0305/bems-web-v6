@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-06 18:01:07
+ * @Last Modified time: 2021-05-12 09:52:53
  */
 import { base } from '../../public/app.config.json';
 
@@ -125,6 +125,13 @@ const REQUEST_VIEW_STATUS = {
   COMPLETED: { key: 'COMPLETED', title: '审批完成', color: 'green' },
 };
 
+/** 预算申请行项目状态 */
+const REQUEST_ITEM_STATUS = {
+  ALL: { key: 'ALL', title: '全部', color: '' },
+  NORMAL: { key: 'NORMAL', title: '正常', color: 'green' },
+  ERROR: { key: 'ERROR', title: '异常', color: 'red' },
+};
+
 /** 申请单操作 */
 const REQUEST_ORDER_ACTION = {
   ADD: 'add',
@@ -162,4 +169,5 @@ export default {
   REQUEST_ORDER_ACTION,
   WSBaseUrl,
   BUDGET_PERIOD_USER_ACTION,
+  REQUEST_ITEM_STATUS,
 };
