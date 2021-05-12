@@ -44,6 +44,8 @@ const menuData = () => [
 ];
 
 class ExtAction extends PureComponent {
+  static flowLoaded;
+
   static propTypes = {
     recordItem: PropTypes.object.isRequired,
     onAction: PropTypes.func,
@@ -120,12 +122,8 @@ class ExtAction extends PureComponent {
 
   startFlowCallBack = res => {
     const { onAction, recordItem } = this.props;
-    if (res !== true) {
-      if (res.statusCode === 200 && res.success) {
-        if (onAction) {
-          onAction(INJECTION_REQUEST_BTN_KEY.START_FLOW, recordItem);
-        }
-      }
+    if (res && res.success && onAction) {
+      onAction(INJECTION_REQUEST_BTN_KEY.START_FLOW, recordItem);
     }
   };
 
@@ -135,7 +133,7 @@ class ExtAction extends PureComponent {
         selectedKeys: '',
         menuShow: false,
       });
-      this.globalLoad = message.loading(
+      this.flowLoaded = message.loading(
         formatMessage({
           id: 'global.startFlow.loading',
           defaultMessage: '正在启动流程...',
@@ -153,21 +151,11 @@ class ExtAction extends PureComponent {
       selectedKeys: '',
       menuShow: false,
     });
-    if (onAction) {
-      onAction(e.key, recordItem);
+    if (e.key !== INJECTION_REQUEST_BTN_KEY.START_FLOW) {
+      if (onAction) {
+        onAction(e.key, recordItem);
+      }
     }
-  };
-
-  action = (e, key, record) => {
-    const { onAction } = this.props;
-    e.stopPropagation();
-    if (onAction) {
-      onAction(key, record);
-    }
-    this.setState({
-      selectedKeys: '',
-      menuShow: false,
-    });
   };
 
   getMenu = (menus, record) => {
@@ -191,8 +179,8 @@ class ExtAction extends PureComponent {
                   beforeStart={this.beforeStartFlow}
                 >
                   {loading => {
-                    if (!loading && this.globalLoad) {
-                      this.globalLoad();
+                    if (!loading && this.flowLoaded) {
+                      this.flowLoaded();
                     }
                     return (
                       <div style={{ height: '100%' }}>
