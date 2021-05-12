@@ -36,6 +36,7 @@ export default {
   'global.reset': '重置',
   'global.filter': '过滤',
   'global.all': '全部',
-  'global.startFlow': '提交审批',
+  'global.startFlow': '启动流程',
   'global.flowHistory': '流程历史',
+  'global.startFlow.loading': '正在启动流程...',
 };

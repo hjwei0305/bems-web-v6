@@ -79,6 +79,7 @@ class InjectionRequestList extends Component {
         this.delConfirm(record);
         break;
       case INJECTION_REQUEST_BTN_KEY.START_FLOW:
+        this.reloadData();
         break;
       default:
     }

@@ -121,9 +121,6 @@ class RequestOrder extends Component {
             flowCallBack(res);
           }
           if (res.success) {
-            if (this.requestItemRef) {
-              this.requestItemRef.reloadData();
-            }
             this.needRefreshList = true;
           }
         },
@@ -161,9 +158,12 @@ class RequestOrder extends Component {
               const { success, message: msg, data: returnData } = res;
               if (res.success) {
                 this.needRefreshList = true;
-                if (this.requestItemRef) {
-                  this.requestItemRef.reloadData();
-                }
+                dispatch({
+                  type: 'injectionOrder/updateState',
+                  payload: {
+                    headData: res.data,
+                  },
+                });
               }
               resolve({
                 success,

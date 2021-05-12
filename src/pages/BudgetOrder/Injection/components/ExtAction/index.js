@@ -36,7 +36,7 @@ const menuData = () => [
     disabled: true,
   },
   {
-    title: formatMessage({ id: 'global.startFlow', defaultMessage: '提交审批' }),
+    title: '启动流程',
     key: INJECTION_REQUEST_BTN_KEY.START_FLOW,
     disabled: true,
     ignore: 'true',
@@ -138,7 +138,7 @@ class ExtAction extends PureComponent {
       this.globalLoad = message.loading(
         formatMessage({
           id: 'global.startFlow.loading',
-          defaultMessage: '正在提交审批...',
+          defaultMessage: '正在启动流程...',
         }),
         0,
       );
@@ -186,7 +186,7 @@ class ExtAction extends PureComponent {
                 <StartFlow
                   key={recordItem.id}
                   businessKey={recordItem.id}
-                  businessModelCode="com.changhong.beis.entity.PaymentRequestHead"
+                  businessModelCode="com.changhong.bems.entity.Order"
                   startComplete={this.startFlowCallBack}
                   beforeStart={this.beforeStartFlow}
                 >

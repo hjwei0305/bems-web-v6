@@ -36,7 +36,7 @@ class ExtAction extends PureComponent {
       tempDisabled,
     } = this.props;
     const startFlowProps = {
-      businessModelCode: 'com.changhong.beis.entity.PaymentRequestHead',
+      businessModelCode: 'com.changhong.bems.entity.Order',
       startComplete: handlerStartComlete,
       beforeStart: beforeStartFlow,
       needStartConfirm: true,
@@ -49,7 +49,7 @@ class ExtAction extends PureComponent {
             <StartFlow {...startFlowProps}>
               {loading => (
                 <Button type="default" disabled={loading || disabled} loading={loading}>
-                  <FormattedMessage id="global.startFlow" defaultMessage="提交审批" />
+                  <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
                 </Button>
               )}
             </StartFlow>
@@ -73,7 +73,7 @@ class ExtAction extends PureComponent {
             <StartFlow {...startFlowProps}>
               {loading => (
                 <Button type="default" disabled={loading || disabled} loading={loading}>
-                  <FormattedMessage id="global.startFlow" defaultMessage="提交审批" />
+                  <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
                 </Button>
               )}
             </StartFlow>
