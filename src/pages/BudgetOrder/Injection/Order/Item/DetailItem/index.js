@@ -223,7 +223,7 @@ class DetailItem extends PureComponent {
         </>
       );
     }
-    return `${item.periodName} ${item.itemName}(${item.item})`;
+    return `${item.periodName} ${item.itemName}`;
   };
 
   getDisplaySubDimensionFields = item => {

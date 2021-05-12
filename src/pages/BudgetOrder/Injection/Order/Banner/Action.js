@@ -36,7 +36,7 @@ class ExtAction extends PureComponent {
       tempDisabled,
     } = this.props;
     const startFlowProps = {
-      businessModelCode: 'com.changhong.bems.entity.Order',
+      businessModelCode: 'INJECTION',
       startComplete: handlerStartComlete,
       beforeStart: beforeStartFlow,
       needStartConfirm: true,
