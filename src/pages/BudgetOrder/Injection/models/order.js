@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-12 11:09:15
+ * @Last Modified time: 2021-05-13 14:27:57
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -21,6 +21,20 @@ import {
 const { dvaModel } = utils;
 const { modelExtend, model } = dvaModel;
 
+const setSubDimensionFields = dimensionsData => {
+  const subDimensionFields = [];
+  dimensionsData.forEach(d => {
+    if (d.required === false) {
+      subDimensionFields.push({
+        dimension: d.code,
+        value: `${d.code}Name`,
+        title: d.name,
+      });
+    }
+  });
+  return subDimensionFields;
+};
+
 export default modelExtend(model, {
   namespace: 'injectionOrder',
 
@@ -29,6 +43,7 @@ export default modelExtend(model, {
     showDimensionSelection: false,
     dimensionsData: [],
     showProgressResult: false,
+    subDimensionFields: [],
   },
   effects: {
     *save({ payload, callback }, { call, put }) {
@@ -58,11 +73,13 @@ export default modelExtend(model, {
     *getHead({ payload, callback }, { call, put }) {
       const res = yield call(getHead, payload);
       if (res.success) {
-        const headData = res.data;
+        const { dimensions, ...rest } = res.data;
+        const subDimensionFields = setSubDimensionFields(dimensions);
         yield put({
           type: 'updateState',
           payload: {
-            headData,
+            headData: rest,
+            subDimensionFields,
           },
         });
       } else {
@@ -104,9 +121,7 @@ export default modelExtend(model, {
         amount: get(rowItem, 'amount'),
       });
       message.destroy();
-      if (re.success) {
-        message.success(formatMessage({ id: 'global.save-success', defaultMessage: '保存成功' }));
-      } else {
+      if (!re.success) {
         message.error(re.message);
       }
       if (callback && callback instanceof Function) {
@@ -158,12 +173,15 @@ export default modelExtend(model, {
       if (re.success) {
         const resDimension = yield call(getDimension, { categoryId });
         if (resDimension.success) {
+          const dimensionsData = resDimension.data;
+          const subDimensionFields = setSubDimensionFields(dimensionsData);
           yield put({
             type: 'updateState',
             payload: {
               headData,
               showDimensionSelection: true,
-              dimensionsData: resDimension.data,
+              dimensionsData,
+              subDimensionFields,
             },
           });
         }

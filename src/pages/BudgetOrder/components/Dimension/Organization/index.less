@@ -1,0 +1,19 @@
+.container-box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  overflow: hidden;
+  :global {
+    .header-tool-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      padding: 0 24px;
+    }
+    .tree-body {
+      height: calc(100% - 60px);
+    }
+  }
+}

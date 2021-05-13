@@ -14,15 +14,6 @@ const REQUEST_ITEM_STATUS_DATA = Object.keys(REQUEST_ITEM_STATUS).map(
   key => REQUEST_ITEM_STATUS[key],
 );
 const { Search } = Input;
-const subDimensionFields = [
-  { dimension: 'org', value: ['orgName'], title: '组织机构' },
-  { dimension: 'project', value: ['projectName'], title: '项目' },
-  { dimension: 'udf1', value: ['udf1Name'], title: '自定义1' },
-  { dimension: 'udf2', value: ['udf2Name'], title: '自定义2' },
-  { dimension: 'udf3', value: ['udf3Name'], title: '自定义3' },
-  { dimension: 'udf4', value: ['udf4Name'], title: '自定义4' },
-  { dimension: 'udf5', value: ['udf5Name'], title: '自定义5' },
-];
 
 class DetailItem extends PureComponent {
   static listCardRef;
@@ -38,6 +29,7 @@ class DetailItem extends PureComponent {
     tempDisabled: PropTypes.bool,
     onRemoveItem: PropTypes.func,
     removing: PropTypes.bool,
+    subDimensionFields: PropTypes.array,
   };
 
   constructor(props) {
@@ -227,6 +219,7 @@ class DetailItem extends PureComponent {
   };
 
   getDisplaySubDimensionFields = item => {
+    const { subDimensionFields } = this.props;
     const fields = [];
     subDimensionFields.forEach(f => {
       if (get(item, f.dimension) !== 'none') {
@@ -252,16 +245,13 @@ class DetailItem extends PureComponent {
     const subFields = this.getDisplaySubDimensionFields(item);
     if (subFields.length > 0) {
       return (
-        <Descriptions column={3} bordered={false}>
+        <Descriptions key={`sub${item.id}`} column={2} bordered={false}>
           {subFields.map(f => {
-            let v = '';
-            if (f.value.length === 1) {
-              v = `${get(item, f.value[0])}`;
-            }
-            if (f.value.length === 2) {
-              v = `${get(item, f.value[0])}(${get(item, f.value[1])})`;
-            }
-            return <Descriptions.Item label={f.title}>{v}</Descriptions.Item>;
+            return (
+              <Descriptions.Item key={`sub${item.id}${f.dimension}`} label={f.title}>
+                {get(item, f.value) || '-'}
+              </Descriptions.Item>
+            );
           })}
         </Descriptions>
       );

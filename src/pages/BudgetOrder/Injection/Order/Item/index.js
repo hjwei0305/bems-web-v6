@@ -209,6 +209,7 @@ class RequestItem extends PureComponent {
       showProgressResult,
       headData,
       dimensionsData,
+      subDimensionFields,
       saving,
       itemMoneySaving,
       removeOrderItems,
@@ -232,6 +233,7 @@ class RequestItem extends PureComponent {
       itemMoneySaving,
       onSaveItemMoney: this.handlerSaveItemMoney,
       onRemoveItem: removeOrderItems,
+      subDimensionFields,
       removing,
     };
     return (

@@ -276,7 +276,13 @@ class RequestOrder extends Component {
 
   render() {
     const { action, title, loading, injectionOrder } = this.props;
-    const { headData, dimensionsData, showDimensionSelection, showProgressResult } = injectionOrder;
+    const {
+      headData,
+      dimensionsData,
+      showDimensionSelection,
+      showProgressResult,
+      subDimensionFields,
+    } = injectionOrder;
     const bannerProps = {
       headData,
       title,
@@ -305,6 +311,7 @@ class RequestOrder extends Component {
       clearItem: this.clearItem,
       clearing: loading.effects['injectionOrder/clearOrderItems'],
       dimensionsData,
+      subDimensionFields,
       globalDisabled: loading.global,
       showDimensionSelection,
       showProgressResult,

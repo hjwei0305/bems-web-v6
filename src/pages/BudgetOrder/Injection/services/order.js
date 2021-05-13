@@ -94,7 +94,7 @@ export async function addOrderDetails(data) {
  * @id
  */
 export async function getHead(params) {
-  const url = `${SERVER_PATH}/bems-v6/order/findOne`;
+  const url = `${SERVER_PATH}/bems-v6/order/getHead`;
   return request({
     url,
     params,

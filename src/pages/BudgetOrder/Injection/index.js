@@ -272,17 +272,6 @@ class InjectionRequestList extends Component {
       layout: { leftSpan: 10, rightSpan: 14 },
       left: (
         <Space>
-          <FilterView
-            style={{ minWidth: 160 }}
-            title="单据视图"
-            currentViewType={currentViewType}
-            viewTypeData={viewTypeData}
-            onAction={this.handlerViewTypeChange}
-            reader={{
-              title: 'title',
-              value: 'key',
-            }}
-          />
           <Button
             key={INJECTION_REQUEST_BTN_KEY.CREATE}
             onClick={this.addOrder}
@@ -297,7 +286,18 @@ class InjectionRequestList extends Component {
         </Space>
       ),
       extra: (
-        <>
+        <Space>
+          <FilterView
+            title="单据状态"
+            iconType={null}
+            currentViewType={currentViewType}
+            viewTypeData={viewTypeData}
+            onAction={this.handlerViewTypeChange}
+            reader={{
+              title: 'title',
+              value: 'key',
+            }}
+          />
           <span
             className={cls('filter-btn', 'icon-btn-item', { 'has-filter': filters.hasFilter })}
             onClick={this.handlerShowFilter}
@@ -307,7 +307,7 @@ class InjectionRequestList extends Component {
               <FormattedMessage id="global.filter" defaultMessage="过滤" />
             </span>
           </span>
-        </>
+        </Space>
       ),
     };
     const props = {

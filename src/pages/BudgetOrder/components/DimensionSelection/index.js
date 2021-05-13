@@ -9,6 +9,7 @@ import empty from '@/assets/not_done.svg';
 import Tip from '../Tip';
 import Subject from '../Dimension/Subject';
 import Period from '../Dimension/Period';
+import Organization from '../Dimension/Organization';
 import styles from './index.less';
 
 const { TabPane } = Tabs;
@@ -123,6 +124,15 @@ class DimensionSelection extends PureComponent {
                     <Period
                       subjectId={subjectId}
                       periodType={periodType}
+                      onSelectChange={items => this.handlerSelectChange(code, items)}
+                    />
+                  </TabPane>
+                );
+              case 'Organization':
+                return (
+                  <TabPane tab={`${name}(${dimensionData.length})`} key={code}>
+                    <Organization
+                      subjectId={subjectId}
                       onSelectChange={items => this.handlerSelectChange(code, items)}
                     />
                   </TabPane>
