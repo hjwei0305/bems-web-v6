@@ -1,7 +1,7 @@
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
 import { constants } from '@/utils';
-import { del } from '../services/requestList';
+import { del, checkInjectPrefab } from '../services/requestList';
 
 const { REQUEST_VIEW_STATUS } = constants;
 const { dvaModel } = utils;
@@ -33,6 +33,27 @@ export default modelExtend(model, {
       }
       if (callback && callback instanceof Function) {
         callback(re);
+      }
+    },
+    *trash({ payload, callback }, { call }) {
+      const re = yield call(del, payload);
+      message.destroy();
+      if (!re.success) {
+        message.error(re.message);
+      }
+      if (callback && callback instanceof Function) {
+        callback(re);
+      }
+    },
+    *checkInjectPrefab({ successCallback }, { call }) {
+      const res = yield call(checkInjectPrefab);
+      if (res.success) {
+        if (successCallback && successCallback instanceof Function) {
+          successCallback(res.data);
+        }
+      } else {
+        message.destroy();
+        message.error(res.message);
       }
     },
   },

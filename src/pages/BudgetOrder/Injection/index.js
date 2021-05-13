@@ -127,12 +127,75 @@ class InjectionRequestList extends Component {
     });
   };
 
+  resumeConfirm = record => {
+    const { dispatch } = this.props;
+    const orderId = get(record, 'id');
+    const createdDate = get(record, 'createdDate', '-');
+    this.confirmModal = Modal.confirm({
+      title: `恢复确认`,
+      content: `你于[${createdDate}]创建的申请单未保存，是否需要恢复!`,
+      okButtonProps: { type: 'primary' },
+      style: { top: '20%' },
+      okText: '恢复',
+      onOk: () => {
+        dispatch({
+          type: 'injectionRequestList/updateState',
+          payload: {
+            recordItem: record,
+            showUpdate: true,
+          },
+        });
+      },
+      cancelText: '取消',
+      onCancel: () => {
+        return new Promise(resolve => {
+          this.confirmModal.update({
+            okButtonProps: { type: 'primary', disabled: true },
+            cancelButtonProps: { loading: true },
+          });
+          dispatch({
+            type: 'injectionRequestList/trash',
+            payload: {
+              id: orderId,
+            },
+            callback: res => {
+              if (res.success) {
+                resolve();
+                dispatch({
+                  type: 'injectionRequestList/updateState',
+                  payload: {
+                    recordItem: null,
+                    showCreate: true,
+                  },
+                });
+              } else {
+                this.confirmModal.update({
+                  okButtonProps: { disabled: false },
+                  cancelButtonProps: { disabled: false, loading: false },
+                });
+              }
+            },
+          });
+        });
+      },
+    });
+  };
+
   addOrder = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'injectionRequestList/updateState',
-      payload: {
-        showCreate: true,
+      type: 'injectionRequestList/checkInjectPrefab',
+      successCallback: recordItem => {
+        if (recordItem) {
+          this.resumeConfirm(recordItem);
+        } else {
+          dispatch({
+            type: 'injectionRequestList/updateState',
+            payload: {
+              showCreate: true,
+            },
+          });
+        }
       },
     });
   };
@@ -188,7 +251,7 @@ class InjectionRequestList extends Component {
   };
 
   getExtTableProps = () => {
-    const { injectionRequestList } = this.props;
+    const { injectionRequestList, loading } = this.props;
     const { currentViewType, viewTypeData } = injectionRequestList;
     const columns = [
       {
@@ -275,7 +338,7 @@ class InjectionRequestList extends Component {
           <Button
             key={INJECTION_REQUEST_BTN_KEY.CREATE}
             onClick={this.addOrder}
-            icon="plus"
+            loading={loading.effects['injectionRequestList/checkInjectPrefab']}
             type="primary"
           >
             新建单据

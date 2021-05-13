@@ -13,3 +13,15 @@ export async function del(params) {
     method: 'DELETE',
   });
 }
+
+/**
+ * 检查是否有预制单
+ * @id
+ */
+export async function checkInjectPrefab(params) {
+  const url = `${SERVER_PATH}/bems-v6/order/checkInjectPrefab`;
+  return request({
+    url,
+    params,
+  });
+}
