@@ -1,47 +1,34 @@
 import React, { PureComponent } from 'react';
-import { formatMessage } from 'umi-plugin-react/locale';
 import cls from 'classnames';
 import PropTypes from 'prop-types';
 import { get, isEqual } from 'lodash';
-import { Dropdown, Menu, message } from 'antd';
+import { Dropdown, Menu } from 'antd';
 import { utils, ExtIcon, WorkFlow } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
 const { getUUID, authAction } = utils;
 const { StartFlow, FlowHistoryButton } = WorkFlow;
-const { INJECTION_REQUEST_BTN_KEY, REQUEST_VIEW_STATUS } = constants;
+const { INJECTION_REQUEST_BTN_KEY } = constants;
 const { Item } = Menu;
 
 const menuData = () => [
   {
     title: '查看',
     key: INJECTION_REQUEST_BTN_KEY.VIEW,
-    disabled: true,
+    disabled: false,
     ignore: 'true',
   },
   {
-    title: formatMessage({ id: 'global.flowHistory', defaultMessage: '流程历史' }),
+    title: '启用',
     key: INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY,
-    disabled: true,
+    disabled: false,
     ignore: 'true',
   },
   {
-    title: formatMessage({ id: 'global.edit', defaultMessage: '编辑' }),
+    title: '停用',
     key: INJECTION_REQUEST_BTN_KEY.EDIT,
-    disabled: true,
-    ignore: 'true',
-  },
-  {
-    title: formatMessage({ id: 'global.delete', defaultMessage: '删除' }),
-    key: INJECTION_REQUEST_BTN_KEY.DELETE,
-    disabled: true,
-    ignore: 'true',
-  },
-  {
-    title: '启动流程',
-    key: INJECTION_REQUEST_BTN_KEY.START_FLOW,
-    disabled: true,
+    disabled: false,
     ignore: 'true',
   },
 ];
@@ -68,11 +55,8 @@ class ExtAction extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { currentViewType, recordItem } = this.props;
-    if (!isEqual(prevProps.currentViewType, currentViewType)) {
-      this.initActionMenus();
-    }
-    if (!isEqual((prevProps.recordItem || {}).status, (recordItem || {}).status)) {
+    const { recordItem } = this.props;
+    if (!isEqual(prevProps.recordItem, recordItem)) {
       this.initActionMenus();
     }
   }
@@ -87,70 +71,12 @@ class ExtAction extends PureComponent {
       return false;
     });
     switch (status) {
-      case REQUEST_VIEW_STATUS.DRAFT.key:
-        menus.forEach(m => {
-          if (m.key !== INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY) {
-            Object.assign(m, { disabled: false });
-          }
-        });
-        break;
-      case REQUEST_VIEW_STATUS.PROCESSING.key:
-        menus.forEach(m => {
-          if (
-            m.key === INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY ||
-            m.key === INJECTION_REQUEST_BTN_KEY.VIEW
-          ) {
-            Object.assign(m, { disabled: false });
-          }
-        });
-        break;
-      case REQUEST_VIEW_STATUS.COMPLETED.key:
-        menus.forEach(m => {
-          if (
-            m.key === INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY ||
-            m.key === INJECTION_REQUEST_BTN_KEY.VIEW
-          ) {
-            Object.assign(m, { disabled: false });
-          }
-        });
-        break;
-      case REQUEST_VIEW_STATUS.EFFECTING.key:
-        menus.forEach(m => {
-          if (m.key === INJECTION_REQUEST_BTN_KEY.VIEW) {
-            Object.assign(m, { disabled: false });
-          }
-        });
-        break;
       default:
         break;
     }
     const mData = menus.filter(m => !m.disabled);
     this.setState({
       menusData: mData,
-    });
-  };
-
-  startFlowCallBack = res => {
-    const { onAction, recordItem } = this.props;
-    if (res && res.success && onAction) {
-      onAction(INJECTION_REQUEST_BTN_KEY.START_FLOW, recordItem);
-    }
-  };
-
-  beforeStartFlow = () => {
-    return new Promise(resolve => {
-      this.setState({
-        selectedKeys: '',
-        menuShow: false,
-      });
-      this.flowLoaded = message.loading(
-        formatMessage({
-          id: 'global.startFlow.loading',
-          defaultMessage: '正在启动流程...',
-        }),
-        0,
-      );
-      resolve({ success: true });
     });
   };
 
@@ -244,7 +170,7 @@ class ExtAction extends PureComponent {
           visible={menuShow}
           onVisibleChange={this.onVisibleChange}
         >
-          <ExtIcon className={cls('action-recordItem')} type="more" antd />
+          <ExtIcon className={cls('action-item')} type="more" antd />
         </Dropdown>
       </>
     );

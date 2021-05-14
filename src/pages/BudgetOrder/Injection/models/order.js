@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-13 14:27:57
+ * @Last Modified time: 2021-05-14 17:17:38
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -16,6 +16,7 @@ import {
   addOrderDetails,
   getHead,
   saveItemMoney,
+  effective,
 } from '../services/order';
 
 const { dvaModel } = utils;
@@ -190,6 +191,18 @@ export default modelExtend(model, {
       }
       if (callback && callback instanceof Function) {
         callback(re);
+      }
+    },
+    *effective({ payload, callback }, { call }) {
+      const res = yield call(effective, payload);
+      if (res.success) {
+        message.success('操作成功');
+      } else {
+        message.destroy();
+        message.error(res.message);
+      }
+      if (callback && callback instanceof Function) {
+        callback(res);
       }
     },
   },

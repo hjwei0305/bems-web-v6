@@ -100,3 +100,16 @@ export async function getHead(params) {
     params,
   });
 }
+
+/**
+ * 直接生效
+ */
+export async function effective(params) {
+  const url = `${SERVER_PATH}/bems-v6/order/effectiveOrder`;
+  return request({
+    url,
+    method: 'POST',
+    params,
+    data: {},
+  });
+}

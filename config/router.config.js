@@ -35,6 +35,11 @@ export default [
         name: '预算单据',
         routes: [{ path: '/budgetOrder/budgetInjection', component: './BudgetOrder/Injection' }],
       },
+      {
+        path: '/budgetPool',
+        name: '预算池',
+        routes: [{ path: '/budgetPool/poollist', component: './BudgetPool' }],
+      },
     ],
   },
 ];

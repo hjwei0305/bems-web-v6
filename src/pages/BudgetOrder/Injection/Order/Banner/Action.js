@@ -1,5 +1,6 @@
 import React, { Fragment, PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { get } from 'lodash';
 import { FormattedMessage } from 'umi-plugin-react/locale';
 import { Button, Icon, Popconfirm } from 'antd';
 import { WorkFlow } from 'suid';
@@ -13,6 +14,7 @@ const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTIO
 
 class ExtAction extends PureComponent {
   static propTypes = {
+    headData: PropTypes.object,
     action: PropTypes.oneOf(ACTIONS).isRequired,
     saveOrder: PropTypes.func,
     closeOrder: PropTypes.func,
@@ -22,10 +24,13 @@ class ExtAction extends PureComponent {
     beforeStartFlow: PropTypes.func,
     handlerStartComlete: PropTypes.func,
     tempDisabled: PropTypes.bool,
+    effective: PropTypes.func,
+    effecting: PropTypes.bool,
   };
 
   renderExtActions = () => {
     const {
+      headData,
       action,
       saveOrder,
       closeOrder,
@@ -34,6 +39,8 @@ class ExtAction extends PureComponent {
       beforeStartFlow,
       handlerStartComlete,
       tempDisabled,
+      effective,
+      effecting,
     } = this.props;
     const startFlowProps = {
       businessModelCode: 'INJECTION',
@@ -41,21 +48,41 @@ class ExtAction extends PureComponent {
       beforeStart: beforeStartFlow,
       needStartConfirm: true,
     };
-    const disabled = tempDisabled || saving;
+    const disabled = tempDisabled || saving || effecting;
+    const orderCode = get(headData, 'code');
     switch (action) {
       case REQUEST_ORDER_ACTION.ADD:
         return (
           <Fragment>
-            <StartFlow {...startFlowProps}>
-              {loading => (
-                <Button type="default" disabled={loading || disabled} loading={loading}>
-                  <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
-                </Button>
-              )}
-            </StartFlow>
+            {orderCode ? (
+              <>
+                <Popconfirm
+                  disabled={disabled}
+                  icon={<Icon type="question-circle-o" />}
+                  placement="bottom"
+                  trigger="click"
+                  title={
+                    <Tip topic="确定要直接生效吗？" description="警告：生效后预算可以被业务使用!" />
+                  }
+                  onConfirm={effective}
+                >
+                  <Button loading={effecting} disabled={disabled}>
+                    直接生效
+                  </Button>
+                </Popconfirm>
+                <StartFlow {...startFlowProps}>
+                  {loading => (
+                    <Button type="default" disabled={loading || disabled} loading={loading}>
+                      <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
+                    </Button>
+                  )}
+                </StartFlow>
+              </>
+            ) : null}
             <Popconfirm
+              disabled={disabled}
               icon={<Icon type="question-circle-o" />}
-              placement="left"
+              placement="bottom"
               trigger="click"
               title={<Tip topic="确定要返回吗？" description="未保存的数据将会丢失!" />}
               onConfirm={closeOrder}
@@ -70,16 +97,35 @@ class ExtAction extends PureComponent {
       case REQUEST_ORDER_ACTION.EDIT:
         return (
           <Fragment>
-            <StartFlow {...startFlowProps}>
-              {loading => (
-                <Button type="default" disabled={loading || disabled} loading={loading}>
-                  <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
-                </Button>
-              )}
-            </StartFlow>
+            {orderCode ? (
+              <>
+                <Popconfirm
+                  disabled={disabled}
+                  icon={<Icon type="question-circle-o" />}
+                  placement="bottom"
+                  trigger="click"
+                  title={
+                    <Tip topic="确定要直接生效吗？" description="警告：生效后预算可以被业务使用!" />
+                  }
+                  onConfirm={effective}
+                >
+                  <Button loading={effecting} disabled={disabled}>
+                    直接生效
+                  </Button>
+                </Popconfirm>
+                <StartFlow {...startFlowProps}>
+                  {loading => (
+                    <Button type="default" disabled={loading || disabled} loading={loading}>
+                      <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
+                    </Button>
+                  )}
+                </StartFlow>
+              </>
+            ) : null}
             <Popconfirm
+              disabled={disabled}
               icon={<Icon type="question-circle-o" />}
-              placement="left"
+              placement="bottom"
               trigger="click"
               title={<Tip topic="确定要返回吗？" description="未保存的数据将会丢失!" />}
               onConfirm={closeOrder}

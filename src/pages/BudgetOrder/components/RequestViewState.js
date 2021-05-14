@@ -17,6 +17,16 @@ const RequestViewState = ({ enumName }) => {
         </Tag>
       );
     }
+    if (enumName === REQUEST_VIEW_STATUS.EFFECTING.key) {
+      return (
+        <Tag color={status.color} className="effecting">
+          <>
+            <Badge status="processing" color={status.color} />
+            {status.title}
+          </>
+        </Tag>
+      );
+    }
     return <Tag color={status.color}>{status.title}</Tag>;
   }
   return null;

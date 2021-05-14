@@ -99,6 +99,26 @@ class RequestOrder extends Component {
     }
   };
 
+  effective = () => {
+    const {
+      dispatch,
+      injectionOrder: { headData },
+    } = this.props;
+    const orderId = get(headData, 'id');
+    dispatch({
+      type: 'injectionOrder/effective',
+      payload: {
+        orderId,
+      },
+      callback: res => {
+        if (res.success) {
+          this.needRefreshList = true;
+          this.closeOrder();
+        }
+      },
+    });
+  };
+
   /** 流程中保存单据的代理方法 */
   linkSaveOrder = callBack => {
     this.saveOrder(null, callBack);
@@ -295,6 +315,8 @@ class RequestOrder extends Component {
         loadingGlobal: loading.global,
         beforeStartFlow: this.beforeStartFlow,
         handlerStartComlete: this.handlerStartComlete,
+        effective: this.effective,
+        effecting: loading.effects['injectionOrder/effective'],
       },
     };
     const requestHeadProps = {

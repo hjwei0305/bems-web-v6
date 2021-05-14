@@ -58,7 +58,7 @@ class Banner extends Component {
           </div>
         </div>
         <div className="banner-action">
-          <Action {...actionProps} />
+          <Action headData={headData} {...actionProps} />
         </div>
       </div>
     );
