@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-12 09:52:53
+ * @Last Modified time: 2021-05-14 09:44:13
  */
 import { base } from '../../public/app.config.json';
 
@@ -151,6 +151,34 @@ const INJECTION_REQUEST_BTN_KEY = {
   FLOW_HISTORY: 'BEMS-INJECTION-LCLS',
 };
 
+/** 日期枚举 */
+const SEARCH_DATE_PERIOD = {
+  THIS_MONTH: {
+    value: 0,
+    name: 'THIS_MONTH',
+    remark: '本月',
+    anEnum: 'THIS_MONTH',
+  },
+  THIS_WEEK: {
+    value: 1,
+    name: 'THIS_WEEK',
+    remark: '本周',
+    anEnum: 'THIS_WEEK',
+  },
+  TODAY: {
+    value: 2,
+    name: 'TODAY',
+    remark: '今日',
+    anEnum: 'TODAY',
+  },
+  PERIOD: {
+    value: 3,
+    name: 'PERIOD',
+    remark: '自定义',
+    anEnum: 'PERIOD',
+  },
+};
+
 export default {
   APP_BASE,
   LOCAL_PATH,
@@ -170,4 +198,5 @@ export default {
   WSBaseUrl,
   BUDGET_PERIOD_USER_ACTION,
   REQUEST_ITEM_STATUS,
+  SEARCH_DATE_PERIOD,
 };

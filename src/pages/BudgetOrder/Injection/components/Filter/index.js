@@ -36,10 +36,8 @@ class Filter extends PureComponent {
   constructor(props) {
     super(props);
     const { filterData } = props;
-    const { corporationCode } = filterData;
     this.state = {
       filterData,
-      corporationCode,
     };
   }
 
@@ -83,17 +81,14 @@ class Filter extends PureComponent {
   };
 
   getFields() {
-    const { filterData, corporationCode } = this.state;
+    const { filterData } = this.state;
     const { form } = this.props;
     const { getFieldDecorator } = form;
-    getFieldDecorator('onlineBankAccountId', {
-      initialValue: get(filterData, 'onlineBankAccountId', null),
+    getFieldDecorator('subjectId', {
+      initialValue: get(filterData, 'subjectId', null),
     });
-    getFieldDecorator('organizationId', {
-      initialValue: get(filterData, 'organizationId', null),
-    });
-    getFieldDecorator('corporationCode', {
-      initialValue: get(filterData, 'corporationCode', null),
+    getFieldDecorator('applyOrgId', {
+      initialValue: get(filterData, 'applyOrgId', null),
     });
     const corporationComboListProps = {
       placeholder: formatMessage({ id: 'global.all', defaultMessage: '全部' }),
@@ -101,34 +96,14 @@ class Filter extends PureComponent {
       rowKey: 'id',
       form,
       store: {
-        url: `${SERVER_PATH}/sei-basic/corporation/getUserAuthorizedEntities`,
+        url: `${SERVER_PATH}/bems-v6/subject/getUserAuthorizedEntities`,
       },
-      name: 'corporationName',
-      field: ['corporationCode'],
+      name: 'subjectName',
+      field: ['subjectId'],
       reader: {
         name: 'name',
-        field: ['code'],
         description: 'code',
-      },
-      afterSelect: row => {
-        if (corporationCode !== row.code) {
-          form.setFieldsValue({
-            onlineBankAccount: null,
-            onlineBankAccountId: null,
-          });
-          this.setState({
-            corporationCode: row.code,
-          });
-        }
-      },
-      afterClear: () => {
-        form.setFieldsValue({
-          onlineBankAccount: null,
-          onlineBankAccountId: null,
-        });
-        this.setState({
-          corporationCode: null,
-        });
+        field: ['id'],
       },
     };
 
@@ -136,10 +111,10 @@ class Filter extends PureComponent {
       placeholder: formatMessage({ id: 'global.all', defaultMessage: '全部' }),
       allowClear: true,
       form,
-      name: 'organizationName',
-      field: ['organizationId'],
+      name: 'applyOrgName',
+      field: ['applyOrgId'],
       store: {
-        url: `${SERVER_PATH}/sei-basic/organization/findAllAuthTreeEntityData`,
+        url: `${SERVER_PATH}/bems-v6/order/findOrgTree`,
       },
       reader: {
         name: 'name',
@@ -148,15 +123,15 @@ class Filter extends PureComponent {
     };
     return (
       <>
-        <FormItem label="公司">
+        <FormItem label="预算主体">
           {getFieldDecorator('corporationName', {
             initialValue: get(filterData, 'corporationName', null),
           })(<ComboList {...corporationComboListProps} />)}
         </FormItem>
 
         <FormItem label="申请单位">
-          {getFieldDecorator('organizationName', {
-            initialValue: get(filterData, 'organizationName', null),
+          {getFieldDecorator('applyOrgName', {
+            initialValue: get(filterData, 'applyOrgName', null),
           })(<ComboTree {...organizationProps} />)}
         </FormItem>
       </>
@@ -164,11 +139,7 @@ class Filter extends PureComponent {
   }
 
   render() {
-    const { showFilter, form, filterData } = this.props;
-    const { getFieldDecorator } = form;
-    getFieldDecorator('onlineBankAccountId', {
-      initialValue: get(filterData, 'onlineBankAccountId', null),
-    });
+    const { showFilter } = this.props;
     return (
       <Drawer
         width={350}

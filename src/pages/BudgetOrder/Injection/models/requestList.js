@@ -3,11 +3,13 @@ import { utils, message } from 'suid';
 import { constants } from '@/utils';
 import { del, checkInjectPrefab } from '../services/requestList';
 
-const { REQUEST_VIEW_STATUS } = constants;
+const { REQUEST_VIEW_STATUS, SEARCH_DATE_PERIOD } = constants;
 const { dvaModel } = utils;
 const { modelExtend, model } = dvaModel;
 const viewTypeData = Object.keys(REQUEST_VIEW_STATUS).map(key => REQUEST_VIEW_STATUS[key]);
 const [defaultViewType] = viewTypeData;
+const viewDateData = Object.keys(SEARCH_DATE_PERIOD).map(key => SEARCH_DATE_PERIOD[key]);
+const [defaultViewDate] = viewDateData;
 
 export default modelExtend(model, {
   namespace: 'injectionRequestList',
@@ -16,6 +18,8 @@ export default modelExtend(model, {
     recordItem: null,
     viewTypeData,
     currentViewType: defaultViewType,
+    viewDateData,
+    currentViewDate: defaultViewDate,
     showCreate: false,
     showUpdate: false,
     showView: false,

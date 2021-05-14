@@ -18,6 +18,7 @@ const menuData = () => [
     title: '查看',
     key: INJECTION_REQUEST_BTN_KEY.VIEW,
     disabled: true,
+    ignore: 'true',
   },
   {
     title: formatMessage({ id: 'global.flowHistory', defaultMessage: '流程历史' }),
@@ -29,11 +30,13 @@ const menuData = () => [
     title: formatMessage({ id: 'global.edit', defaultMessage: '编辑' }),
     key: INJECTION_REQUEST_BTN_KEY.EDIT,
     disabled: true,
+    ignore: 'true',
   },
   {
     title: formatMessage({ id: 'global.delete', defaultMessage: '删除' }),
     key: INJECTION_REQUEST_BTN_KEY.DELETE,
     disabled: true,
+    ignore: 'true',
   },
   {
     title: '启动流程',

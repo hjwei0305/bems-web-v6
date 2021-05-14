@@ -1,11 +1,12 @@
 import React, { Component, Suspense } from 'react';
 import { connect } from 'dva';
-import { get } from 'lodash';
+import { get, isEmpty, isNumber, isEqual } from 'lodash';
 import cls from 'classnames';
+import moment from 'moment';
 import { FormattedMessage } from 'umi-plugin-react/locale';
 import { Button, Modal } from 'antd';
 import { ExtTable, ExtIcon, Money, PageLoader, Space } from 'suid';
-import { FilterView } from '@/components';
+import { FilterView, FilterDate } from '@/components';
 import { constants } from '@/utils';
 import ExtAction from './components/ExtAction';
 import Filter from './components/Filter';
@@ -15,7 +16,19 @@ import styles from './index.less';
 const CreateRequestOrder = React.lazy(() => import('./Request/CreateOrder'));
 const UpdateRequestOrder = React.lazy(() => import('./Request/UpdateOrder'));
 const ViewRequestOrder = React.lazy(() => import('./Request/ViewOrder'));
-const { SERVER_PATH, INJECTION_REQUEST_BTN_KEY, REQUEST_VIEW_STATUS } = constants;
+const {
+  SERVER_PATH,
+  INJECTION_REQUEST_BTN_KEY,
+  REQUEST_VIEW_STATUS,
+  SEARCH_DATE_PERIOD,
+} = constants;
+const startFormat = 'YYYY-MM-DD 00:00:00';
+const endFormat = 'YYYY-MM-DD 23:59:59';
+
+const filterFields = {
+  subjectId: { fieldName: 'subjectId', operation: 'EQ' },
+  applyOrgId: { fieldName: 'applyOrgId', operation: 'EQ' },
+};
 
 @connect(({ injectionRequestList, loading }) => ({ injectionRequestList, loading }))
 class InjectionRequestList extends Component {
@@ -201,7 +214,11 @@ class InjectionRequestList extends Component {
   };
 
   handlerFilterSubmit = filterData => {
-    const { dispatch } = this.props;
+    const { dispatch, injectionRequestList } = this.props;
+    const { filterData: originFilterData } = injectionRequestList;
+    if (isEqual(filterData, originFilterData)) {
+      this.reloadData();
+    }
     dispatch({
       type: 'injectionRequestList/updateState',
       payload: {
@@ -246,13 +263,95 @@ class InjectionRequestList extends Component {
     }
   };
 
+  handlerFitlerDate = currentViewDate => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'injectionRequestList/updateState',
+      payload: {
+        currentViewDate,
+      },
+    });
+  };
+
   getFilters = () => {
-    return {};
+    const { injectionRequestList } = this.props;
+    const { filterData, currentViewDate, currentViewType } = injectionRequestList;
+    let hasFilter = false;
+    const filters = [];
+    Object.keys(filterData).forEach(key => {
+      const filterField = get(filterFields, key);
+      if (filterField) {
+        const value = get(filterData, key, null);
+        if (!isEmpty(value) || isNumber(value)) {
+          hasFilter = true;
+          filters.push({ fieldName: key, operator: get(filterField, 'operation'), value });
+        }
+      }
+    });
+    const status = get(currentViewType, 'key');
+    if (status !== REQUEST_VIEW_STATUS.ALL.key) {
+      filters.push({ fieldName: 'status', operator: 'EQ', value: status });
+    }
+    const currentDate = moment();
+    const { name: searchDateType, startTime = null, endTime = null } = currentViewDate;
+    switch (searchDateType) {
+      case SEARCH_DATE_PERIOD.THIS_MONTH.name:
+        filters.push({
+          fieldName: 'createdDate',
+          operator: 'GE',
+          value: currentDate.startOf('month').format(startFormat),
+        });
+        filters.push({
+          fieldName: 'createdDate',
+          operator: 'LE',
+          value: currentDate.endOf('month').format(endFormat),
+        });
+        break;
+      case SEARCH_DATE_PERIOD.THIS_WEEK.name:
+        filters.push({
+          fieldName: 'createdDate',
+          operator: 'GE',
+          value: currentDate.startOf('week').format(startFormat),
+        });
+        filters.push({
+          fieldName: 'createdDate',
+          operator: 'LE',
+          value: currentDate.endOf('week').format(endFormat),
+        });
+        break;
+      case SEARCH_DATE_PERIOD.TODAY.name:
+        filters.push({
+          fieldName: 'createdDate',
+          operator: 'GE',
+          value: currentDate.format(startFormat),
+        });
+        filters.push({
+          fieldName: 'createdDate',
+          operator: 'LE',
+          value: currentDate.format(endFormat),
+        });
+        break;
+      case SEARCH_DATE_PERIOD.PERIOD.name:
+        filters.push({
+          fieldName: 'createdDate',
+          operator: 'GE',
+          value: moment(startTime).format(startFormat),
+        });
+        filters.push({
+          fieldName: 'createdDate',
+          operator: 'LE',
+          value: moment(endTime).format(endFormat),
+        });
+        break;
+      default:
+        break;
+    }
+    return { filters, hasFilter };
   };
 
   getExtTableProps = () => {
     const { injectionRequestList, loading } = this.props;
-    const { currentViewType, viewTypeData } = injectionRequestList;
+    const { currentViewType, viewTypeData, viewDateData, currentViewDate } = injectionRequestList;
     const columns = [
       {
         title: '操作',
@@ -330,7 +429,7 @@ class InjectionRequestList extends Component {
         optional: true,
       },
     ];
-    const filters = this.getFilters();
+    const { filters, hasFilter } = this.getFilters();
     const toolBarProps = {
       layout: { leftSpan: 10, rightSpan: 14 },
       left: (
@@ -361,8 +460,14 @@ class InjectionRequestList extends Component {
               value: 'key',
             }}
           />
+          <FilterDate
+            title="创建日期"
+            currentViewType={currentViewDate}
+            viewTypeData={viewDateData}
+            onAction={this.handlerFitlerDate}
+          />
           <span
-            className={cls('filter-btn', 'icon-btn-item', { 'has-filter': filters.hasFilter })}
+            className={cls('filter-btn', 'icon-btn-item', { 'has-filter': hasFilter })}
             onClick={this.handlerShowFilter}
           >
             <ExtIcon type="filter" style={{ fontSize: 16 }} />
@@ -387,10 +492,6 @@ class InjectionRequestList extends Component {
         field: { createdDate: 'desc' },
       },
     };
-    let requestViewStatus = get(currentViewType, 'name');
-    if (requestViewStatus === REQUEST_VIEW_STATUS.ALL.key) {
-      requestViewStatus = null;
-    }
     if (currentViewType) {
       Object.assign(props, {
         store: {
@@ -398,8 +499,7 @@ class InjectionRequestList extends Component {
           url: `${SERVER_PATH}/bems-v6/order/findInjectionByPage`,
         },
         cascadeParams: {
-          requestViewStatus,
-          ...filters.filter,
+          filters,
         },
       });
     }
