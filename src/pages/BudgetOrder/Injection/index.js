@@ -392,7 +392,6 @@ class InjectionRequestList extends Component {
         title: '预算类型',
         dataIndex: 'categoryName',
         width: 110,
-        render: t => `${t}(下达)`,
       },
       {
         title: '预算总金额',
