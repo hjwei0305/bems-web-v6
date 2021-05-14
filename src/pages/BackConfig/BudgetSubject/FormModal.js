@@ -66,7 +66,7 @@ class FormModal extends PureComponent {
               rules: [
                 {
                   required: true,
-                  message: '维度名称不能为空',
+                  message: '科目名称不能为空',
                 },
               ],
             })(<Input autoComplete="off" />)}

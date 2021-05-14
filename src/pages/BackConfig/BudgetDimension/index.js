@@ -144,12 +144,6 @@ class BudgetDimension extends Component {
         ),
       },
       {
-        title: '序号',
-        dataIndex: 'rank',
-        width: 80,
-        required: true,
-      },
-      {
         title: '维度代码',
         dataIndex: 'code',
         width: 120,
@@ -186,6 +180,12 @@ class BudgetDimension extends Component {
         dataIndex: 'uiComponent',
         width: 160,
       },
+      {
+        title: '序号',
+        dataIndex: 'rank',
+        width: 80,
+        required: true,
+      },
     ];
     const formModalProps = {
       save: this.save,
@@ -211,6 +211,7 @@ class BudgetDimension extends Component {
       columns,
       searchWidth: 260,
       lineNumber: false,
+      allowCustomColumns: false,
       searchPlaceHolder: '输入维度代码、维度名称关键字',
       searchProperties: ['name', 'code'],
       onTableRef: ref => (this.tablRef = ref),

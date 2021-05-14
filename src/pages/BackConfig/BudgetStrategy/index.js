@@ -188,6 +188,7 @@ class BudgetStrategy extends Component {
       columns,
       searchWidth: 260,
       lineNumber: false,
+      allowCustomColumns: false,
       searchPlaceHolder: '策略名称、策略类路径',
       searchProperties: ['name', 'classPath'],
       onTableRef: ref => (this.tablRef = ref),

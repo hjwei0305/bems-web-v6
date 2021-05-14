@@ -163,13 +163,6 @@ class BudgetEvent extends Component {
         ),
       },
       {
-        title: '序号',
-        dataIndex: 'rank',
-        width: 80,
-        required: true,
-        render: (t, r) => this.renderDisabled(t, r),
-      },
-      {
         title: '事件代码',
         dataIndex: 'code',
         width: 220,
@@ -193,7 +186,14 @@ class BudgetEvent extends Component {
       {
         title: '标签名',
         dataIndex: 'label',
-        width: 380,
+        width: 320,
+        render: (t, r) => this.renderDisabled(t, r),
+      },
+      {
+        title: '序号',
+        dataIndex: 'rank',
+        width: 80,
+        required: true,
         render: (t, r) => this.renderDisabled(t, r),
       },
     ];
@@ -221,6 +221,7 @@ class BudgetEvent extends Component {
       columns,
       searchWidth: 320,
       lineNumber: false,
+      allowCustomColumns: false,
       searchPlaceHolder: '事件代码、名称、业务来源和标签名关键字',
       searchProperties: ['code', 'name', 'bizFrom', 'label'],
       onTableRef: ref => (this.tablRef = ref),

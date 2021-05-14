@@ -128,7 +128,7 @@ class BudgetTypeForm extends PureComponent {
                 rules: [
                   {
                     required: true,
-                    message: '管理策略不能为空',
+                    message: '期间类型不能为空',
                   },
                 ],
               })(<ComboList {...periodTypeProps} />)}

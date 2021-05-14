@@ -299,11 +299,13 @@ class InjectionRequestList extends Component {
         filters.push({
           fieldName: 'createdDate',
           operator: 'GE',
+          fieldType: 'date',
           value: currentDate.startOf('month').format(startFormat),
         });
         filters.push({
           fieldName: 'createdDate',
           operator: 'LE',
+          fieldType: 'date',
           value: currentDate.endOf('month').format(endFormat),
         });
         break;
@@ -311,11 +313,13 @@ class InjectionRequestList extends Component {
         filters.push({
           fieldName: 'createdDate',
           operator: 'GE',
+          fieldType: 'date',
           value: currentDate.startOf('week').format(startFormat),
         });
         filters.push({
           fieldName: 'createdDate',
           operator: 'LE',
+          fieldType: 'date',
           value: currentDate.endOf('week').format(endFormat),
         });
         break;
@@ -328,6 +332,7 @@ class InjectionRequestList extends Component {
         filters.push({
           fieldName: 'createdDate',
           operator: 'LE',
+          fieldType: 'date',
           value: currentDate.format(endFormat),
         });
         break;
@@ -335,11 +340,13 @@ class InjectionRequestList extends Component {
         filters.push({
           fieldName: 'createdDate',
           operator: 'GE',
+          fieldType: 'date',
           value: moment(startTime).format(startFormat),
         });
         filters.push({
           fieldName: 'createdDate',
           operator: 'LE',
+          fieldType: 'date',
           value: moment(endTime).format(endFormat),
         });
         break;
@@ -385,6 +392,7 @@ class InjectionRequestList extends Component {
         title: '预算类型',
         dataIndex: 'categoryName',
         width: 110,
+        render: t => `${t}(下达)`,
       },
       {
         title: '预算总金额',

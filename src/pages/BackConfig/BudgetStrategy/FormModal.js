@@ -51,6 +51,8 @@ class FormModal extends PureComponent {
       name: 'categoryName',
       dataSource: STRATEGY_TYPE_DATA,
       field: ['category'],
+      showSearch: false,
+      pagination: false,
       reader: {
         name: 'title',
         field: ['key'],

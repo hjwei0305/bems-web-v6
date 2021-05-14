@@ -46,6 +46,7 @@ class FormModal extends PureComponent {
         url: `${SERVER_PATH}/bems-v6/dimension/findAllCodes`,
       },
       pagination: false,
+      showSearch: false,
       afterSelect: item => {
         const originCode = get(rowData, 'code');
         let name = get(rowData, 'name');
