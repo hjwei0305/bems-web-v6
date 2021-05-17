@@ -207,11 +207,11 @@ class DetailItem extends PureComponent {
     if (poolCode) {
       return (
         <>
-          {`${item.periodName} ${item.itemName}`}
-          <span className="pool-box">
+          <div className="pool-box">
             <span className="title">池号</span>
             <span className="no">{poolCode}</span>
-          </span>
+          </div>
+          <div className="master-title">{`${item.periodName} ${item.itemName}`}</div>
         </>
       );
     }

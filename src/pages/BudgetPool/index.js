@@ -173,10 +173,6 @@ class BudgetPool extends Component {
     return (
       <>
         {this.renderSubField(item)}
-        <div className="field-item">
-          <span className="label">有效期</span>
-          <span>{`${startDate} ~ ${endDate}`}</span>
-        </div>
         <div className="money-box">
           <div className="field-item">
             <span className="label">预算余额</span>
@@ -189,6 +185,10 @@ class BudgetPool extends Component {
             </span>
           </div>
         </div>
+        <div className="field-item">
+          <span className="label">有效期</span>
+          <span>{`${startDate} ~ ${endDate}`}</span>
+        </div>
       </>
     );
   };
@@ -198,11 +198,11 @@ class BudgetPool extends Component {
     if (poolCode) {
       return (
         <>
-          {`${item.periodName} ${item.itemName}`}
-          <span className="pool-box">
+          <div className="pool-box">
             <span className="title">池号</span>
             <span className="no">{poolCode}</span>
-          </span>
+          </div>
+          <div className="master-title">{`${item.periodName} ${item.itemName}`}</div>
         </>
       );
     }
