@@ -284,7 +284,7 @@ class DetailItem extends PureComponent {
             allowEdit={!globalDisabled}
             onSave={this.handlerSaveMoney}
           />
-          {errMsg ? <Alert type="error" message={errMsg} banner /> : null}
+          {errMsg ? <Alert type="error" message={errMsg} banner closable /> : null}
         </div>
       </>
     );

@@ -302,7 +302,7 @@ class DetailItem extends PureComponent {
               <Money value={afterAmount} />
             </span>
           </div>
-          {errMsg ? <Alert type="error" message={errMsg} banner /> : null}
+          {errMsg ? <Alert type="error" message={errMsg} banner closable /> : null}
         </div>
       </>
     );
