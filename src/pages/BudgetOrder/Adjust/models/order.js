@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-17 09:04:12
+ * @Last Modified time: 2021-05-17 15:35:28
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -17,6 +17,7 @@ import {
   getHead,
   saveItemMoney,
   effective,
+  getAdjustData,
 } from '../services/order';
 
 const { dvaModel } = utils;
@@ -72,6 +73,7 @@ export default modelExtend(model, {
       }
     },
     *getHead({ payload, callback }, { call, put }) {
+      const summary = yield call(getAdjustData, { orderId: get(payload, 'id') });
       const res = yield call(getHead, payload);
       if (res.success) {
         const { dimensions, ...rest } = res.data;
@@ -79,7 +81,10 @@ export default modelExtend(model, {
         yield put({
           type: 'updateState',
           payload: {
-            headData: rest,
+            headData: {
+              ...rest,
+              updownAmount: { up: get(summary, 'data.ADD', 0), down: get(summary, 'data.SUB', 0) },
+            },
             subDimensionFields,
           },
         });

@@ -265,6 +265,7 @@ class DetailItem extends PureComponent {
     const rowKey = get(item, 'id');
     const amount = get(this.pagingData[rowKey], 'amount') || get(item, 'amount');
     const errMsg = get(this.pagingData[rowKey], 'errMsg') || '';
+    const poolAmount = get(item, 'poolAmount');
     return (
       <>
         {this.renderSubField(item)}
@@ -272,14 +273,17 @@ class DetailItem extends PureComponent {
           <div className="field-item">
             <span className="label">预算余额</span>
             <span>
-              <Money value={get(item, 'poolAmount')} />
+              <Money value={poolAmount} />
             </span>
           </div>
           <BudgetMoney
             className="inject-money"
             amount={amount}
-            title="下达金额"
+            title="分解金额"
             rowItem={item}
+            maxAmount={poolAmount}
+            minAmount={0}
+            extra={`允许输入的最大金额为${poolAmount}`}
             loading={itemMoneySaving}
             allowEdit={!globalDisabled}
             onSave={this.handlerSaveMoney}

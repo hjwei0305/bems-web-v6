@@ -102,6 +102,18 @@ export async function getHead(params) {
 }
 
 /**
+ * 获取初始的调整金额
+ * @id
+ */
+export async function getAdjustData(params) {
+  const url = `${SERVER_PATH}/bems-v6/order/getAdjustData`;
+  return request({
+    url,
+    params,
+  });
+}
+
+/**
  * 直接生效
  */
 export async function effective(params) {

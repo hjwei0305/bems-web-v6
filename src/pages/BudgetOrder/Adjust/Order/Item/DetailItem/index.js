@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { get, add } from 'lodash';
+import { get } from 'lodash';
+import { Decimal } from 'decimal.js';
 import { Descriptions, Input, Button, Popconfirm, Checkbox, Alert, Tag } from 'antd';
 import { ExtIcon, ListCard, Money, Space } from 'suid';
 import { FilterView } from '@/components';
@@ -37,8 +38,17 @@ class DetailItem extends PureComponent {
   constructor(props) {
     super(props);
     const [itemStatus] = REQUEST_ITEM_STATUS_DATA;
+    const { headData } = props;
     this.pagingData = {};
-    this.updownAmount = { up: 0, down: 0 };
+    if (headData) {
+      const { updownAmount } = headData;
+      this.updownAmount = {
+        up: get(updownAmount, 'up') || 0,
+        down: get(updownAmount, 'down') || 0,
+      };
+    } else {
+      this.updownAmount = { up: 0, down: 0 };
+    }
     this.state = {
       selectedKeys: [],
       globalDisabled: false,
@@ -88,12 +98,27 @@ class DetailItem extends PureComponent {
         onSaveItemMoney(rowItem, amount, res => {
           callBack();
           if (res.success) {
-            this.pagingData[rowKey] = { ...res.data };
-            if (amount > 0) {
-              this.updownAmount.up += amount;
-            }
-            if (amount < 0) {
-              this.updownAmount.down += amount;
+            const rowData = res.data;
+            this.pagingData[rowKey] = { ...rowData };
+            if (rowData.hasErr === false) {
+              if (originAmount > 0) {
+                this.updownAmount.up = new Decimal(this.updownAmount.up).sub(
+                  new Decimal(originAmount),
+                );
+              }
+              if (originAmount < 0) {
+                this.updownAmount.down = new Decimal(this.updownAmount.down).sub(
+                  new Decimal(originAmount),
+                );
+              }
+              if (amount > 0) {
+                this.updownAmount.up = new Decimal(this.updownAmount.up).add(new Decimal(amount));
+              }
+              if (amount < 0) {
+                this.updownAmount.down = new Decimal(this.updownAmount.down).add(
+                  new Decimal(amount),
+                );
+              }
             }
           }
         });
@@ -273,10 +298,13 @@ class DetailItem extends PureComponent {
     const { globalDisabled } = this.state;
     const { itemMoneySaving } = this.props;
     const rowKey = get(item, 'id');
-    const amount = get(this.pagingData[rowKey], 'amount') || get(item, 'amount');
+    const amount =
+      get(this.pagingData[rowKey], 'amount') !== undefined
+        ? get(this.pagingData[rowKey], 'amount')
+        : get(item, 'amount');
     const errMsg = get(this.pagingData[rowKey], 'errMsg') || '';
     const poolAmount = get(item, 'poolAmount');
-    const afterAmount = add(poolAmount, amount);
+    const afterAmount = new Decimal(poolAmount).add(new Decimal(amount));
     return (
       <>
         {this.renderSubField(item)}

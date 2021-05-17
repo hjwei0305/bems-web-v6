@@ -1,18 +1,21 @@
 import React, { useState, useMemo, useRef, useCallback } from 'react';
 import cls from 'classnames';
-import { get } from 'lodash';
+import { get, isNaN } from 'lodash';
 import { Money, MoneyInput, Space, ExtIcon } from 'suid';
 import styles from './index.less';
 
 const BudgetMoney = ({
   title,
   amount,
+  maxAmount = null,
+  minAmount = null,
   onSave,
   allowEdit = true,
   rowItem,
   style,
   className,
   loading,
+  extra = null,
 }) => {
   let money = amount;
 
@@ -22,10 +25,13 @@ const BudgetMoney = ({
 
   const [edit, setEdit] = useState(false);
 
+  const [validFail, setValidFail] = useState(false);
+
   const handlerEdit = useCallback(() => {
     if (allowEdit) {
       setRowKey(get(rowItem, 'id'));
       setEdit(true);
+      setValidFail(false);
       setTimeout(() => {
         if (inputRef) {
           inputRef.current.handlerFocus();
@@ -41,7 +47,19 @@ const BudgetMoney = ({
 
   const handlerBlurAutoSave = e => {
     money = Number(parser(e.target.value));
+    if (isNaN(money)) {
+      setValidFail(true);
+      return false;
+    }
     if (onSave && onSave instanceof Function) {
+      if (maxAmount !== null && maxAmount !== undefined && maxAmount < money) {
+        setValidFail(true);
+        return false;
+      }
+      if (minAmount !== null && minAmount !== undefined && minAmount > money) {
+        setValidFail(true);
+        return false;
+      }
       onSave(rowItem, money, () => {
         setRowKey('');
       });
@@ -73,19 +91,34 @@ const BudgetMoney = ({
     );
   }, [money, rowItem, loading, rowKey, allowEdit, getClassName, handlerEdit]);
 
+  const restProps = {};
+  if (maxAmount != null && maxAmount !== undefined) {
+    Object.assign(restProps, { max: Number(maxAmount) });
+  }
+  if (minAmount != null && minAmount !== undefined) {
+    Object.assign(restProps, { min: Number(minAmount) });
+  }
+
   return (
     <div className={cls(styles['money-box'], className)} style={style}>
       <span className="field-item">
         <span className="label">{title}</span>
         {edit ? (
-          <Space size={0} onClick={e => e.stopPropagation()}>
+          <Space direction="vertical" size={0} onClick={e => e.stopPropagation()}>
             <MoneyInput
               ref={inputRef}
               textAlign="left"
               value={money}
+              className={cls({ 'has-error': validFail })}
               onBlur={handlerBlurAutoSave}
               onPressEnter={handlerBlurAutoSave}
+              {...restProps}
             />
+            {extra ? (
+              <span style={{ fontSize: 12, color: 'rgba(0,0,0,0.35)', position: 'absolute' }}>
+                {extra}
+              </span>
+            ) : null}
           </Space>
         ) : (
           <Space size={2} onClick={e => e.stopPropagation()}>
