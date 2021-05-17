@@ -1,0 +1,59 @@
+@import '../../../../../../themes/vars.less';
+
+.detail-item-box {
+  :global {
+    .pool-box {
+      display: inline-block;
+      max-width: 132px;
+      height: auto;
+      margin: 0 0 8px 0;
+      font-variant: tabular-nums;
+      line-height: 20px;
+      white-space: nowrap;
+      background-color: @white;
+      border-radius: 4px;
+      cursor: default;
+      transition: all 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+      font-feature-settings: 'tnum';
+      .title {
+        display: inline-block;
+        padding: 2px;
+        color: #fff;
+        font-size: 12px;
+        background-color: #2db7f5;
+        border-radius: 4px 0 0 4px;
+      }
+      .no {
+        display: inline-block;
+        margin: 0 4px;
+        color: #47acea;
+      }
+    }
+    .ant-list-item-meta-title {
+      color: fade(@black, 85%);
+    }
+    .ant-list-item {
+      cursor: default !important;
+    }
+    .suid-money {
+      padding-left: 8px;
+      font-size: 16px;
+    }
+    .field-item {
+      .label {
+        color: fade(@black, 65%);
+        &::after {
+          margin: 0 4px;
+          content: ':';
+        }
+      }
+    }
+    .inject-money {
+      .field-item {
+        .label {
+          text-align: right;
+        }
+      }
+    }
+  }
+}

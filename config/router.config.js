@@ -33,7 +33,23 @@ export default [
       {
         path: '/budgetOrder',
         name: '预算单据',
-        routes: [{ path: '/budgetOrder/budgetInjection', component: './BudgetOrder/Injection' }],
+        routes: [
+          {
+            name: '预算下达申请',
+            path: '/budgetOrder/budgetInjection',
+            component: './BudgetOrder/Injection',
+          },
+          {
+            name: '预算调整申请',
+            path: '/budgetOrder/budgetAdjust',
+            component: './BudgetOrder/Adjust',
+          },
+          {
+            name: '预算分解申请',
+            path: '/budgetOrder/budgetSplit',
+            component: './BudgetOrder/Split',
+          },
+        ],
       },
       {
         path: '/budgetPool',

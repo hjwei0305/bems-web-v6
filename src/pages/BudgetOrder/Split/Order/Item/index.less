@@ -1,0 +1,36 @@
+@import '../../../../../themes/vars.less';
+
+.item-box {
+  position: relative;
+  height: calc(100% - 250px);
+  overflow: hidden;
+  :global {
+    .tab-box {
+      height: 100%;
+      background-color: @white;
+      .ant-tabs-ink-bar {
+        z-index: 0;
+      }
+      .ant-tabs-bar {
+        margin: 0;
+      }
+      .ant-tabs-content {
+        height: calc(100% - 44px);
+      }
+      .suid-attachment {
+        margin: 24px;
+      }
+    }
+    .ant-tabs-extra-content {
+      margin-right: 16px;
+    }
+    .ant-tabs-tabpane-active {
+      height: 100%;
+    }
+    .attachment-file-list-box {
+      .suid-file-item {
+        padding: 16px 24px 4px 24px;
+      }
+    }
+  }
+}

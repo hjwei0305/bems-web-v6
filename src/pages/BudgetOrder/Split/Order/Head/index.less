@@ -1,0 +1,23 @@
+@import '../../../../../themes/vars.less';
+
+.head-box {
+  position: relative;
+  height: 160px;
+  padding: 8px 64px 8px 24px;
+  overflow: hidden;
+  background-color: @white;
+  border-bottom: 6px solid @page-background-color;
+  :global {
+    .has-error .ant-form-explain,
+    .has-error .ant-form-split {
+      display: none;
+    }
+    .ant-row {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .ant-form-item {
+      margin-bottom: 8px;
+    }
+  }
+}
