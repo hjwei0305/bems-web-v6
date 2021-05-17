@@ -127,7 +127,7 @@ class BudgetPool extends Component {
         <Space>
           <Search
             allowClear
-            placeholder="输入维度关键字"
+            placeholder="输入池号、维度关键字"
             onChange={e => this.handlerSearchChange(e.target.value)}
             onSearch={this.handlerSearch}
             onPressEnter={this.handlerPressEnter}
@@ -258,6 +258,7 @@ class BudgetPool extends Component {
         ...filters,
       },
       searchProperties: [
+        'code',
         'itemName',
         'periodName',
         'projectName',
