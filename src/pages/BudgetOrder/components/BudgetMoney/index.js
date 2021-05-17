@@ -62,7 +62,7 @@ const BudgetMoney = ({
     if (loading && rowKey === get(rowItem, 'id')) {
       return (
         <div className="allow-edit">
-          <ExtIcon type="loading" antd spin />
+          <ExtIcon type="loading" antd spin style={{ marginLeft: 4 }} />
         </div>
       );
     }
@@ -84,6 +84,7 @@ const BudgetMoney = ({
               textAlign="left"
               value={money}
               onBlur={handlerBlurAutoSave}
+              onPressEnter={handlerBlurAutoSave}
             />
           </Space>
         ) : (

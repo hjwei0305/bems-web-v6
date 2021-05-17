@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
-import { Descriptions, Input, Button, Popconfirm, Checkbox, Alert } from 'antd';
-import { ListCard, Money, Space } from 'suid';
+import { get, add } from 'lodash';
+import { Descriptions, Input, Button, Popconfirm, Checkbox, Alert, Tag } from 'antd';
+import { ExtIcon, ListCard, Money, Space } from 'suid';
 import { FilterView } from '@/components';
 import { constants } from '@/utils';
 import BudgetMoney from '../../../../components/BudgetMoney';
@@ -20,6 +20,8 @@ class DetailItem extends PureComponent {
 
   static pagingData;
 
+  static updownAmount;
+
   static propTypes = {
     onDetailItemRef: PropTypes.func,
     action: PropTypes.oneOf(ACTIONS).isRequired,
@@ -36,6 +38,7 @@ class DetailItem extends PureComponent {
     super(props);
     const [itemStatus] = REQUEST_ITEM_STATUS_DATA;
     this.pagingData = {};
+    this.updownAmount = { up: 0, down: 0 };
     this.state = {
       selectedKeys: [],
       globalDisabled: false,
@@ -53,6 +56,7 @@ class DetailItem extends PureComponent {
 
   componentWillUnmount() {
     this.pagingData = {};
+    this.updownAmount = { up: 0, down: 0 };
   }
 
   initGlobalAction = () => {
@@ -85,6 +89,12 @@ class DetailItem extends PureComponent {
           callBack();
           if (res.success) {
             this.pagingData[rowKey] = { ...res.data };
+            if (amount > 0) {
+              this.updownAmount.up += amount;
+            }
+            if (amount < 0) {
+              this.updownAmount.down += amount;
+            }
           }
         });
       } else {
@@ -191,7 +201,7 @@ class DetailItem extends PureComponent {
           />
           <Search
             allowClear
-            placeholder="输入下达金额、维度关键字"
+            placeholder="输入调整金额、维度关键字"
             onChange={e => this.handlerSearchChange(e.target.value)}
             onSearch={this.handlerSearch}
             onPressEnter={this.handlerPressEnter}
@@ -265,25 +275,33 @@ class DetailItem extends PureComponent {
     const rowKey = get(item, 'id');
     const amount = get(this.pagingData[rowKey], 'amount') || get(item, 'amount');
     const errMsg = get(this.pagingData[rowKey], 'errMsg') || '';
+    const poolAmount = get(item, 'poolAmount');
+    const afterAmount = add(poolAmount, amount);
     return (
       <>
         {this.renderSubField(item)}
         <div className="money-box">
           <div className="field-item">
-            <span className="label">预算余额</span>
+            <span className="label">调整前余额</span>
             <span>
-              <Money value={get(item, 'poolAmount')} />
+              <Money value={poolAmount} />
             </span>
           </div>
           <BudgetMoney
             className="inject-money"
             amount={amount}
-            title="下达金额"
+            title="调整金额"
             rowItem={item}
             loading={itemMoneySaving}
             allowEdit={!globalDisabled}
             onSave={this.handlerSaveMoney}
           />
+          <div className="field-item">
+            <span className="label">调整后余额</span>
+            <span>
+              <Money value={afterAmount} />
+            </span>
+          </div>
           {errMsg ? <Alert type="error" message={errMsg} banner /> : null}
         </div>
       </>
@@ -308,7 +326,6 @@ class DetailItem extends PureComponent {
         return { tabIndex: -1 };
       },
       selectedKeys,
-      className: styles['detail-item-box'],
       onListCardRef: ref => (this.listCardRef = ref),
       customTool: this.renderCustomTool,
       searchProperties: [
@@ -348,7 +365,39 @@ class DetailItem extends PureComponent {
         },
       });
     }
-    return <ListCard {...listProps} />;
+    return (
+      <div className={styles['detail-item-box']}>
+        <ListCard {...listProps} />
+        {globalDisabled ? null : (
+          <div className="detail-summary">
+            <Tag color="green">
+              <Money
+                prefix={
+                  <>
+                    <ExtIcon type="arrow-up" antd />
+                    调增
+                  </>
+                }
+                style={{ color: '#52c41a' }}
+                value={this.updownAmount.up}
+              />
+            </Tag>
+            <Tag color="red">
+              <Money
+                prefix={
+                  <>
+                    <ExtIcon type="arrow-down" antd />
+                    调减
+                  </>
+                }
+                style={{ color: '#f5222d' }}
+                value={this.updownAmount.down}
+              />
+            </Tag>
+          </div>
+        )}
+      </div>
+    );
   }
 }
 

@@ -249,7 +249,7 @@ class RequestHead extends PureComponent {
               </FormItem>
             </Col>
             <Col span={24}>
-              <FormItem label="备注说明" {...formItemRemarkLayout}>
+              <FormItem label="调整说明" {...formItemRemarkLayout}>
                 {getFieldDecorator('remark', {
                   initialValue: get(headData, 'remark'),
                 })(<Input disabled={globalDisabled} autoComplete="off" />)}
