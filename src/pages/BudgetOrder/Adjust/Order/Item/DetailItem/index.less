@@ -6,9 +6,8 @@
       display: inline-block;
       max-width: 132px;
       height: auto;
-      margin: 0 0 8px 0;
       font-variant: tabular-nums;
-      line-height: 20px;
+      line-height: 16px;
       white-space: nowrap;
       background-color: @white;
       border-radius: 4px;
@@ -29,8 +28,20 @@
         color: #47acea;
       }
     }
+    .ant-descriptions-row > th,
+    .ant-descriptions-row > td {
+      padding-bottom: 0;
+    }
+    .ant-descriptions-item-label {
+      min-width: 80px;
+      color: fade(@black, 65%);
+      text-align-last: justify;
+    }
     .ant-list-item-meta-title {
       color: fade(@black, 85%);
+    }
+    .money-box {
+      margin-top: 8px;
     }
     .ant-list-item {
       cursor: default !important;

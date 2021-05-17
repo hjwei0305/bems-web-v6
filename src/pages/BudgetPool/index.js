@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { get, isEmpty, isNumber, isEqual } from 'lodash';
 import cls from 'classnames';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import { Input, Descriptions } from 'antd';
+import { Input, Descriptions, Tag } from 'antd';
 import { ListCard, ExtIcon, Money, Space } from 'suid';
 import { constants } from '@/utils';
 import Filter from './components/Filter';
@@ -151,7 +151,7 @@ class BudgetPool extends Component {
     const subFields = this.getDisplaySubDimensionFields(item);
     if (subFields.length > 0) {
       return (
-        <Descriptions key={`sub${item.id}`} column={2} bordered={false}>
+        <Descriptions key={`sub${item.id}`} column={1} bordered={false}>
           {subFields.map(f => {
             return (
               <Descriptions.Item key={`sub${item.id}${f.dimension}`} label={f.title}>
@@ -189,24 +189,29 @@ class BudgetPool extends Component {
           <span className="label">有效期</span>
           <span>{`${startDate} ~ ${endDate}`}</span>
         </div>
+        <div className="field-item">
+          {item.roll ? <Tag color="magenta">可结转</Tag> : null}
+          {item.use ? <Tag color="cyan">业务可用</Tag> : null}
+        </div>
       </>
     );
   };
 
   renderMasterTitle = item => {
     const poolCode = get(item, 'code');
-    if (poolCode) {
-      return (
-        <>
-          <div className="pool-box">
-            <span className="title">池号</span>
-            <span className="no">{poolCode}</span>
-          </div>
-          <div className="master-title">{`${item.periodName} ${item.itemName}`}</div>
-        </>
-      );
-    }
-    return `${item.periodName} ${item.itemName}`;
+    const actived = get(item, 'actived');
+    return (
+      <>
+        <div className="pool-box">
+          <span className="title">池号</span>
+          <span className="no">{poolCode}</span>
+          {actived === false ? (
+            <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
+          ) : null}
+        </div>
+        <div className="master-title">{`${item.periodName} ${item.itemName}`}</div>
+      </>
+    );
   };
 
   getDisplaySubDimensionFields = item => {
