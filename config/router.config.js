@@ -52,6 +52,27 @@ export default [
         ],
       },
       {
+        path: '/budgetOrderFlow',
+        name: '预算单据流程审批',
+        routes: [
+          {
+            name: '预算下达申请-显示',
+            path: '/budgetOrderFlow/injectionView',
+            component: './BudgetOrder/Injection/Flow/ViewOrder',
+          },
+          {
+            name: '预算下达申请-修改',
+            path: '/budgetOrderFlow/injectionUpdate',
+            component: './BudgetOrder/Injection/Flow/UpdateOrder',
+          },
+          {
+            name: '预算下达申请-审批',
+            path: '/budgetOrderFlow/injectionApprove',
+            component: './BudgetOrder/Injection/Flow/ApproveOrder',
+          },
+        ],
+      },
+      {
         path: '/budgetPool',
         name: '预算池',
         routes: [{ path: '/budgetPool/poollist', component: './BudgetPool' }],

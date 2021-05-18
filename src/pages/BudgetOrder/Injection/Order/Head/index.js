@@ -73,6 +73,7 @@ class RequestHead extends PureComponent {
       case REQUEST_ORDER_ACTION.VIEW:
       case REQUEST_ORDER_ACTION.VIEW_APPROVE_FLOW:
       case REQUEST_ORDER_ACTION.LINK_VIEW:
+      case REQUEST_ORDER_ACTION.APPROVE_FLOW:
         globalDisabled = true;
         break;
       default:

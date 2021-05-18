@@ -8,7 +8,7 @@ import styles from './Request.less';
 
 const { REQUEST_ORDER_ACTION } = constants;
 
-class UpdateOrder extends PureComponent {
+class ViewOrder extends PureComponent {
   static propTypes = {
     showView: PropTypes.bool,
     onCloseModal: PropTypes.func,
@@ -48,4 +48,4 @@ class UpdateOrder extends PureComponent {
   }
 }
 
-export default UpdateOrder;
+export default ViewOrder;
