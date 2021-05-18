@@ -1,0 +1,23 @@
+@import '../../../../themes/vars.less';
+
+.approve-wrapper {
+  :global {
+    .approve-order-content {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      background-color: @page-background-color;
+    }
+    .flow-order-box {
+      width: 100%;
+      min-width: auto;
+      max-width: none;
+      .order-content-box {
+        background-color: @white;
+      }
+    }
+  }
+}

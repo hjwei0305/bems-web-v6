@@ -184,7 +184,7 @@ class ExtAction extends PureComponent {
                 <StartFlow
                   key={recordItem.id}
                   businessKey={recordItem.id}
-                  businessModelCode="INJECTION"
+                  businessModelCode="SPLIT"
                   startComplete={this.startFlowCallBack}
                   beforeStart={this.beforeStartFlow}
                 >

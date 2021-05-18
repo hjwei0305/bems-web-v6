@@ -43,7 +43,7 @@ class ExtAction extends PureComponent {
       effecting,
     } = this.props;
     const startFlowProps = {
-      businessModelCode: 'INJECTION',
+      businessModelCode: 'SPLIT',
       startComplete: handlerStartComlete,
       beforeStart: beforeStartFlow,
       needStartConfirm: true,

@@ -70,6 +70,36 @@ export default [
             path: '/budgetOrderFlow/injectionApprove',
             component: './BudgetOrder/Injection/Flow/ApproveOrder',
           },
+          {
+            name: '预算调整申请-显示',
+            path: '/budgetOrderFlow/adjustView',
+            component: './BudgetOrder/Adjust/Flow/ViewOrder',
+          },
+          {
+            name: '预算调整申请-修改',
+            path: '/budgetOrderFlow/adjustUpdate',
+            component: './BudgetOrder/Adjust/Flow/UpdateOrder',
+          },
+          {
+            name: '预算调整申请-审批',
+            path: '/budgetOrderFlow/adjustApprove',
+            component: './BudgetOrder/Adjust/Flow/ApproveOrder',
+          },
+          {
+            name: '预算分解申请-显示',
+            path: '/budgetOrderFlow/splitView',
+            component: './BudgetOrder/Split/Flow/ViewOrder',
+          },
+          {
+            name: '预算分解申请-修改',
+            path: '/budgetOrderFlow/splitUpdate',
+            component: './BudgetOrder/Split/Flow/UpdateOrder',
+          },
+          {
+            name: '预算分解申请-审批',
+            path: '/budgetOrderFlow/splitApprove',
+            component: './BudgetOrder/Split/Flow/ApproveOrder',
+          },
         ],
       },
       {
