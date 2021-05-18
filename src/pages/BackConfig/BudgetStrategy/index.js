@@ -158,7 +158,7 @@ class BudgetStrategy extends Component {
         render: t => <StrategyType state={t} />,
       },
       {
-        title: '策略BeanId',
+        title: '策略类路径',
         dataIndex: 'classPath',
         width: 380,
         render: t => t || '-',
