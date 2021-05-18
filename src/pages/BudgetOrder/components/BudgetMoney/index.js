@@ -63,7 +63,7 @@ const BudgetMoney = ({
       onSave(rowItem, money, () => {
         setRowKey('');
       });
-      // setEdit(false);
+      setEdit(false);
     }
   };
 

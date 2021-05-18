@@ -270,7 +270,7 @@ class DetailItem extends PureComponent {
     const errMsg = get(this.pagingData[rowKey], 'errMsg') || '';
     const poolAmount = get(item, 'poolAmount');
     const originPoolAmount = get(item, 'originPoolAmount');
-    const originPoolCode = get(item, 'originPoolCode');
+    const originPoolCode = get(item, 'originPoolCode') || '-';
     return (
       <>
         {this.renderSubField(item)}
