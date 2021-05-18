@@ -160,7 +160,7 @@ class BudgetStrategy extends Component {
       {
         title: '策略类路径',
         dataIndex: 'classPath',
-        width: 380,
+        width: 520,
         render: t => t || '-',
       },
     ];
