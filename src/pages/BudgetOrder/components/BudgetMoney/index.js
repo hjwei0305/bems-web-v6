@@ -63,7 +63,7 @@ const BudgetMoney = ({
       onSave(rowItem, money, () => {
         setRowKey('');
       });
-      setEdit(false);
+      // setEdit(false);
     }
   };
 
@@ -115,7 +115,14 @@ const BudgetMoney = ({
               {...restProps}
             />
             {extra ? (
-              <span style={{ fontSize: 12, color: 'rgba(0,0,0,0.35)', position: 'absolute' }}>
+              <span
+                style={{
+                  fontSize: 12,
+                  color: 'rgba(0,0,0,0.35)',
+                  position: 'absolute',
+                  minWidth: 600,
+                }}
+              >
                 {extra}
               </span>
             ) : null}

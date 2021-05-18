@@ -9,26 +9,26 @@ import styles from './index.less';
 
 const { getUUID, authAction } = utils;
 const { StartFlow, FlowHistoryButton } = WorkFlow;
-const { INJECTION_REQUEST_BTN_KEY } = constants;
+const { BUDGET_POOL_ACTION } = constants;
 const { Item } = Menu;
 
 const menuData = () => [
   {
-    title: '查看',
-    key: INJECTION_REQUEST_BTN_KEY.VIEW,
+    title: '查看日志',
+    key: BUDGET_POOL_ACTION.LOG,
     disabled: false,
     ignore: 'true',
   },
   {
     title: '启用',
-    key: INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY,
-    disabled: false,
+    key: BUDGET_POOL_ACTION.UNFROZEN,
+    disabled: true,
     ignore: 'true',
   },
   {
     title: '停用',
-    key: INJECTION_REQUEST_BTN_KEY.EDIT,
-    disabled: false,
+    key: BUDGET_POOL_ACTION.FROZEN,
+    disabled: true,
     ignore: 'true',
   },
 ];
@@ -63,16 +63,25 @@ class ExtAction extends PureComponent {
 
   initActionMenus = () => {
     const { recordItem } = this.props;
-    const status = get(recordItem, 'status');
+    const actived = get(recordItem, 'actived');
     const menus = menuData().filter(action => {
       if (authAction(action)) {
         return action;
       }
       return false;
     });
-    switch (status) {
-      default:
-        break;
+    if (actived) {
+      menus.forEach(m => {
+        if (m.key === BUDGET_POOL_ACTION.FROZEN) {
+          Object.assign(m, { disabled: false });
+        }
+      });
+    } else {
+      menus.forEach(m => {
+        if (m.key === BUDGET_POOL_ACTION.UNFROZEN) {
+          Object.assign(m, { disabled: false });
+        }
+      });
     }
     const mData = menus.filter(m => !m.disabled);
     this.setState({
@@ -87,10 +96,8 @@ class ExtAction extends PureComponent {
       selectedKeys: '',
       menuShow: false,
     });
-    if (e.key !== INJECTION_REQUEST_BTN_KEY.START_FLOW) {
-      if (onAction) {
-        onAction(e.key, recordItem);
-      }
+    if (onAction) {
+      onAction(e.key, recordItem);
     }
   };
 
@@ -104,7 +111,7 @@ class ExtAction extends PureComponent {
         onClick={e => this.onActionOperation(e, record)}
       >
         {menus.map(m => {
-          if (m.key === INJECTION_REQUEST_BTN_KEY.START_FLOW) {
+          if (m.key === BUDGET_POOL_ACTION.START_FLOW) {
             return (
               <Item key={m.key} disabled={m.disabled}>
                 <StartFlow
@@ -128,7 +135,7 @@ class ExtAction extends PureComponent {
               </Item>
             );
           }
-          if (m.key === INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY) {
+          if (m.key === BUDGET_POOL_ACTION.FLOW_HISTORY) {
             return (
               <Item key={m.key} disabled={m.disabled}>
                 <FlowHistoryButton key={m.key} businessId={recordItem.id}>

@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-18 08:59:53
+ * @Last Modified time: 2021-05-18 15:14:53
  */
 import { base } from '../../public/app.config.json';
 
@@ -144,6 +144,13 @@ const REQUEST_ORDER_ACTION = {
   LINK_VIEW: 'link_view',
 };
 
+/** 预算池的操作 */
+const BUDGET_POOL_ACTION = {
+  LOG: 'log_view',
+  FROZEN: 'frozen',
+  UNFROZEN: 'unfrozen',
+};
+
 const INJECTION_REQUEST_BTN_KEY = {
   CREATE: 'BEMS-INJECTION-CJ',
   EDIT: 'BEMS-INJECTION-XG',
@@ -201,4 +208,5 @@ export default {
   BUDGET_PERIOD_USER_ACTION,
   REQUEST_ITEM_STATUS,
   SEARCH_DATE_PERIOD,
+  BUDGET_POOL_ACTION,
 };

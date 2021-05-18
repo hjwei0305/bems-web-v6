@@ -263,7 +263,10 @@ class DetailItem extends PureComponent {
     const { globalDisabled } = this.state;
     const { itemMoneySaving } = this.props;
     const rowKey = get(item, 'id');
-    const amount = get(this.pagingData[rowKey], 'amount') || get(item, 'amount');
+    const amount =
+      get(this.pagingData[rowKey], 'amount') !== undefined
+        ? get(this.pagingData[rowKey], 'amount')
+        : get(item, 'amount');
     const errMsg = get(this.pagingData[rowKey], 'errMsg') || '';
     return (
       <>

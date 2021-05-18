@@ -96,13 +96,13 @@ class FormModal extends PureComponent {
               ],
             })(<ComboList {...categoryNameProps} />)}
           </FormItem>
-          <FormItem label="策略类路径">
+          <FormItem label="策略BeanId">
             {getFieldDecorator('classPath', {
               initialValue: get(rowData, 'classPath'),
               rules: [
                 {
                   required: true,
-                  message: '策略类路径不能为空',
+                  message: '策略BeanId不能为空',
                 },
               ],
             })(<Input autoComplete="off" />)}

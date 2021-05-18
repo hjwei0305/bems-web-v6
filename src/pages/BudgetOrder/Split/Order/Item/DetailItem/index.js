@@ -263,9 +263,14 @@ class DetailItem extends PureComponent {
     const { globalDisabled } = this.state;
     const { itemMoneySaving } = this.props;
     const rowKey = get(item, 'id');
-    const amount = get(this.pagingData[rowKey], 'amount') || get(item, 'amount');
+    const amount =
+      get(this.pagingData[rowKey], 'amount') !== undefined
+        ? get(this.pagingData[rowKey], 'amount')
+        : get(item, 'amount');
     const errMsg = get(this.pagingData[rowKey], 'errMsg') || '';
     const poolAmount = get(item, 'poolAmount');
+    const originPoolAmount = get(item, 'originPoolAmount');
+    const originPoolCode = get(item, 'originPoolCode');
     return (
       <>
         {this.renderSubField(item)}
@@ -281,9 +286,9 @@ class DetailItem extends PureComponent {
             amount={amount}
             title="分解金额"
             rowItem={item}
-            maxAmount={poolAmount}
-            minAmount={0}
-            extra={`允许输入的最大金额为${poolAmount}`}
+            maxAmount={originPoolAmount}
+            minAmount={-poolAmount}
+            extra={`允许输入的最小值金额：${-poolAmount}，最大金额(池号：${originPoolCode})：${originPoolAmount}`}
             loading={itemMoneySaving}
             allowEdit={!globalDisabled}
             onSave={this.handlerSaveMoney}

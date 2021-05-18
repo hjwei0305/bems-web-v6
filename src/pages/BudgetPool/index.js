@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { get, isEmpty, isNumber, isEqual } from 'lodash';
 import cls from 'classnames';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import { Input, Descriptions, Tag } from 'antd';
+import { Input, Descriptions, Tag, Button } from 'antd';
 import { ListCard, ExtIcon, Money, Space } from 'suid';
 import { constants } from '@/utils';
 import Filter from './components/Filter';
@@ -20,6 +20,13 @@ const filterFields = {
 @connect(({ budgetPool, loading }) => ({ budgetPool, loading }))
 class BudgetPool extends Component {
   static listCardRef;
+
+  static total;
+
+  constructor() {
+    super();
+    this.total = 0;
+  }
 
   componentWillUnmount() {
     const { dispatch } = this.props;
@@ -121,9 +128,12 @@ class BudgetPool extends Component {
   };
 
   renderCustomTool = (total, hasFilter) => {
+    this.total = total;
     return (
       <>
-        <div>{`共 ${total} 项`}</div>
+        <div>
+          <Button onClick={this.reloadData}>刷新</Button>
+        </div>
         <Space>
           <Search
             allowClear
@@ -258,6 +268,9 @@ class BudgetPool extends Component {
       store: {
         type: 'POST',
         url: `${SERVER_PATH}/bems-v6/pool/findByPage`,
+        loaded: () => {
+          this.forceUpdate();
+        },
       },
       cascadeParams: {
         ...filters,
@@ -284,6 +297,7 @@ class BudgetPool extends Component {
       <div className={cls(styles['container-box'])}>
         <ListCard {...listProps} />
         <Filter {...filterProps} />
+        <span className="page-summary">{`共 ${this.total} 项`}</span>
       </div>
     );
   }

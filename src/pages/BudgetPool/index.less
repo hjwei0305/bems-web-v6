@@ -4,6 +4,9 @@
   padding: 0;
   overflow: hidden;
   :global {
+    .suid-list-card .ant-card-body .suid-list-card-tool-box {
+      border-bottom: 4px solid @page-background-color;
+    }
     .filter-btn {
       display: inline-block;
       height: 32px;
@@ -103,6 +106,13 @@
           }
         }
       }
+    }
+    .page-summary {
+      position: absolute;
+      bottom: 0;
+      left: 24px;
+      height: 48px;
+      line-height: 48px;
     }
   }
 }
