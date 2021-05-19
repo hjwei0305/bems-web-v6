@@ -223,6 +223,17 @@ class AdjustRequestList extends Component {
     });
   };
 
+  clearFilter = e => {
+    e.stopPropagation();
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'adjustRequestList/updateState',
+      payload: {
+        filterData: {},
+      },
+    });
+  };
+
   handlerShowFilter = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -433,7 +444,7 @@ class AdjustRequestList extends Component {
     ];
     const { filters, hasFilter } = this.getFilters();
     const toolBarProps = {
-      layout: { leftSpan: 10, rightSpan: 14 },
+      layout: { leftSpan: 6, rightSpan: 18 },
       left: (
         <Space>
           <Button
@@ -476,6 +487,16 @@ class AdjustRequestList extends Component {
             <span className="lable">
               <FormattedMessage id="global.filter" defaultMessage="过滤" />
             </span>
+            {hasFilter ? (
+              <ExtIcon
+                type="close"
+                className="btn-clear"
+                antd
+                onClick={e => this.clearFilter(e)}
+                tooltip={{ title: '清除过滤条件', placement: 'bottomRight' }}
+                style={{ fontSize: 14 }}
+              />
+            ) : null}
           </span>
         </Space>
       ),

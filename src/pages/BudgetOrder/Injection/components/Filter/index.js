@@ -146,6 +146,7 @@ class Filter extends PureComponent {
         getContainer={false}
         placement="right"
         visible={showFilter}
+        destroyOnClose
         title={formatMessage({ id: 'global.filter', defaultMessage: '过滤' })}
         className={cls(styles['filter-box'])}
         onClose={this.handlerClose}
