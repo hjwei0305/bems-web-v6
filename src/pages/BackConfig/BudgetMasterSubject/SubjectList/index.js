@@ -314,7 +314,7 @@ class BudgetSubject extends Component {
             loading={loading.effects['budgetMasterSubject/checkSubjectInit']}
             onClick={this.showInitSubject}
           >
-            初始化
+            参考引用
           </Button>
           <Button onClick={this.reloadData}>
             <FormattedMessage id="global.refresh" defaultMessage="刷新" />
