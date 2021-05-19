@@ -16,12 +16,7 @@ import styles from './index.less';
 const CreateRequestOrder = React.lazy(() => import('./Request/CreateOrder'));
 const UpdateRequestOrder = React.lazy(() => import('./Request/UpdateOrder'));
 const ViewRequestOrder = React.lazy(() => import('./Request/ViewOrder'));
-const {
-  SERVER_PATH,
-  INJECTION_REQUEST_BTN_KEY,
-  REQUEST_VIEW_STATUS,
-  SEARCH_DATE_PERIOD,
-} = constants;
+const { SERVER_PATH, ADJUST_REQUEST_BTN_KEY, REQUEST_VIEW_STATUS, SEARCH_DATE_PERIOD } = constants;
 const startFormat = 'YYYY-MM-DD 00:00:00';
 const endFormat = 'YYYY-MM-DD 23:59:59';
 
@@ -70,7 +65,7 @@ class AdjustRequestList extends Component {
   handlerAction = (key, record) => {
     const { dispatch } = this.props;
     switch (key) {
-      case INJECTION_REQUEST_BTN_KEY.VIEW:
+      case ADJUST_REQUEST_BTN_KEY.VIEW:
         dispatch({
           type: 'adjustRequestList/updateState',
           payload: {
@@ -79,7 +74,7 @@ class AdjustRequestList extends Component {
           },
         });
         break;
-      case INJECTION_REQUEST_BTN_KEY.EDIT:
+      case ADJUST_REQUEST_BTN_KEY.EDIT:
         dispatch({
           type: 'adjustRequestList/updateState',
           payload: {
@@ -88,10 +83,10 @@ class AdjustRequestList extends Component {
           },
         });
         break;
-      case INJECTION_REQUEST_BTN_KEY.DELETE:
+      case ADJUST_REQUEST_BTN_KEY.DELETE:
         this.delConfirm(record);
         break;
-      case INJECTION_REQUEST_BTN_KEY.START_FLOW:
+      case ADJUST_REQUEST_BTN_KEY.START_FLOW:
         this.reloadData();
         break;
       default:
@@ -442,7 +437,7 @@ class AdjustRequestList extends Component {
       left: (
         <Space>
           <Button
-            key={INJECTION_REQUEST_BTN_KEY.CREATE}
+            key={ADJUST_REQUEST_BTN_KEY.CREATE}
             onClick={this.addOrder}
             loading={loading.effects['adjustRequestList/checkAdjustPrefab']}
             type="primary"
