@@ -62,6 +62,17 @@ class BudgetPool extends Component {
     });
   };
 
+  clearFilter = e => {
+    e.stopPropagation();
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'budgetPool/updateState',
+      payload: {
+        filterData: {},
+      },
+    });
+  };
+
   handlerShowFilter = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -122,13 +133,6 @@ class BudgetPool extends Component {
     this.listCardRef.handlerSearch(v);
   };
 
-  handlerAction = (key, record) => {
-    console.log(record);
-    switch (key) {
-      default:
-    }
-  };
-
   renderCustomTool = (total, hasFilter) => {
     this.total = total;
     return (
@@ -153,6 +157,16 @@ class BudgetPool extends Component {
             <span className="lable">
               <FormattedMessage id="global.filter" defaultMessage="过滤" />
             </span>
+            {hasFilter ? (
+              <ExtIcon
+                type="close"
+                className="btn-clear"
+                antd
+                onClick={e => this.clearFilter(e)}
+                tooltip={{ title: '清除过滤条件', placement: 'bottomRight' }}
+                style={{ fontSize: 14 }}
+              />
+            ) : null}
           </span>
         </Space>
       </>
@@ -194,16 +208,16 @@ class BudgetPool extends Component {
                 className={balance < 0 ? 'red' : ''}
                 value={get(item, 'balance')}
               />
+              <span style={{ marginLeft: 8 }}>
+                {item.roll ? <Tag color="magenta">可结转</Tag> : null}
+                {item.use ? <Tag color="cyan">业务可用</Tag> : null}
+              </span>
             </span>
           </div>
         </div>
         <div className="field-item">
           <span className="label">有效期</span>
           <span>{`${startDate} ~ ${endDate}`}</span>
-        </div>
-        <div className="field-item">
-          {item.roll ? <Tag color="magenta">可结转</Tag> : null}
-          {item.use ? <Tag color="cyan">业务可用</Tag> : null}
         </div>
       </>
     );
