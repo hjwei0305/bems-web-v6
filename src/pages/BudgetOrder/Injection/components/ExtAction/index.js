@@ -58,6 +58,7 @@ class ExtAction extends PureComponent {
     super(props);
     this.state = {
       menuShow: false,
+      manuallyEffective: false,
       selectedKeys: '',
       menusData: [],
     };
@@ -79,6 +80,7 @@ class ExtAction extends PureComponent {
 
   initActionMenus = () => {
     const { recordItem } = this.props;
+    const manuallyEffective = get(recordItem, 'manuallyEffective') || false;
     const status = get(recordItem, 'status');
     const menus = menuData().filter(action => {
       if (authAction(action)) {
@@ -127,6 +129,7 @@ class ExtAction extends PureComponent {
     const mData = menus.filter(m => !m.disabled);
     this.setState({
       menusData: mData,
+      manuallyEffective,
     });
   };
 
@@ -155,6 +158,7 @@ class ExtAction extends PureComponent {
   };
 
   onActionOperation = e => {
+    const { manuallyEffective } = this.state;
     const { onAction, recordItem } = this.props;
     e.domEvent.stopPropagation();
     this.setState({
@@ -162,20 +166,23 @@ class ExtAction extends PureComponent {
       menuShow: false,
     });
     if (e.key !== INJECTION_REQUEST_BTN_KEY.START_FLOW) {
-      if (onAction) {
+      if (manuallyEffective && e.key === INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY) {
+        message.destroy();
+        message.warning('直接生效的预算无流程历史!');
+      } else if (onAction) {
         onAction(e.key, recordItem);
       }
     }
   };
 
-  getMenu = (menus, record) => {
-    const { recordItem } = this.props;
+  getMenu = (menus, recordItem) => {
     const menuId = getUUID();
+    const { manuallyEffective } = this.state;
     return (
       <Menu
         id={menuId}
         className={cls(styles['action-menu-box'])}
-        onClick={e => this.onActionOperation(e, record)}
+        onClick={e => this.onActionOperation(e, recordItem)}
       >
         {menus.map(m => {
           if (m.key === INJECTION_REQUEST_BTN_KEY.START_FLOW) {
@@ -203,6 +210,13 @@ class ExtAction extends PureComponent {
             );
           }
           if (m.key === INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY) {
+            if (manuallyEffective) {
+              return (
+                <Item key={m.key} disabled={m.disabled}>
+                  <span className="menu-title">{m.title}</span>
+                </Item>
+              );
+            }
             return (
               <Item key={m.key} disabled={m.disabled}>
                 <FlowHistoryButton key={m.key} businessId={recordItem.id}>

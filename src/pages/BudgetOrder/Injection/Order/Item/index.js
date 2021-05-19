@@ -4,7 +4,7 @@ import cls from 'classnames';
 import { get } from 'lodash';
 import { PubSub } from 'pubsub-js';
 import { Button, Popconfirm, Tabs } from 'antd';
-import { Space, Attachment, ScrollBar, PageLoader, message } from 'suid';
+import { Space, Attachment, PageLoader, message } from 'suid';
 import { constants, wsocket } from '@/utils';
 import Tip from '../../../components/Tip';
 import DetailItem from './DetailItem';
@@ -249,9 +249,7 @@ class RequestItem extends PureComponent {
             <DetailItem {...detailItemProps} />
           </TabPane>
           <TabPane tab="附件信息" key="attachment" forceRender>
-            <ScrollBar>
-              <Attachment {...attachmentProps} />
-            </ScrollBar>
+            <Attachment {...attachmentProps} />
           </TabPane>
         </Tabs>
         <Suspense fallback={<PageLoader />}>

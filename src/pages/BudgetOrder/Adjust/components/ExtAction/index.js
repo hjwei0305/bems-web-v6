@@ -10,37 +10,37 @@ import styles from './index.less';
 
 const { getUUID, authAction } = utils;
 const { StartFlow, FlowHistoryButton } = WorkFlow;
-const { INJECTION_REQUEST_BTN_KEY, REQUEST_VIEW_STATUS } = constants;
+const { ADJUST_REQUEST_BTN_KEY, REQUEST_VIEW_STATUS } = constants;
 const { Item } = Menu;
 
 const menuData = () => [
   {
     title: '查看',
-    key: INJECTION_REQUEST_BTN_KEY.VIEW,
+    key: ADJUST_REQUEST_BTN_KEY.VIEW,
     disabled: true,
     ignore: 'true',
   },
   {
     title: formatMessage({ id: 'global.flowHistory', defaultMessage: '流程历史' }),
-    key: INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY,
+    key: ADJUST_REQUEST_BTN_KEY.FLOW_HISTORY,
     disabled: true,
     ignore: 'true',
   },
   {
     title: formatMessage({ id: 'global.edit', defaultMessage: '编辑' }),
-    key: INJECTION_REQUEST_BTN_KEY.EDIT,
+    key: ADJUST_REQUEST_BTN_KEY.EDIT,
     disabled: true,
     ignore: 'true',
   },
   {
     title: formatMessage({ id: 'global.delete', defaultMessage: '删除' }),
-    key: INJECTION_REQUEST_BTN_KEY.DELETE,
+    key: ADJUST_REQUEST_BTN_KEY.DELETE,
     disabled: true,
     ignore: 'true',
   },
   {
     title: '启动流程',
-    key: INJECTION_REQUEST_BTN_KEY.START_FLOW,
+    key: ADJUST_REQUEST_BTN_KEY.START_FLOW,
     disabled: true,
     ignore: 'true',
   },
@@ -58,6 +58,7 @@ class ExtAction extends PureComponent {
     super(props);
     this.state = {
       menuShow: false,
+      manuallyEffective: false,
       selectedKeys: '',
       menusData: [],
     };
@@ -79,6 +80,7 @@ class ExtAction extends PureComponent {
 
   initActionMenus = () => {
     const { recordItem } = this.props;
+    const manuallyEffective = get(recordItem, 'manuallyEffective') || false;
     const status = get(recordItem, 'status');
     const menus = menuData().filter(action => {
       if (authAction(action)) {
@@ -89,7 +91,7 @@ class ExtAction extends PureComponent {
     switch (status) {
       case REQUEST_VIEW_STATUS.DRAFT.key:
         menus.forEach(m => {
-          if (m.key !== INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY) {
+          if (m.key !== ADJUST_REQUEST_BTN_KEY.FLOW_HISTORY) {
             Object.assign(m, { disabled: false });
           }
         });
@@ -97,8 +99,8 @@ class ExtAction extends PureComponent {
       case REQUEST_VIEW_STATUS.PROCESSING.key:
         menus.forEach(m => {
           if (
-            m.key === INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY ||
-            m.key === INJECTION_REQUEST_BTN_KEY.VIEW
+            m.key === ADJUST_REQUEST_BTN_KEY.FLOW_HISTORY ||
+            m.key === ADJUST_REQUEST_BTN_KEY.VIEW
           ) {
             Object.assign(m, { disabled: false });
           }
@@ -107,8 +109,8 @@ class ExtAction extends PureComponent {
       case REQUEST_VIEW_STATUS.COMPLETED.key:
         menus.forEach(m => {
           if (
-            m.key === INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY ||
-            m.key === INJECTION_REQUEST_BTN_KEY.VIEW
+            m.key === ADJUST_REQUEST_BTN_KEY.FLOW_HISTORY ||
+            m.key === ADJUST_REQUEST_BTN_KEY.VIEW
           ) {
             Object.assign(m, { disabled: false });
           }
@@ -116,7 +118,7 @@ class ExtAction extends PureComponent {
         break;
       case REQUEST_VIEW_STATUS.EFFECTING.key:
         menus.forEach(m => {
-          if (m.key === INJECTION_REQUEST_BTN_KEY.VIEW) {
+          if (m.key === ADJUST_REQUEST_BTN_KEY.VIEW) {
             Object.assign(m, { disabled: false });
           }
         });
@@ -127,13 +129,14 @@ class ExtAction extends PureComponent {
     const mData = menus.filter(m => !m.disabled);
     this.setState({
       menusData: mData,
+      manuallyEffective,
     });
   };
 
   startFlowCallBack = res => {
     const { onAction, recordItem } = this.props;
     if (res && res.success && onAction) {
-      onAction(INJECTION_REQUEST_BTN_KEY.START_FLOW, recordItem);
+      onAction(ADJUST_REQUEST_BTN_KEY.START_FLOW, recordItem);
     }
   };
 
@@ -155,14 +158,18 @@ class ExtAction extends PureComponent {
   };
 
   onActionOperation = e => {
+    const { manuallyEffective } = this.state;
     const { onAction, recordItem } = this.props;
     e.domEvent.stopPropagation();
     this.setState({
       selectedKeys: '',
       menuShow: false,
     });
-    if (e.key !== INJECTION_REQUEST_BTN_KEY.START_FLOW) {
-      if (onAction) {
+    if (e.key !== ADJUST_REQUEST_BTN_KEY.START_FLOW) {
+      if (manuallyEffective && e.key === ADJUST_REQUEST_BTN_KEY.FLOW_HISTORY) {
+        message.destroy();
+        message.warning('直接生效的预算无流程历史!');
+      } else if (onAction) {
         onAction(e.key, recordItem);
       }
     }
@@ -170,6 +177,7 @@ class ExtAction extends PureComponent {
 
   getMenu = (menus, record) => {
     const { recordItem } = this.props;
+    const { manuallyEffective } = this.state;
     const menuId = getUUID();
     return (
       <Menu
@@ -178,7 +186,7 @@ class ExtAction extends PureComponent {
         onClick={e => this.onActionOperation(e, record)}
       >
         {menus.map(m => {
-          if (m.key === INJECTION_REQUEST_BTN_KEY.START_FLOW) {
+          if (m.key === ADJUST_REQUEST_BTN_KEY.START_FLOW) {
             return (
               <Item key={m.key} disabled={m.disabled}>
                 <StartFlow
@@ -202,7 +210,14 @@ class ExtAction extends PureComponent {
               </Item>
             );
           }
-          if (m.key === INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY) {
+          if (m.key === ADJUST_REQUEST_BTN_KEY.FLOW_HISTORY) {
+            if (manuallyEffective) {
+              return (
+                <Item key={m.key} disabled={m.disabled}>
+                  <span className="menu-title">{m.title}</span>
+                </Item>
+              );
+            }
             return (
               <Item key={m.key} disabled={m.disabled}>
                 <FlowHistoryButton key={m.key} businessId={recordItem.id}>

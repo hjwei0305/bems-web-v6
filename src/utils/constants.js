@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-18 15:14:53
+ * @Last Modified time: 2021-05-19 09:14:32
  */
 import { base } from '../../public/app.config.json';
 
@@ -151,6 +151,7 @@ const BUDGET_POOL_ACTION = {
   UNFROZEN: 'unfrozen',
 };
 
+/** 预算下达操作 */
 const INJECTION_REQUEST_BTN_KEY = {
   CREATE: 'BEMS-INJECTION-CJ',
   EDIT: 'BEMS-INJECTION-XG',
@@ -158,6 +159,26 @@ const INJECTION_REQUEST_BTN_KEY = {
   DELETE: 'BEMS-INJECTION-SC',
   START_FLOW: 'BEMS-INJECTION-QDLC',
   FLOW_HISTORY: 'BEMS-INJECTION-LCLS',
+};
+
+/** 预算调整操作 */
+const ADJUST_REQUEST_BTN_KEY = {
+  CREATE: 'BEMS-ADJUST-CJ',
+  EDIT: 'BEMS-ADJUST-XG',
+  VIEW: 'BEMS-ADJUST-XS',
+  DELETE: 'BEMS-ADJUST-SC',
+  START_FLOW: 'BEMS-ADJUST-QDLC',
+  FLOW_HISTORY: 'BEMS-ADJUST-LCLS',
+};
+
+/** 预算分解操作 */
+const SPLIT_REQUEST_BTN_KEY = {
+  CREATE: 'BEMS-SPLIT-CJ',
+  EDIT: 'BEMS-SPLIT-XG',
+  VIEW: 'BEMS-SPLIT-XS',
+  DELETE: 'BEMS-SPLIT-SC',
+  START_FLOW: 'BEMS-SPLIT-QDLC',
+  FLOW_HISTORY: 'BEMS-SPLIT-LCLS',
 };
 
 /** 日期枚举 */
@@ -203,6 +224,8 @@ export default {
   BUDGET_SUBJECT_USER_ACTION,
   REQUEST_VIEW_STATUS,
   INJECTION_REQUEST_BTN_KEY,
+  ADJUST_REQUEST_BTN_KEY,
+  SPLIT_REQUEST_BTN_KEY,
   REQUEST_ORDER_ACTION,
   WSBaseUrl,
   BUDGET_PERIOD_USER_ACTION,
