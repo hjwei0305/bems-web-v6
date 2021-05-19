@@ -7,7 +7,6 @@ import { Input, Descriptions, Tag, Button } from 'antd';
 import { ListCard, ExtIcon, Money, Space } from 'suid';
 import { constants } from '@/utils';
 import Filter from './components/Filter';
-import ExtAction from './components/ExtAction';
 import styles from './index.less';
 
 const { SERVER_PATH } = constants;
@@ -26,6 +25,9 @@ class BudgetPool extends Component {
   constructor() {
     super();
     this.total = 0;
+    this.state = {
+      rowId: null,
+    };
   }
 
   componentWillUnmount() {
@@ -237,9 +239,40 @@ class BudgetPool extends Component {
     return fields;
   };
 
+  renderActivedBtn = item => {
+    const { loading } = this.props;
+    const actived = get(item, 'actived');
+    const { rowId } = this.state;
+    if (loading.effects['budgetPool/active'] && rowId === item.id) {
+      return <ExtIcon className="del-loading" type="loading" antd />;
+    }
+    if (actived) {
+      return (
+        <ExtIcon
+          className="action-item item-disabled"
+          tooltip={{ title: '停用' }}
+          type="close-circle"
+          antd
+        />
+      );
+    }
+    return (
+      <ExtIcon
+        className="action-item item-enable"
+        tooltip={{ title: '启用' }}
+        type="check-circle"
+        antd
+      />
+    );
+  };
+
   renderAction = item => {
-    const id = get(item, 'id');
-    return <ExtAction key={id} onAction={this.handlerAction} recordItem={item} />;
+    return (
+      <Space size={16}>
+        <ExtIcon className="action-item" tooltip={{ title: '日志' }} type="profile" antd />
+        {this.renderActivedBtn(item)}
+      </Space>
+    );
   };
 
   render() {
@@ -288,9 +321,9 @@ class BudgetPool extends Component {
         'udf5Name',
       ],
       itemField: {
-        avatar: ({ item }) => this.renderAction(item),
         title: this.renderMasterTitle,
         description: this.renderDescription,
+        extra: this.renderAction,
       },
     };
     return (
