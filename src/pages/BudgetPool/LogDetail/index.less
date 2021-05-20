@@ -1,0 +1,57 @@
+@import '../../../themes/vars.less';
+.log-box {
+  height: 100%;
+  padding: 0;
+  :global {
+    .amount-title {
+      .ant-table-column-title {
+        text-align: center;
+      }
+    }
+    .trigger-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: inline-block;
+      width: 56px;
+      height: 56px;
+      font-weight: normal;
+      line-height: 58px;
+      cursor: pointer;
+      transition: all ease-in 0.2s;
+      &:hover {
+        color: @primary-color;
+        background-color: fade(@black, 2%);
+      }
+    }
+    .action-item {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      color: fade(@black, 45%);
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 36px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all ease-in 0.2s;
+      &:hover {
+        color: @primary-color;
+        background-color: fade(@black, 5%);
+      }
+    }
+    .ant-card-head {
+      padding-left: 0;
+      .ant-card-extra {
+        padding: 0;
+      }
+    }
+    .ant-card-head-title {
+      padding-left: 56px;
+    }
+    .ant-card-body {
+      height: calc(100% - 56px);
+      padding: 0;
+    }
+  }
+}

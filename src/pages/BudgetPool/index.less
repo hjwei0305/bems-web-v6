@@ -7,6 +7,10 @@
     .suid-list-card .ant-card-body .suid-list-card-tool-box {
       border-bottom: 4px solid @page-background-color;
     }
+    .main-content {
+      position: relative;
+      overflow: hidden;
+    }
     .filter-btn {
       display: inline-block;
       height: 32px;
@@ -59,6 +63,26 @@
           margin: 0 4px;
           color: #47acea;
         }
+        &.disabled {
+          .title {
+            background-color: #7a7d7e;
+          }
+          .no {
+            color: #7a7d7e;
+          }
+        }
+      }
+      .master-title {
+        &.disabled {
+          opacity: 0.5;
+        }
+      }
+      .ant-descriptions {
+        &.disabled {
+          .ant-descriptions-item {
+            opacity: 0.5;
+          }
+        }
       }
       .ant-descriptions-row > th,
       .ant-descriptions-row > td {
@@ -107,6 +131,9 @@
         margin-top: 8px;
       }
       .field-item {
+        &.disabled {
+          opacity: 0.5;
+        }
         .label {
           display: inline-block;
           min-width: 80px;

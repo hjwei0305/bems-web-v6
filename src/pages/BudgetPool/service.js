@@ -12,3 +12,29 @@ export async function getDimensionAll() {
     url,
   });
 }
+
+/**
+ * 停用
+ * @ids arrary
+ */
+export async function poolItemDisable(data) {
+  const url = `${SERVER_PATH}/bems-v6/pool/disable`;
+  return request({
+    method: 'POST',
+    url,
+    data,
+  });
+}
+
+/**
+ * 启用
+ * @ids arrary
+ */
+export async function poolItemEnable(data) {
+  const url = `${SERVER_PATH}/bems-v6/pool/enable`;
+  return request({
+    method: 'POST',
+    url,
+    data,
+  });
+}

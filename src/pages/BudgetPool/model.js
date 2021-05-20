@@ -1,5 +1,5 @@
 import { utils, message } from 'suid';
-import { getDimensionAll } from './service';
+import { getDimensionAll, poolItemDisable, poolItemEnable } from './service';
 
 const { dvaModel, pathMatchRegexp } = utils;
 const { modelExtend, model } = dvaModel;
@@ -26,6 +26,7 @@ export default modelExtend(model, {
     subDimensionFields: [],
     showFilter: false,
     filterData: {},
+    showLog: false,
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -52,6 +53,30 @@ export default modelExtend(model, {
         });
       } else {
         message.error(re.message);
+      }
+    },
+    *poolItemEnable({ payload, callback }, { call }) {
+      const re = yield call(poolItemEnable, payload);
+      message.destroy();
+      if (re.success) {
+        message.success('启用成功');
+      } else {
+        message.error(re.message);
+      }
+      if (callback && callback instanceof Function) {
+        callback(re);
+      }
+    },
+    *poolItemDisable({ payload, callback }, { call }) {
+      const re = yield call(poolItemDisable, payload);
+      message.destroy();
+      if (re.success) {
+        message.success('停用成功');
+      } else {
+        message.error(re.message);
+      }
+      if (callback && callback instanceof Function) {
+        callback(re);
       }
     },
   },
