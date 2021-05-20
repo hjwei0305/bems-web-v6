@@ -47,7 +47,6 @@ class FormModal extends PureComponent {
         url: `${SERVER_PATH}/bems-v6/subject/findUserAuthorizedCorporations`,
       },
       remotePaging: false,
-      searchProperties: [],
       field: ['corporationCode'],
       afterSelect: item => {
         form.setFieldsValue({

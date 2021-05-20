@@ -107,7 +107,7 @@ class PeriodList extends Component {
     const { dispatch } = this.props;
     const frozen = get(rowData, 'closed');
     this.confirmModal = Modal.confirm({
-      title: frozen ? `启用科目【${get(rowData, 'name')}】` : `停用科目【${get(rowData, 'name')}】`,
+      title: frozen ? `启用【${get(rowData, 'name')}】` : `停用【${get(rowData, 'name')}】`,
       content: frozen ? `确定要启用吗?` : `确定要停用吗?`,
       okButtonProps: { type: 'primary' },
       style: { top: '20%' },

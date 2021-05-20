@@ -56,7 +56,10 @@ class FormModal extends PureComponent {
         onOk={this.handlerFormSubmit}
       >
         <Form {...formItemLayout} layout="horizontal" style={{ margin: 24 }}>
-          <FormItem label="事件代码" extra="代码规范：仅大写字母或下划线组合,示例：AAA_BBB">
+          <FormItem
+            label="事件代码"
+            extra="代码规范：仅大写字母或下划线组合,且不能以_头或结尾,示例：AAA_BBB"
+          >
             {getFieldDecorator('code', {
               initialValue: get(rowData, 'code'),
               rules: [
