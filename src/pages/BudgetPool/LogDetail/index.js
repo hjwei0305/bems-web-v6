@@ -70,11 +70,13 @@ const LogDetail = ({ poolItem, handlerClose }) => {
       title: '业务事件',
       dataIndex: 'bizEvent',
       width: 110,
+      optional: true,
     },
     {
       title: '业务来源',
       dataIndex: 'bizFrom',
       width: 110,
+      optional: true,
     },
     {
       title: '业务描述',
@@ -126,7 +128,7 @@ const LogDetail = ({ poolItem, handlerClose }) => {
     remotePaging: true,
     lineNumber: false,
     searchWidth: 260,
-    allowCustomColumns: false,
+    storageId: '36e28135-9faa-4094-ae62-f994d3ab4fdf',
     searchProperties: ['bizCode', 'bizEvent', 'bizFrom', 'bizRemark'],
     sort: {
       field: { opTime: 'desc' },
