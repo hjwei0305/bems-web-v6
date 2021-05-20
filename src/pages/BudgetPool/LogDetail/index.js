@@ -34,7 +34,7 @@ const LogDetail = ({ poolItem, handlerClose }) => {
 
   const columns = [
     {
-      title: '发生额',
+      title: '发生金额',
       dataIndex: 'amount',
       width: 140,
       align: 'right',
