@@ -1,12 +1,12 @@
 import React from 'react';
 import cls from 'classnames';
 import { get } from 'lodash';
-import { Card, Input, Tooltip } from 'antd';
+import { Card, Input, Tooltip, Tag } from 'antd';
 import { BannerTitle, ExtIcon, ExtTable, Space, Money } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
-const { SERVER_PATH } = constants;
+const { SERVER_PATH, POOL_OPERATION } = constants;
 const { Search } = Input;
 let tableRef;
 
@@ -51,7 +51,14 @@ const LogDetail = ({ poolItem, handlerClose }) => {
     {
       title: '类型',
       dataIndex: 'operation',
-      width: 100,
+      width: 80,
+      render: t => {
+        const st = POOL_OPERATION[t];
+        if (st) {
+          return <Tag color={t.color}>{st.title}</Tag>;
+        }
+        return t;
+      },
     },
     {
       title: '操作者',
