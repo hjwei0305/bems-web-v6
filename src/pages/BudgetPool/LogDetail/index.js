@@ -68,7 +68,7 @@ const LogDetail = ({ poolItem, handlerClose }) => {
     },
     {
       title: '业务事件',
-      dataIndex: 'bizEvent',
+      dataIndex: 'eventName',
       width: 110,
       optional: true,
     },
