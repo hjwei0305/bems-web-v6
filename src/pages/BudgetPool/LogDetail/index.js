@@ -55,7 +55,7 @@ const LogDetail = ({ poolItem, handlerClose }) => {
       render: t => {
         const st = POOL_OPERATION[t];
         if (st) {
-          return <Tag color={t.color}>{st.title}</Tag>;
+          return <Tag color={st.color}>{st.title}</Tag>;
         }
         return t;
       },

@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-20 15:49:01
+ * @Last Modified time: 2021-05-20 16:02:26
  */
 import { base } from '../../public/app.config.json';
 
@@ -212,7 +212,7 @@ const SEARCH_DATE_PERIOD = {
 /** 预算池操作类型 */
 const POOL_OPERATION = {
   FREED: { key: 'FREED', title: '释放', color: 'orange' },
-  RELEASE: { key: 'RELEASE', title: '下达', color: 'cyan' },
+  RELEASE: { key: 'RELEASE', title: '下达', color: 'green' },
   USE: { key: 'USE', title: '占用', color: 'blue' },
 };
 
