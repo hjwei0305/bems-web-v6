@@ -64,13 +64,13 @@ const LogDetail = ({ poolItem, handlerClose }) => {
       title: '操作者',
       dataIndex: 'opUserName',
       width: 160,
+      optional: true,
       render: (t, r) => `${t}(${r.opUserAccount})`,
     },
     {
       title: '业务事件',
       dataIndex: 'eventName',
       width: 110,
-      optional: true,
     },
     {
       title: '业务来源',
