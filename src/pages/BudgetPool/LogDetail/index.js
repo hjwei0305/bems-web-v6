@@ -40,7 +40,7 @@ const LogDetail = ({ poolItem, handlerClose }) => {
       align: 'right',
       className: 'amount-title',
       render: t => {
-        return <Money value={t} />;
+        return <Money className={cls(t < 0 ? 'red' : '')} value={t} />;
       },
     },
     {
