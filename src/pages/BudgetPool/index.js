@@ -399,7 +399,7 @@ class BudgetPool extends Component {
       return (
         <ExtIcon
           className="action-item item-disabled"
-          tooltip={{ title: '停用' }}
+          tooltip={{ title: '停用', placement: 'bottom' }}
           type="close-circle"
           onClick={() => this.itemDiableConfirm(item)}
           antd
@@ -409,7 +409,7 @@ class BudgetPool extends Component {
     return (
       <ExtIcon
         className="action-item item-enable"
-        tooltip={{ title: '启用' }}
+        tooltip={{ title: '启用', placement: 'bottom' }}
         type="check-circle"
         onClick={() => this.itemEnableConfirm(item)}
         antd
@@ -424,7 +424,7 @@ class BudgetPool extends Component {
         <ExtIcon
           className="action-item"
           onClick={() => this.showLogDetail(item)}
-          tooltip={{ title: '日志' }}
+          tooltip={{ title: '日志', placement: 'bottom' }}
           type="profile"
           antd
         />
