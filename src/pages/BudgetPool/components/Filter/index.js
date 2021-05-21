@@ -125,8 +125,8 @@ class Filter extends PureComponent {
     return (
       <>
         <FormItem label="预算主体">
-          {getFieldDecorator('corporationName', {
-            initialValue: get(filterData, 'corporationName', null),
+          {getFieldDecorator('subjectName', {
+            initialValue: get(filterData, 'subjectName', null),
           })(<ComboList {...corporationComboListProps} />)}
         </FormItem>
 

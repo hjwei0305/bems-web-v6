@@ -465,7 +465,11 @@ class BudgetPool extends Component {
         },
       },
       cascadeParams: {
-        ...filters,
+        sortOrders: [
+          { property: 'itemName', direction: 'ASC' },
+          { property: 'startDate', direction: 'ASC' },
+        ],
+        filters,
       },
       searchProperties: [
         'code',
