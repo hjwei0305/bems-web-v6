@@ -73,7 +73,7 @@ class ExtAction extends PureComponent {
     if (!isEqual(prevProps.currentViewType, currentViewType)) {
       this.initActionMenus();
     }
-    if (!isEqual((prevProps.recordItem || {}).status, (recordItem || {}).status)) {
+    if (!isEqual(prevProps.recordItem, recordItem)) {
       this.initActionMenus();
     }
   }
