@@ -79,6 +79,12 @@ const LogDetail = ({ poolItem, handlerClose }) => {
       optional: true,
     },
     {
+      title: '业务编号',
+      dataIndex: 'bizCode',
+      width: 120,
+      optional: true,
+    },
+    {
       title: '业务描述',
       dataIndex: 'bizRemark',
       width: 300,
@@ -103,6 +109,7 @@ const LogDetail = ({ poolItem, handlerClose }) => {
       <Space>
         <Tooltip title="输入业务编码、业务事件、业务来源、业务描述关键字">
           <Search
+            allowClear
             placeholder="输入业务编码、业务事件、业务来源、业务描述关键字"
             onChange={e => handlerSearchChange(e.target.value)}
             onSearch={handlerSearch}
