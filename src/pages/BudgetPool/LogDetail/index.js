@@ -17,6 +17,7 @@ const filterFields = {
   eventName: { fieldName: 'eventName', operation: 'LK' },
   amount: { fieldName: 'eventName', operation: 'EQ' },
   bizCode: { fieldName: 'bizCode', operation: 'LK' },
+  bizRemark: { fieldName: 'bizRemark', operation: 'LK' },
 };
 
 const LogDetail = ({ poolItem, handlerClose }) => {
@@ -227,6 +228,7 @@ const LogDetail = ({ poolItem, handlerClose }) => {
       dataIndex: 'bizRemark',
       width: 300,
       optional: true,
+      ...getColumnSearchProps('bizRemark'),
     },
   ];
   const filters = getFilters();
