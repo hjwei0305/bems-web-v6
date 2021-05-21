@@ -186,11 +186,6 @@ const LogDetail = ({ poolItem, handlerClose }) => {
       },
     },
     {
-      title: '发生时间',
-      dataIndex: 'opTime',
-      width: 180,
-    },
-    {
       title: '类型',
       dataIndex: 'operation',
       width: 80,
@@ -202,6 +197,11 @@ const LogDetail = ({ poolItem, handlerClose }) => {
         }
         return t;
       },
+    },
+    {
+      title: '发生时间',
+      dataIndex: 'opTime',
+      width: 180,
     },
     {
       title: '操作者',
