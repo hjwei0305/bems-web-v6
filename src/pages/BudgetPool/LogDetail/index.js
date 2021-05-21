@@ -251,6 +251,7 @@ const LogDetail = ({ poolItem, handlerClose }) => {
     bordered: false,
     showSearch: false,
     remotePaging: true,
+    lineNumber: false,
     searchWidth: 260,
     storageId: '36e28135-9faa-4094-ae62-f994d3ab4fdf',
     searchProperties: ['bizCode', 'bizEvent', 'bizFrom', 'bizRemark'],
