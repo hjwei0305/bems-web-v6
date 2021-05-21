@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import cls from 'classnames';
 import { get, isEmpty, isNumber } from 'lodash';
-import { Card, Input, Tooltip, Tag, Button, Menu, Badge } from 'antd';
+import { Card, Input, Tag, Button, Menu, Badge } from 'antd';
 import { BannerTitle, ExtIcon, ExtTable, Space, Money } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
 const { SERVER_PATH, POOL_OPERATION } = constants;
 const POOL_OPERATION_DATA = Object.keys(POOL_OPERATION).map(key => POOL_OPERATION[key]);
-const { Search } = Input;
 let tableRef;
 let searchInput;
 
@@ -233,31 +232,9 @@ const LogDetail = ({ poolItem, handlerClose }) => {
   ];
   const filters = getFilters();
 
-  const handlerSearchChange = v => {
-    tableRef.handlerSearchChange(v);
-  };
-
-  const handlerPressEnter = () => {
-    tableRef.handlerPressEnter();
-  };
-
-  const handlerSearch = v => {
-    tableRef.handlerSearch(v);
-  };
-
   const renderCustomTool = () => {
     return (
       <Space>
-        <Tooltip title="输入业务编码、业务事件、业务来源、业务描述关键字">
-          <Search
-            allowClear
-            placeholder="输入业务编码、业务事件、业务来源、业务描述关键字"
-            onChange={e => handlerSearchChange(e.target.value)}
-            onSearch={handlerSearch}
-            onPressEnter={handlerPressEnter}
-            style={{ width: 280 }}
-          />
-        </Tooltip>
         <ExtIcon
           tooltip={{ title: '刷新' }}
           type="reload"
