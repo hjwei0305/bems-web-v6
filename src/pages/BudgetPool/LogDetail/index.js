@@ -258,14 +258,20 @@ const LogDetail = ({ poolItem, handlerClose }) => {
     sort: {
       field: { opTime: 'desc' },
     },
-    store: {
-      type: 'POST',
-      url: `${SERVER_PATH}/bems-v6/pool/findRecordByPage`,
-    },
     cascadeParams: {
       filters,
     },
   };
+
+  const poolCode = get(poolItem, 'code');
+  if (poolCode) {
+    Object.assign(props, {
+      store: {
+        type: 'POST',
+        url: `${SERVER_PATH}/bems-v6/pool/findRecordByPage`,
+      },
+    });
+  }
 
   return (
     <Card

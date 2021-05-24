@@ -61,7 +61,6 @@ const MasterView = ({ style, defaultTitle, onChange, readTitle = 'name' }) => {
       store: {
         type: 'POST',
         url: `${SERVER_PATH}/bems-v6/subject/findByPage`,
-        autoLoad: true,
       },
       customTool: renderCustomTool,
       onListCardRef: ref => (listCardRef = ref),

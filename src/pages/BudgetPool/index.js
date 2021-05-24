@@ -251,7 +251,7 @@ class BudgetPool extends Component {
       const filterField = get(filterFields, key);
       if (filterField) {
         const value = get(filterData, key, null);
-        const form = get(filterFields, 'form');
+        const form = get(filterField, 'form');
         if (!isEmpty(value) || isNumber(value)) {
           if (form) {
             hasFilter = true;
