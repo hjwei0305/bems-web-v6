@@ -9,7 +9,7 @@ import { ScrollBar, ComboList, ScopeDatePicker } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
-const { SERVER_PATH, PERIOD_TYPE } = constants;
+const { PERIOD_TYPE } = constants;
 const PERIOD_TYPE_DATA = Object.keys(PERIOD_TYPE)
   .map(key => PERIOD_TYPE[key])
   .filter(f => f.key !== PERIOD_TYPE.ALL.key);
@@ -119,28 +119,9 @@ class Filter extends PureComponent {
     const { filterData } = this.state;
     const { form } = this.props;
     const { getFieldDecorator } = form;
-    getFieldDecorator('subjectId', {
-      initialValue: get(filterData, 'subjectId', null),
-    });
     getFieldDecorator('periodType', {
       initialValue: get(filterData, 'periodType', null),
     });
-    const corporationComboListProps = {
-      placeholder: formatMessage({ id: 'global.all', defaultMessage: '全部' }),
-      allowClear: true,
-      rowKey: 'id',
-      form,
-      store: {
-        url: `${SERVER_PATH}/bems-v6/subject/getUserAuthorizedEntities`,
-      },
-      name: 'subjectName',
-      field: ['subjectId'],
-      reader: {
-        name: 'name',
-        description: 'code',
-        field: ['id'],
-      },
-    };
 
     const periodTypeProps = {
       placeholder: formatMessage({ id: 'global.all', defaultMessage: '全部' }),
@@ -158,11 +139,6 @@ class Filter extends PureComponent {
     };
     return (
       <>
-        <FormItem label="预算主体">
-          {getFieldDecorator('subjectName', {
-            initialValue: get(filterData, 'subjectName', null),
-          })(<ComboList {...corporationComboListProps} />)}
-        </FormItem>
         <FormItem label="期间类型">
           {getFieldDecorator('periodTypeName', {
             initialValue: this.getPeriodTypeName(),

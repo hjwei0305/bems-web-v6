@@ -3,10 +3,11 @@ import { connect } from 'dva';
 import { get, isEmpty, isNumber, isEqual } from 'lodash';
 import cls from 'classnames';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import { Input, Descriptions, Tag, Button, Modal, Layout } from 'antd';
+import { Input, Descriptions, Tag, Modal, Layout } from 'antd';
 import { ListCard, ExtIcon, Money, Space, PageLoader } from 'suid';
 import { constants } from '@/utils';
 import Filter from './components/Filter';
+import MasterView from './components/MasterView';
 import styles from './index.less';
 
 const LogDetail = React.lazy(() => import('./LogDetail'));
@@ -14,10 +15,10 @@ const { SERVER_PATH } = constants;
 const { Search } = Input;
 const { Sider, Content } = Layout;
 const filterFields = {
-  subjectId: { fieldName: 'subjectId', operation: 'EQ' },
-  periodType: { fieldName: 'periodType', operation: 'EQ' },
-  startDate: { fieldName: 'startDate', operation: 'GT', fieldType: 'date8' },
-  endDate: { fieldName: 'endDate', operation: 'LT', fieldType: 'date8' },
+  subjectId: { fieldName: 'subjectId', operation: 'EQ', form: false },
+  periodType: { fieldName: 'periodType', operation: 'EQ', form: true },
+  startDate: { fieldName: 'startDate', operation: 'GT', fieldType: 'date8', form: true },
+  endDate: { fieldName: 'endDate', operation: 'LT', fieldType: 'date8', form: true },
 };
 
 @connect(({ budgetPool, loading }) => ({ budgetPool, loading }))
@@ -85,6 +86,18 @@ class BudgetPool extends Component {
       const [recordItem] = items;
       this.showLogDetail(recordItem);
     }
+  };
+
+  handlerMasterSelect = master => {
+    const { dispatch, budgetPool } = this.props;
+    const { filterData: originFilterData } = budgetPool;
+    const filterData = { ...originFilterData, subjectId: get(master, 'id') };
+    dispatch({
+      type: 'budgetPool/updateState',
+      payload: {
+        filterData,
+      },
+    });
   };
 
   handlerFilterSubmit = filterData => {
@@ -238,8 +251,11 @@ class BudgetPool extends Component {
       const filterField = get(filterFields, key);
       if (filterField) {
         const value = get(filterData, key, null);
+        const form = get(filterFields, 'form');
         if (!isEmpty(value) || isNumber(value)) {
-          hasFilter = true;
+          if (form) {
+            hasFilter = true;
+          }
           const fit = { fieldName: key, operator: get(filterField, 'operation'), value };
           const fieldType = get(filterField, 'fieldType');
           if (fieldType) {
@@ -269,7 +285,7 @@ class BudgetPool extends Component {
     return (
       <>
         <div>
-          <Button onClick={this.reloadData}>刷新</Button>
+          <MasterView onChange={this.handlerMasterSelect} />
         </div>
         <Space>
           <Search
@@ -278,7 +294,7 @@ class BudgetPool extends Component {
             onChange={e => this.handlerSearchChange(e.target.value)}
             onSearch={this.handlerSearch}
             onPressEnter={this.handlerPressEnter}
-            style={{ width: 260 }}
+            style={{ width: 220 }}
           />
           <span
             className={cls('filter-btn', { 'has-filter': hasFilter })}
@@ -463,14 +479,6 @@ class BudgetPool extends Component {
       onListCardRef: ref => (this.listCardRef = ref),
       customTool: ({ total }) => this.renderCustomTool(total, hasFilter),
       onSelectChange: this.handlerSelectPool,
-      remotePaging: true,
-      store: {
-        type: 'POST',
-        url: `${SERVER_PATH}/bems-v6/pool/findByPage`,
-        loaded: () => {
-          this.forceUpdate();
-        },
-      },
       cascadeParams: {
         sortOrders: [
           { property: 'itemName', direction: 'ASC' },
@@ -496,6 +504,19 @@ class BudgetPool extends Component {
         extra: this.renderAction,
       },
     };
+    const subjectId = get(filterData, 'subjectId');
+    if (subjectId) {
+      Object.assign(listProps, {
+        remotePaging: true,
+        store: {
+          type: 'POST',
+          url: `${SERVER_PATH}/bems-v6/pool/findByPage`,
+          loaded: () => {
+            this.forceUpdate();
+          },
+        },
+      });
+    }
     const logDetailProps = {
       poolItem: recordItem,
       handlerClose: this.closeLog,

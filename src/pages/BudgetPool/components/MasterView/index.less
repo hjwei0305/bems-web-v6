@@ -1,0 +1,24 @@
+@import '../../../../themes/vars.less';
+
+.view-box {
+  position: relative;
+  display: inline-block;
+  margin-right: 16px;
+  cursor: pointer;
+  :global {
+    .view-content {
+      margin-right: 8px;
+      color: fade(@black, 85%);
+      font-weight: 700;
+      font-size: 16px;
+    }
+  }
+}
+
+.filter-box {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.pop-confirm-box {
+  z-index: 1050;
+}
