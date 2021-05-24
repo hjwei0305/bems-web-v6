@@ -163,6 +163,12 @@ class BudgetStrategy extends Component {
         width: 520,
         render: t => t || '-',
       },
+      {
+        title: '优先级',
+        dataIndex: 'rank',
+        width: 80,
+        required: true,
+      },
     ];
     const formModalProps = {
       save: this.save,

@@ -1,14 +1,18 @@
 import React, { PureComponent } from 'react';
 import cls from 'classnames';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { get, isEqual } from 'lodash';
+import { get, isEqual, omit } from 'lodash';
 import { Drawer, Form, Button } from 'antd';
-import { ScrollBar, ComboList, ComboTree } from 'suid';
+import { ScrollBar, ComboList, ScopeDatePicker } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
-const { SERVER_PATH } = constants;
+const { SERVER_PATH, PERIOD_TYPE } = constants;
+const PERIOD_TYPE_DATA = Object.keys(PERIOD_TYPE)
+  .map(key => PERIOD_TYPE[key])
+  .filter(f => f.key !== PERIOD_TYPE.ALL.key);
 const FormItem = Form.Item;
 const formItemLayout = {
   labelCol: {
@@ -18,6 +22,7 @@ const formItemLayout = {
     span: 24,
   },
 };
+const format = 'YYYY-MM-DD';
 
 @Form.create()
 class Filter extends PureComponent {
@@ -62,7 +67,14 @@ class Filter extends PureComponent {
         return;
       }
       const submitData = { ...filterData, ...formData };
-      onFilterSubmit(submitData);
+      const [startDate, endDate] = get(formData, 'startEndDate');
+      if (startDate && endDate) {
+        Object.assign(submitData, {
+          startDate,
+          endDate,
+        });
+      }
+      onFilterSubmit(omit(submitData, ['startEndDate']));
     });
   };
 
@@ -81,6 +93,28 @@ class Filter extends PureComponent {
     }
   };
 
+  getPeriodTypeName = () => {
+    const { filterData } = this.state;
+    const periodType = PERIOD_TYPE[get(filterData, 'periodType')];
+    if (periodType) {
+      return periodType.title;
+    }
+    return '';
+  };
+
+  getStartEndDate = () => {
+    const { filterData } = this.state;
+    let startDate = get(filterData, 'startDate') || '';
+    let endDate = get(filterData, 'endDate') || '';
+    if (startDate) {
+      startDate = moment(startDate).format(format);
+    }
+    if (endDate) {
+      endDate = moment(endDate).format(format);
+    }
+    return [startDate, endDate];
+  };
+
   getFields() {
     const { filterData } = this.state;
     const { form } = this.props;
@@ -88,8 +122,8 @@ class Filter extends PureComponent {
     getFieldDecorator('subjectId', {
       initialValue: get(filterData, 'subjectId', null),
     });
-    getFieldDecorator('applyOrgId', {
-      initialValue: get(filterData, 'applyOrgId', null),
+    getFieldDecorator('periodType', {
+      initialValue: get(filterData, 'periodType', null),
     });
     const corporationComboListProps = {
       placeholder: formatMessage({ id: 'global.all', defaultMessage: '全部' }),
@@ -108,18 +142,18 @@ class Filter extends PureComponent {
       },
     };
 
-    const organizationProps = {
+    const periodTypeProps = {
       placeholder: formatMessage({ id: 'global.all', defaultMessage: '全部' }),
       allowClear: true,
       form,
-      name: 'applyOrgName',
-      field: ['applyOrgId'],
-      store: {
-        url: `${SERVER_PATH}/bems-v6/order/findOrgTree`,
-      },
+      name: 'periodTypeName',
+      field: ['periodType'],
+      dataSource: PERIOD_TYPE_DATA,
+      pagination: false,
+      showSearch: false,
       reader: {
-        name: 'name',
-        field: ['id'],
+        name: 'title',
+        field: ['key'],
       },
     };
     return (
@@ -129,11 +163,15 @@ class Filter extends PureComponent {
             initialValue: get(filterData, 'subjectName', null),
           })(<ComboList {...corporationComboListProps} />)}
         </FormItem>
-
-        <FormItem label="申请单位">
-          {getFieldDecorator('applyOrgName', {
-            initialValue: get(filterData, 'applyOrgName', null),
-          })(<ComboTree {...organizationProps} />)}
+        <FormItem label="期间类型">
+          {getFieldDecorator('periodTypeName', {
+            initialValue: this.getPeriodTypeName(),
+          })(<ComboList {...periodTypeProps} />)}
+        </FormItem>
+        <FormItem label="有效期">
+          {getFieldDecorator('startEndDate', {
+            initialValue: this.getStartEndDate(),
+          })(<ScopeDatePicker allowClear />)}
         </FormItem>
       </>
     );

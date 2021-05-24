@@ -15,7 +15,9 @@ const { Search } = Input;
 const { Sider, Content } = Layout;
 const filterFields = {
   subjectId: { fieldName: 'subjectId', operation: 'EQ' },
-  applyOrgId: { fieldName: 'applyOrgId', operation: 'EQ' },
+  periodType: { fieldName: 'periodType', operation: 'EQ' },
+  startDate: { fieldName: 'startDate', operation: 'GT', fieldType: 'date' },
+  endDate: { fieldName: 'endDate', operation: 'LT', fieldType: 'date' },
 };
 
 @connect(({ budgetPool, loading }) => ({ budgetPool, loading }))
@@ -238,7 +240,12 @@ class BudgetPool extends Component {
         const value = get(filterData, key, null);
         if (!isEmpty(value) || isNumber(value)) {
           hasFilter = true;
-          filters.push({ fieldName: key, operator: get(filterField, 'operation'), value });
+          const fit = { fieldName: key, operator: get(filterField, 'operation'), value };
+          const fieldType = get(filterField, 'fieldType');
+          if (fieldType) {
+            Object.assign(fit, { fieldType });
+          }
+          filters.push(fit);
         }
       }
     });
