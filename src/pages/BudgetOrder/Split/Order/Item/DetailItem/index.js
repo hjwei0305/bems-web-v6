@@ -322,7 +322,6 @@ class DetailItem extends PureComponent {
       customTool: this.renderCustomTool,
       searchProperties: [
         'itemName',
-        'amount',
         'periodName',
         'projectName',
         'orgName',
@@ -353,6 +352,10 @@ class DetailItem extends PureComponent {
           },
         },
         cascadeParams: {
+          sortOrders: [
+            { property: 'period', direction: 'ASC' },
+            { property: 'itemName', direction: 'ASC' },
+          ],
           ...filters,
         },
       });
