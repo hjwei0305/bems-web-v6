@@ -267,6 +267,7 @@ class InjectionRequestList extends Component {
         showCreate: false,
         showUpdate: false,
         showView: false,
+        recordItem: null,
       },
     });
     if (needRefresh === true) {
