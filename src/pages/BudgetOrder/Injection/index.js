@@ -450,7 +450,7 @@ class InjectionRequestList extends Component {
     ];
     const { filters, hasFilter } = this.getFilters();
     const toolBarProps = {
-      layout: { leftSpan: 6, rightSpan: 18 },
+      layout: { leftSpan: 8, rightSpan: 16 },
       left: (
         <Space>
           <FilterView
