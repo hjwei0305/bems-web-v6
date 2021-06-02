@@ -453,6 +453,16 @@ class InjectionRequestList extends Component {
       layout: { leftSpan: 6, rightSpan: 18 },
       left: (
         <Space>
+          <FilterView
+            title="单据视图"
+            currentViewType={currentViewType}
+            viewTypeData={viewTypeData}
+            onAction={this.handlerViewTypeChange}
+            reader={{
+              title: 'title',
+              value: 'key',
+            }}
+          />
           <Button
             key={INJECTION_REQUEST_BTN_KEY.CREATE}
             onClick={this.addOrder}
@@ -466,25 +476,16 @@ class InjectionRequestList extends Component {
           </Button>
         </Space>
       ),
+      right: (
+        <FilterDate
+          title="创建日期"
+          currentViewType={currentViewDate}
+          viewTypeData={viewDateData}
+          onAction={this.handlerFitlerDate}
+        />
+      ),
       extra: (
         <Space>
-          <FilterView
-            title="单据状态"
-            iconType={null}
-            currentViewType={currentViewType}
-            viewTypeData={viewTypeData}
-            onAction={this.handlerViewTypeChange}
-            reader={{
-              title: 'title',
-              value: 'key',
-            }}
-          />
-          <FilterDate
-            title="创建日期"
-            currentViewType={currentViewDate}
-            viewTypeData={viewDateData}
-            onAction={this.handlerFitlerDate}
-          />
           <span
             className={cls('filter-btn', 'icon-btn-item', { 'has-filter': hasFilter })}
             onClick={this.handlerShowFilter}
@@ -550,6 +551,7 @@ class InjectionRequestList extends Component {
       filterData,
       onFilterSubmit: this.handlerFilterSubmit,
       onCloseFilter: this.handlerCloseFilter,
+      onResetFilter: this.clearFilter,
     };
     return (
       <div className={cls(styles['container-box'])}>

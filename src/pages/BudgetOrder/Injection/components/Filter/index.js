@@ -93,7 +93,6 @@ class Filter extends PureComponent {
     const corporationComboListProps = {
       placeholder: formatMessage({ id: 'global.all', defaultMessage: '全部' }),
       allowClear: true,
-      rowKey: 'id',
       form,
       store: {
         url: `${SERVER_PATH}/bems-v6/subject/getUserAuthorizedEntities`,
