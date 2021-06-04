@@ -363,6 +363,7 @@ class BudgetPool extends Component {
                 value={get(item, 'balance')}
               />
               <span style={{ marginLeft: 8 }}>
+                {item.strategyName ? <Tag color="purple">{item.strategyName}</Tag> : null}
                 {item.roll ? <Tag color="magenta">可结转</Tag> : null}
                 {item.use ? <Tag color="cyan">业务可用</Tag> : null}
               </span>
