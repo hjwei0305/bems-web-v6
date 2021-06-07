@@ -268,7 +268,6 @@ class DetailItem extends PureComponent {
         title: this.renderMasterTitle,
         description: this.renderDescription,
       },
-      onSelectChange: this.handerSelectChange,
     };
     if (orderId && tempDisabled === false) {
       const filters = this.getFilters();

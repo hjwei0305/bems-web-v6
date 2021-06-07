@@ -130,9 +130,10 @@ const SplitItem = ({
 
   const renderMasterTitle = useCallback(
     item => {
-      if (originPoolCode) {
-        const itemId = get(item, 'id');
-        const checked = selectedKeys.filter(k => k === itemId).length === 1;
+      const itemId = get(item, 'id');
+      const checked = selectedKeys.filter(k => k === itemId).length === 1;
+      const poolCode = get(item, 'poolCode');
+      if (poolCode) {
         return (
           <>
             {!onlyView ? (
@@ -144,15 +145,26 @@ const SplitItem = ({
             ) : null}
             <div className="pool-box">
               <span className="title">池号</span>
-              <span className="no">{originPoolCode}</span>
+              <span className="no">{poolCode}</span>
             </div>
             <div className="master-title">{`${item.periodName} ${item.itemName}`}</div>
           </>
         );
       }
-      return `${item.periodName} ${item.itemName}`;
+      return (
+        <>
+          {!onlyView ? (
+            <Checkbox
+              checked={checked}
+              onChange={e => handlerSelectChange(e, item)}
+              style={{ position: 'absolute', left: 4, top: 24 }}
+            />
+          ) : null}
+          {`${item.periodName} ${item.itemName}`}
+        </>
+      );
     },
-    [originPoolCode, selectedKeys, handlerSelectChange, onlyView],
+    [selectedKeys, handlerSelectChange, onlyView],
   );
 
   const renderDescription = useCallback(
