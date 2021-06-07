@@ -1,0 +1,30 @@
+@import '../../../../../../../themes/vars.less';
+
+.split-item-box {
+  margin: 24px 0 0 24px;
+  :global {
+    .ant-timeline-item-head {
+      background-color: transparent;
+    }
+    .ant-timeline-item-head-custom {
+      top: 28.5px;
+      left: 12px;
+    }
+    .ant-timeline-item-content {
+      margin-left: 24px;
+      padding: 24px;
+      background-color: @hover-color;
+    }
+    .ant-timeline-item-tail {
+      top: 32px;
+      left: 3px;
+      height: calc(100% - 0px);
+      border-color: fade(@black, 25%);
+    }
+    .ant-timeline-item {
+      &:last-child {
+        padding-bottom: 0;
+      }
+    }
+  }
+}

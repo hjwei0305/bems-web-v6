@@ -16,6 +16,7 @@ const BudgetMoney = ({
   className,
   loading,
   extra = null,
+  onFocus = () => {},
 }) => {
   let money = amount;
 
@@ -32,13 +33,14 @@ const BudgetMoney = ({
       setRowKey(get(rowItem, 'id'));
       setEdit(true);
       setValidFail(false);
+      onFocus(rowItem);
       setTimeout(() => {
         if (inputRef) {
           inputRef.current.handlerFocus();
         }
       }, 10);
     }
-  }, [allowEdit, rowItem]);
+  }, [allowEdit, rowItem, onFocus]);
 
   const parser = value => {
     const reg = new RegExp(',', 'g');

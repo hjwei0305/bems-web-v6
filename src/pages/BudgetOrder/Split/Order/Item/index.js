@@ -43,6 +43,7 @@ class RequestItem extends PureComponent {
     itemMoneySaving: PropTypes.bool,
     removeOrderItems: PropTypes.func,
     removing: PropTypes.bool,
+    subDimensionFields: PropTypes.array,
   };
 
   constructor(props) {

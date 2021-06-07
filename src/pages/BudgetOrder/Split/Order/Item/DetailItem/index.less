@@ -2,9 +2,16 @@
 
 .detail-item-box {
   :global {
+    .action-tool-box {
+      position: relative;
+      top: 8px;
+      height: 24px;
+      padding-left: 52px;
+      line-height: 24px;
+    }
     .pool-box {
       display: inline-block;
-      max-width: 132px;
+      max-width: 140px;
       height: auto;
       font-variant: tabular-nums;
       line-height: 16px;
@@ -26,6 +33,14 @@
         display: inline-block;
         margin: 0 4px;
         color: #47acea;
+      }
+      &.origin {
+        .title {
+          background-color: fade(@black, 45%);
+        }
+        .no {
+          color: fade(@black, 65%);
+        }
       }
     }
     .ant-descriptions-row > th,
@@ -57,13 +72,6 @@
         &::after {
           margin: 0 4px;
           content: ':';
-        }
-      }
-    }
-    .inject-money {
-      .field-item {
-        .label {
-          text-align: right;
         }
       }
     }

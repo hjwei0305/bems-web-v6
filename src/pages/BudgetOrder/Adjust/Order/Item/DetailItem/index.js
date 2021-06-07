@@ -226,7 +226,7 @@ class DetailItem extends PureComponent {
           />
           <Search
             allowClear
-            placeholder="输入调整金额、维度关键字"
+            placeholder="输入维度关键字"
             onChange={e => this.handlerSearchChange(e.target.value)}
             onSearch={this.handlerSearch}
             onPressEnter={this.handlerPressEnter}
