@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-17 09:17:18
+ * @Last Modified time: 2021-06-08 09:57:17
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -76,11 +76,13 @@ export default modelExtend(model, {
       if (res.success) {
         const { dimensions, ...rest } = res.data;
         const subDimensionFields = setSubDimensionFields(dimensions);
+        const processing = get(rest, 'processing') || false;
         yield put({
           type: 'updateState',
           payload: {
             headData: rest,
             subDimensionFields,
+            showProgressResult: processing,
           },
         });
       } else {

@@ -1,19 +1,78 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import cls from 'classnames';
 import { get } from 'lodash';
+import { PubSub } from 'pubsub-js';
 import QueueAnim from 'rc-queue-anim';
 import { Progress, Badge, Result } from 'antd';
-import { Space, ListLoader } from 'suid';
+import { Space, ListLoader, message } from 'suid';
+import { constants, wsocket } from '@/utils';
 import styles from './index.less';
 
-const ProgressResult = ({ show, progressData }) => {
+const { closeWebSocket, createWebSocket } = wsocket;
+const { WSBaseUrl } = constants;
+const validJson = wsData => {
+  let valid = true;
+  if (wsData) {
+    try {
+      const str = wsData.replace(/[\r\n\s]/g, '');
+      JSON.parse(str);
+    } catch (e) {
+      valid = false;
+    }
+  }
+  return valid;
+};
+
+let messageSocket;
+
+const ProgressResult = ({ orderId, show, handlerCompleted }) => {
   const [zIndex, setZindex] = useState(-1);
+  const [progressData, setProgressData] = useState();
+
+  const closeSocket = useCallback(() => {
+    closeWebSocket();
+    PubSub.unsubscribe(messageSocket);
+  }, []);
+
+  const connectWebSocket = useCallback(() => {
+    const url = `${WSBaseUrl}/api-gateway/bems-v6/websocket/order/${orderId}`;
+    createWebSocket(url);
+    messageSocket = PubSub.subscribe('message', (topic, msgObj) => {
+      // message 为接收到的消息  这里进行业务处理
+      if (topic === 'message') {
+        const wsData = get(msgObj, 'wsData') || '';
+        if (validJson(wsData)) {
+          const str = wsData.replace(/[\r\n\s]/g, '');
+          const { success, message: msg, data } = JSON.parse(str);
+          if (success) {
+            setProgressData(data);
+            const total = get(data, 'total') || 0;
+            // 处理完成后断开socket连接，并展示明细信息
+            if (total === 0 && handlerCompleted && handlerCompleted instanceof Function) {
+              handlerCompleted();
+              closeSocket();
+            }
+          } else {
+            closeSocket();
+            message.destroy();
+            message.error(msg);
+          }
+        } else {
+          closeSocket();
+          message.destroy();
+          message.error('返回的数据格式不正确');
+        }
+      }
+    });
+  }, [closeSocket, orderId, handlerCompleted]);
 
   useEffect(() => {
     if (show === true) {
       setZindex(9);
+      connectWebSocket();
     }
-  }, [show]);
+    return closeSocket;
+  }, [show, connectWebSocket, closeSocket]);
 
   const handlerEnd = ({ type }) => {
     if (type === 'leave') {

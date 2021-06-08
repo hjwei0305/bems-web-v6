@@ -78,6 +78,7 @@ export default modelExtend(model, {
       if (res.success) {
         const { dimensions, ...rest } = res.data;
         const subDimensionFields = setSubDimensionFields(dimensions);
+        const processing = get(rest, 'processing') || false;
         yield put({
           type: 'updateState',
           payload: {
@@ -86,6 +87,7 @@ export default modelExtend(model, {
               updownAmount: { up: get(summary, 'data.ADD', 0), down: get(summary, 'data.SUB', 0) },
             },
             subDimensionFields,
+            showProgressResult: processing,
           },
         });
       } else {
