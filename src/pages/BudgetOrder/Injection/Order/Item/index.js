@@ -81,6 +81,7 @@ class RequestItem extends PureComponent {
     const { completeImport } = this.props;
     if (completeImport && completeImport instanceof Function) {
       completeImport(orderId);
+      this.closeBatchImport();
     }
   };
 

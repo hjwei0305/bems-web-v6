@@ -294,6 +294,39 @@ class RequestOrder extends Component {
     });
   };
 
+  handlerHeadCheck = () => {
+    let checkedPassed = false;
+    if (this.requestHeadRef) {
+      const { dispatch, splitOrder } = this.props;
+      const { headData } = splitOrder;
+      const { data, isValid } = this.requestHeadRef.getHeaderData();
+      if (isValid) {
+        const head = { ...headData };
+        Object.assign(head, data);
+        checkedPassed = true;
+        dispatch({
+          type: 'splitOrder/updateState',
+          payload: { headData: head },
+        });
+      }
+    }
+    return checkedPassed;
+  };
+
+  handlerCompleteImport = orderId => {
+    const { dispatch, splitOrder } = this.props;
+    const { headData } = splitOrder;
+    const id = get(headData, 'id') || orderId;
+    const head = { ...headData, id };
+    dispatch({
+      type: 'splitOrder/updateState',
+      payload: {
+        headData: head,
+        showProgressResult: true,
+      },
+    });
+  };
+
   render() {
     const { action, title, loading, splitOrder } = this.props;
     const {
@@ -328,6 +361,7 @@ class RequestOrder extends Component {
     const requestItemProps = {
       action,
       headData,
+      headCheck: this.handlerHeadCheck,
       checkDimensionForSelect: this.checkDimensionForSelect,
       dimensionselectChecking: loading.effects['splitOrder/checkDimensionForSelect'],
       clearItem: this.clearItem,

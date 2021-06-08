@@ -13,7 +13,6 @@ import styles from './index.less';
 
 const { REQUEST_ORDER_ACTION } = constants;
 const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTION[key]);
-
 const { Content } = Layout;
 
 @connect(({ adjustOrder, loading }) => ({ adjustOrder, loading }))
@@ -294,6 +293,39 @@ class RequestOrder extends Component {
     });
   };
 
+  handlerHeadCheck = () => {
+    let checkedPassed = false;
+    if (this.requestHeadRef) {
+      const { dispatch, adjustOrder } = this.props;
+      const { headData } = adjustOrder;
+      const { data, isValid } = this.requestHeadRef.getHeaderData();
+      if (isValid) {
+        const head = { ...headData };
+        Object.assign(head, data);
+        checkedPassed = true;
+        dispatch({
+          type: 'adjustOrder/updateState',
+          payload: { headData: head },
+        });
+      }
+    }
+    return checkedPassed;
+  };
+
+  handlerCompleteImport = orderId => {
+    const { dispatch, adjustOrder } = this.props;
+    const { headData } = adjustOrder;
+    const id = get(headData, 'id') || orderId;
+    const head = { ...headData, id };
+    dispatch({
+      type: 'adjustOrder/updateState',
+      payload: {
+        headData: head,
+        showProgressResult: true,
+      },
+    });
+  };
+
   render() {
     const { action, title, loading, adjustOrder } = this.props;
     const {
@@ -328,6 +360,7 @@ class RequestOrder extends Component {
     const requestItemProps = {
       action,
       headData,
+      headCheck: this.handlerHeadCheck,
       checkDimensionForSelect: this.checkDimensionForSelect,
       dimensionselectChecking: loading.effects['adjustOrder/checkDimensionForSelect'],
       clearItem: this.clearItem,
@@ -345,6 +378,7 @@ class RequestOrder extends Component {
       itemMoneySaving: loading.effects['adjustOrder/saveItemMoney'],
       removeOrderItems: this.removeOrderItems,
       removing: loading.effects['adjustOrder/removeOrderItems'],
+      completeImport: this.handlerCompleteImport,
     };
     const headLoading = loading.effects['adjustOrder/getHead'];
     return (

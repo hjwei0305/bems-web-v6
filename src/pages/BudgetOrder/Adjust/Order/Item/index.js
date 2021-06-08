@@ -11,6 +11,7 @@ import styles from './index.less';
 
 const DimensionSelection = React.lazy(() => import('../../../components/DimensionSelection'));
 const ProgressResult = React.lazy(() => import('../../../components/ProgressResult'));
+const BatchItem = React.lazy(() => import('../../../components/BatchItem'));
 const { TabPane } = Tabs;
 const { REQUEST_ORDER_ACTION, SERVER_PATH } = constants;
 const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTION[key]);
@@ -41,6 +42,7 @@ class RequestItem extends PureComponent {
     itemMoneySaving: PropTypes.bool,
     removeOrderItems: PropTypes.func,
     removing: PropTypes.bool,
+    completeImport: PropTypes.func,
   };
 
   constructor(props) {
@@ -48,6 +50,7 @@ class RequestItem extends PureComponent {
     const { action } = props;
     this.state = {
       activeKey: 'item',
+      showBatch: false,
       allowEdit:
         action === REQUEST_ORDER_ACTION.ADD ||
         action === REQUEST_ORDER_ACTION.EDIT ||
@@ -59,7 +62,27 @@ class RequestItem extends PureComponent {
     this.setState({ activeKey });
   };
 
-  showBatchImport = () => {};
+  showBatchImport = () => {
+    const { headCheck } = this.props;
+    if (headCheck && headCheck instanceof Function) {
+      const checkedPassed = headCheck();
+      if (checkedPassed) {
+        this.setState({ showBatch: true });
+      }
+    }
+  };
+
+  closeBatchImport = () => {
+    this.setState({ showBatch: false });
+  };
+
+  handlerCompleteImport = orderId => {
+    const { completeImport } = this.props;
+    if (completeImport && completeImport instanceof Function) {
+      completeImport(orderId);
+      this.closeBatchImport();
+    }
+  };
 
   handlerClearItem = () => {
     const { clearItem } = this.props;
@@ -148,7 +171,7 @@ class RequestItem extends PureComponent {
   };
 
   render() {
-    const { activeKey } = this.state;
+    const { activeKey, showBatch } = this.state;
     const {
       globalDisabled,
       action,
@@ -184,6 +207,12 @@ class RequestItem extends PureComponent {
       subDimensionFields,
       removing,
     };
+    const batchItemProps = {
+      headData,
+      closeBatchImport: this.closeBatchImport,
+      showBatch,
+      completeImport: this.handlerCompleteImport,
+    };
     return (
       <div className={cls(styles['item-box'])}>
         <Tabs
@@ -216,6 +245,9 @@ class RequestItem extends PureComponent {
             orderId={orderId}
             handlerCompleted={this.handlerProcesseCompleted}
           />
+        </Suspense>
+        <Suspense fallback={<PageLoader />}>
+          <BatchItem {...batchItemProps} />
         </Suspense>
       </div>
     );

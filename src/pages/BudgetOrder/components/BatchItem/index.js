@@ -66,6 +66,9 @@ const BatchItem = ({ headData, closeBatchImport, showBatch, completeImport }) =>
       .then(res => {
         if (res.success) {
           completeImport(res.data);
+        } else {
+          message.destroy();
+          message.error(res.message);
         }
       })
       .finally(() => {
