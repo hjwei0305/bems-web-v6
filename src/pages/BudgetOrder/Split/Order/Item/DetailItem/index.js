@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { Input, Checkbox, Button, Popconfirm } from 'antd';
+import { Input, Checkbox, Button, Popconfirm, Avatar } from 'antd';
 import { ListCard, Money, Space } from 'suid';
 import { FilterView } from '@/components';
 import { constants } from '@/utils';
@@ -122,7 +122,7 @@ class DetailItem extends PureComponent {
       return (
         <>
           <div className="pool-box origin">
-            <span className="title">源池号</span>
+            <span className="title">池号</span>
             <span className="no">{originPoolCode}</span>
           </div>
         </>
@@ -197,7 +197,7 @@ class DetailItem extends PureComponent {
       <>
         <div className="origin-money-box">
           <div className="field-item">
-            <span className="label">源预算余额</span>
+            <span className="label">预算余额</span>
             <span>
               <Money value={originPoolAmount} />
             </span>
@@ -265,6 +265,11 @@ class DetailItem extends PureComponent {
         'udf5Name',
       ],
       itemField: {
+        avatar: (
+          <Avatar shape="square" style={{ backgroundColor: '#03a9f4' }}>
+            源
+          </Avatar>
+        ),
         title: this.renderMasterTitle,
         description: this.renderDescription,
       },
