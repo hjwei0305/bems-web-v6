@@ -294,6 +294,39 @@ class RequestOrder extends Component {
     });
   };
 
+  handlerHeadCheck = () => {
+    let checkedPassed = false;
+    if (this.requestHeadRef) {
+      const { dispatch, injectionOrder } = this.props;
+      const { headData } = injectionOrder;
+      const { data, isValid } = this.requestHeadRef.getHeaderData();
+      if (isValid) {
+        const head = { ...headData };
+        Object.assign(head, data);
+        checkedPassed = true;
+        dispatch({
+          type: 'injectionOrder/updateState',
+          payload: { headData: head },
+        });
+      }
+    }
+    return checkedPassed;
+  };
+
+  handlerCompleteImport = orderId => {
+    const { dispatch, injectionOrder } = this.props;
+    const { headData } = injectionOrder;
+    const id = get(headData, 'id') || orderId;
+    const head = { ...headData, id };
+    dispatch({
+      type: 'injectionOrder/updateState',
+      payload: {
+        headData: head,
+        showProgressResult: true,
+      },
+    });
+  };
+
   render() {
     const { action, title, loading, injectionOrder } = this.props;
     const {
@@ -328,6 +361,7 @@ class RequestOrder extends Component {
     const requestItemProps = {
       action,
       headData,
+      headCheck: this.handlerHeadCheck,
       checkDimensionForSelect: this.checkDimensionForSelect,
       dimensionselectChecking: loading.effects['injectionOrder/checkDimensionForSelect'],
       clearItem: this.clearItem,
@@ -345,6 +379,7 @@ class RequestOrder extends Component {
       itemMoneySaving: loading.effects['injectionOrder/saveItemMoney'],
       removeOrderItems: this.removeOrderItems,
       removing: loading.effects['injectionOrder/removeOrderItems'],
+      completeImport: this.handlerCompleteImport,
     };
     const headLoading = loading.effects['injectionOrder/getHead'];
     return (

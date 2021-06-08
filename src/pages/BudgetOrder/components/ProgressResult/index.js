@@ -46,9 +46,9 @@ const ProgressResult = ({ orderId, show, handlerCompleted }) => {
           const { success, message: msg, data } = JSON.parse(str);
           if (success) {
             setProgressData(data);
-            const total = get(data, 'total') || 0;
+            const finished = get(data, 'finish') || false;
             // 处理完成后断开socket连接，并展示明细信息
-            if (total === 0 && handlerCompleted && handlerCompleted instanceof Function) {
+            if (finished === true && handlerCompleted && handlerCompleted instanceof Function) {
               handlerCompleted();
               closeSocket();
             }
@@ -81,6 +81,7 @@ const ProgressResult = ({ orderId, show, handlerCompleted }) => {
   };
 
   const renderProgress = useMemo(() => {
+    const finished = get(progressData, 'finish') || false;
     const total = get(progressData, 'total') || 0;
     const success = get(progressData, 'successes') || 0;
     const error = get(progressData, 'failures') || 0;
@@ -89,7 +90,7 @@ const ProgressResult = ({ orderId, show, handlerCompleted }) => {
       const perNum = Math.round(((success + error) / total) * 10000) / 100;
       percent = parseInt(perNum.toString(), 10);
     }
-    if (total === 0) {
+    if (finished === true) {
       percent = 100;
     }
     return <Progress type="circle" percent={percent} />;
