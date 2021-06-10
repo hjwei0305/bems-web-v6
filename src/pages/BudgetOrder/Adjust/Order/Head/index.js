@@ -135,11 +135,8 @@ class RequestHead extends PureComponent {
       store: {
         url: `${SERVER_PATH}/bems-v6/subject/getUserAuthorizedEntities`,
       },
-      afterSelect: item => {
-        const masterId = form.getFieldValue('subjectId');
-        if (item.id !== masterId) {
-          form.resetFields(['categoryId', 'categoryName']);
-        }
+      afterSelect: () => {
+        form.resetFields(['categoryId', 'categoryName']);
       },
       reader: {
         name: 'name',
