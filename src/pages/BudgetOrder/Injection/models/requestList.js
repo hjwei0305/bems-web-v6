@@ -6,7 +6,9 @@ import { del, checkInjectPrefab } from '../services/requestList';
 const { REQUEST_VIEW_STATUS, SEARCH_DATE_PERIOD } = constants;
 const { dvaModel } = utils;
 const { modelExtend, model } = dvaModel;
-const viewTypeData = Object.keys(REQUEST_VIEW_STATUS).map(key => REQUEST_VIEW_STATUS[key]);
+const viewTypeData = Object.keys(REQUEST_VIEW_STATUS)
+  .filter(key => key !== REQUEST_VIEW_STATUS.PREFAB.key)
+  .map(key => REQUEST_VIEW_STATUS[key]);
 const [defaultViewType] = viewTypeData;
 const viewDateData = Object.keys(SEARCH_DATE_PERIOD).map(key => SEARCH_DATE_PERIOD[key]);
 const [defaultViewDate] = viewDateData;

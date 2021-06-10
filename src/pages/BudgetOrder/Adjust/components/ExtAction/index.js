@@ -96,7 +96,7 @@ class ExtAction extends PureComponent {
           }
         });
         break;
-      case REQUEST_VIEW_STATUS.PROCESSING.key:
+      case REQUEST_VIEW_STATUS.APPROVING.key:
         menus.forEach(m => {
           if (
             m.key === ADJUST_REQUEST_BTN_KEY.FLOW_HISTORY ||

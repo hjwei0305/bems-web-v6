@@ -112,7 +112,7 @@ const ProgressResult = ({ orderId, show, handlerCompleted }) => {
         ? [
             <div className="head-box" key="head">
               <div className="title-box">
-                <span className="title">预算生成进度</span>
+                <span className="title">预算处理进度</span>
               </div>
             </div>,
             <div className="body-content" key="body">

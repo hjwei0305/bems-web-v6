@@ -6,8 +6,8 @@ const { REQUEST_VIEW_STATUS } = constants;
 
 const RequestViewState = ({ enumName }) => {
   const status = REQUEST_VIEW_STATUS[enumName];
-  if (status) {
-    if (enumName === REQUEST_VIEW_STATUS.PROCESSING.key) {
+  if (status && status.key !== REQUEST_VIEW_STATUS.PREFAB.key) {
+    if (enumName === REQUEST_VIEW_STATUS.APPROVING.key) {
       return (
         <Tag color={status.color}>
           <>

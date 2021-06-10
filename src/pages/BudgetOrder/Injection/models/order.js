@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-06-08 09:57:18
+ * @Last Modified time: 2021-06-10 17:14:47
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -17,6 +17,8 @@ import {
   getHead,
   saveItemMoney,
   effective,
+  confirm,
+  cancel,
 } from '../services/order';
 
 const { dvaModel } = utils;
@@ -197,10 +199,49 @@ export default modelExtend(model, {
     },
     *effective({ payload, callback }, { call }) {
       const res = yield call(effective, payload);
+      message.destroy();
       if (res.success) {
         message.success('操作成功');
       } else {
-        message.destroy();
+        message.error(res.message);
+      }
+      if (callback && callback instanceof Function) {
+        callback(res);
+      }
+    },
+    *confirm({ payload, callback }, { put, call, select }) {
+      const { headData: originHeadData } = yield select(sel => sel.injectionOrder);
+      const head = { ...originHeadData };
+      Object.assign(head, { ...payload });
+      message.destroy();
+      let re = yield call(save, head);
+      if (re.success) {
+        const resHeadData = re.data;
+        re = yield call(confirm, { orderId: get(resHeadData, 'id') });
+        if (re.success) {
+          yield put({
+            type: 'updateState',
+            payload: {
+              headData: resHeadData,
+            },
+          });
+          message.success('操作成功');
+        } else {
+          message.error(re.message);
+        }
+      } else {
+        message.error(re.message);
+      }
+      if (callback && callback instanceof Function) {
+        callback(re);
+      }
+    },
+    *cancel({ payload, callback }, { call }) {
+      const res = yield call(cancel, payload);
+      message.destroy();
+      if (res.success) {
+        message.success('操作成功');
+      } else {
         message.error(res.message);
       }
       if (callback && callback instanceof Function) {

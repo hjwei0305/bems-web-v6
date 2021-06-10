@@ -17,7 +17,7 @@ const menuData = () => [
   {
     title: '查看',
     key: INJECTION_REQUEST_BTN_KEY.VIEW,
-    disabled: true,
+    disabled: false,
     ignore: 'true',
   },
   {
@@ -96,7 +96,7 @@ class ExtAction extends PureComponent {
           }
         });
         break;
-      case REQUEST_VIEW_STATUS.PROCESSING.key:
+      case REQUEST_VIEW_STATUS.APPROVING.key:
         menus.forEach(m => {
           if (
             m.key === INJECTION_REQUEST_BTN_KEY.FLOW_HISTORY ||

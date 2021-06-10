@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-06-10 16:04:22
+ * @Last Modified time: 2021-06-10 17:27:05
  */
 import { base } from '../../public/app.config.json';
 
@@ -120,6 +120,7 @@ const BUDGET_PERIOD_USER_ACTION = {
 /** 预算申请流程状态 */
 const REQUEST_VIEW_STATUS = {
   ALL: { key: 'ALL', title: '全部', color: '' },
+  PREFAB: { key: 'PREFAB', title: '预制', color: '' },
   DRAFT: { key: 'DRAFT', title: '草稿', color: '' },
   CANCELING: { key: 'CANCELING', title: '撤销中', color: 'magenta' },
   CONFIRMING: { key: 'CONFIRMING', title: '确认中', color: 'purple' },
