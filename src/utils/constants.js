@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-05-21 10:00:07
+ * @Last Modified time: 2021-06-10 13:07:07
  */
 import { base } from '../../public/app.config.json';
 
@@ -121,6 +121,8 @@ const BUDGET_PERIOD_USER_ACTION = {
 const REQUEST_VIEW_STATUS = {
   ALL: { key: 'ALL', title: '全部', color: '' },
   DRAFT: { key: 'DRAFT', title: '草稿', color: '' },
+  CONFIRM: { key: 'CONFIRM', title: '确认中', color: 'purple' },
+  CONFIRMED: { key: 'CONFIRMED', title: '已确认', color: 'geekblue' },
   EFFECTING: { key: 'EFFECTING', title: '生效中', color: 'orange' },
   PROCESSING: { key: 'PROCESSING', title: '审批中', color: 'blue' },
   COMPLETED: { key: 'COMPLETED', title: '已生效', color: 'green' },
