@@ -148,7 +148,7 @@ class BudgetSubject extends Component {
     });
   };
 
-  handlerAssign = itemCodes => {
+  handlerAssign = (itemCodes, callback) => {
     const { dispatch, budgetMasterSubject } = this.props;
     const { currentMaster } = budgetMasterSubject;
     dispatch({
@@ -161,6 +161,7 @@ class BudgetSubject extends Component {
         if (res.success) {
           this.closeModal();
           this.reloadData();
+          callback();
         }
       },
     });

@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { get } from 'lodash';
 import cls from 'classnames';
 import PropTypes from 'prop-types';
-import { Button, Input, Tooltip } from 'antd';
+import { Button, Input, Tooltip, Checkbox } from 'antd';
 import { ExtModal, ListCard, Space } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
@@ -12,6 +12,8 @@ const { Search } = Input;
 
 class AssignSubject extends PureComponent {
   static listCardRef;
+
+  static currentPageData;
 
   static propTypes = {
     currentMaster: PropTypes.object,
@@ -23,6 +25,7 @@ class AssignSubject extends PureComponent {
 
   constructor(props) {
     super(props);
+    this.currentPageData = {};
     this.state = {
       selectedKeys: [],
     };
@@ -55,21 +58,41 @@ class AssignSubject extends PureComponent {
   assign = () => {
     const { selectedKeys } = this.state;
     const { assign } = this.props;
-    assign(selectedKeys);
+    assign(selectedKeys, () => {
+      this.setState({ selectedKeys: [] });
+    });
   };
 
   assignCancel = () => {
     this.setState({ selectedKeys: [] });
   };
 
+  handlerSelectAll = e => {
+    if (e.target.checked) {
+      this.setState({ selectedKeys: Object.keys(this.currentPageData) });
+    } else {
+      this.setState({ selectedKeys: [] });
+    }
+  };
+
   renderCustomTool = () => {
     const { selectedKeys } = this.state;
     const { assignLoading } = this.props;
     const hasSelected = selectedKeys.length > 0;
+    const pagingKeys = Object.keys(this.currentPageData);
+    const indeterminate = selectedKeys.length > 0 && selectedKeys.length < pagingKeys.length;
+    const checked = selectedKeys.length > 0 && selectedKeys.length === pagingKeys.length;
     return (
       <>
         <div>
           <Space>
+            <Checkbox
+              checked={checked}
+              indeterminate={indeterminate}
+              onChange={this.handlerSelectAll}
+            >
+              本页全选
+            </Checkbox>
             <Button
               type="danger"
               ghost
@@ -113,7 +136,7 @@ class AssignSubject extends PureComponent {
       wrapClassName: cls(styles['assign-modal-box']),
       visible: showModal,
       centered: true,
-      width: 480,
+      width: 580,
       bodyStyle: { padding: 0, height: 560, overflow: 'hidden' },
       footer: null,
       title: '请选择要添加的科目',
@@ -134,6 +157,14 @@ class AssignSubject extends PureComponent {
       store: {
         type: 'POST',
         url: `${SERVER_PATH}/bems-v6/subjectItem/getUnassigned/${get(currentMaster, 'id')}`,
+        loaded: res => {
+          this.currentPageData = {};
+          this.setState({ selectedKeys: [] });
+          const data = get(res, 'data.rows') || [];
+          data.forEach(d => {
+            this.currentPageData[d.code] = d;
+          });
+        },
       },
       onListCardRef: ref => (this.listCardRef = ref),
       onSelectChange: this.handerSelectChange,
