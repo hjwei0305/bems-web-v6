@@ -109,11 +109,41 @@ class RequestOrder extends Component {
       payload: {
         orderId,
       },
-      callback: res => {
-        if (res.success) {
+      callbackSuccess: () => {
+        this.needRefreshList = true;
+      },
+    });
+  };
+
+  handlerConfirm = () => {
+    const { dispatch } = this.props;
+    const { isValid, data } = this.requestHeadRef.getHeaderData();
+    if (isValid) {
+      dispatch({
+        type: 'adjustOrder/confirm',
+        payload: {
+          ...data,
+        },
+        callbackSuccess: () => {
           this.needRefreshList = true;
-          this.closeOrder();
-        }
+        },
+      });
+    }
+  };
+
+  handlerCancel = () => {
+    const {
+      dispatch,
+      adjustOrder: { headData },
+    } = this.props;
+    const orderId = get(headData, 'id');
+    dispatch({
+      type: 'adjustOrder/cancel',
+      payload: {
+        orderId,
+      },
+      callbackSuccess: () => {
+        this.needRefreshList = true;
       },
     });
   };
@@ -349,6 +379,10 @@ class RequestOrder extends Component {
         handlerStartComlete: this.handlerStartComlete,
         effective: this.effective,
         effecting: loading.effects['adjustOrder/effective'],
+        confirm: this.handlerConfirm,
+        confirming: loading.effects['adjustOrder/confirm'],
+        cancel: this.handlerCancel,
+        canceling: loading.effects['adjustOrder/cancel'],
       },
     };
     const requestHeadProps = {

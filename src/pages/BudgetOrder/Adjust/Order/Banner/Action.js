@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { FormattedMessage } from 'umi-plugin-react/locale';
 import { Button, Icon, Popconfirm } from 'antd';
-import { WorkFlow } from 'suid';
+import { WorkFlow, Space } from 'suid';
 import { constants } from '@/utils';
 import Tip from '../../../components/Tip';
 
-const { REQUEST_ORDER_ACTION } = constants;
+const { REQUEST_VIEW_STATUS, REQUEST_ORDER_ACTION } = constants;
 const { StartFlow } = WorkFlow;
 
 const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTION[key]);
@@ -26,6 +26,10 @@ class ExtAction extends PureComponent {
     tempDisabled: PropTypes.bool,
     effective: PropTypes.func,
     effecting: PropTypes.bool,
+    confirm: PropTypes.func,
+    confirming: PropTypes.bool,
+    cancel: PropTypes.func,
+    canceling: PropTypes.bool,
   };
 
   renderExtActions = () => {
@@ -41,6 +45,10 @@ class ExtAction extends PureComponent {
       tempDisabled,
       effective,
       effecting,
+      confirm,
+      confirming,
+      cancel,
+      canceling,
     } = this.props;
     const startFlowProps = {
       businessModelCode: 'ADJUSTMENT',
@@ -48,109 +56,184 @@ class ExtAction extends PureComponent {
       beforeStart: beforeStartFlow,
       needStartConfirm: true,
     };
-    const disabled = tempDisabled || saving || effecting;
+    const disabled = tempDisabled || saving || effecting || confirming || canceling;
     const orderCode = get(headData, 'code');
-    switch (action) {
-      case REQUEST_ORDER_ACTION.ADD:
-        return (
-          <Fragment>
-            {orderCode ? (
-              <>
-                <Popconfirm
-                  disabled={disabled}
-                  icon={<Icon type="question-circle-o" />}
-                  placement="bottom"
-                  trigger="click"
-                  title={
-                    <Tip topic="确定要直接生效吗？" description="警告：生效后预算可以被业务使用!" />
-                  }
-                  onConfirm={effective}
-                >
-                  <Button loading={effecting} disabled={disabled}>
-                    直接生效
-                  </Button>
-                </Popconfirm>
-                <StartFlow {...startFlowProps}>
-                  {loading => (
-                    <Button type="default" disabled={loading || disabled} loading={loading}>
-                      <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
-                    </Button>
-                  )}
-                </StartFlow>
-              </>
-            ) : null}
-            <Popconfirm
+    const status = get(headData, 'status');
+    if (status === REQUEST_VIEW_STATUS.COMPLETED.key) {
+      return (
+        <>
+          <Button onClick={closeOrder} disabled={loadingGlobal}>
+            退出查看
+          </Button>
+        </>
+      );
+    }
+    if (
+      !orderCode ||
+      status === REQUEST_VIEW_STATUS.PREFAB.key ||
+      status === REQUEST_VIEW_STATUS.DRAFT.key
+    ) {
+      return (
+        <Space>
+          <Popconfirm
+            disabled={disabled}
+            icon={<Icon type="question-circle-o" />}
+            placement="bottom"
+            trigger="click"
+            title={<Tip topic="确定要返回吗？" description="未保存的数据将会丢失!" />}
+            onConfirm={closeOrder}
+          >
+            <Button disabled={disabled}>返回</Button>
+          </Popconfirm>
+          <Popconfirm
+            disabled={disabled}
+            icon={<Icon type="question-circle-o" />}
+            placement="bottomRight"
+            trigger="click"
+            title={
+              <Tip topic="预算确认" description="提示:预算确认过程中，将会对预算进行预算占用!" />
+            }
+            onConfirm={confirm}
+          >
+            <Button
               disabled={disabled}
-              icon={<Icon type="question-circle-o" />}
-              placement="bottom"
-              trigger="click"
-              title={<Tip topic="确定要返回吗？" description="未保存的数据将会丢失!" />}
-              onConfirm={closeOrder}
+              type={action === REQUEST_ORDER_ACTION.VIEW ? 'primary' : ''}
+              loading={confirming}
             >
-              <Button disabled={disabled}>返回</Button>
-            </Popconfirm>
+              预算确认
+            </Button>
+          </Popconfirm>
+          {action === REQUEST_ORDER_ACTION.EDIT || action === REQUEST_ORDER_ACTION.ADD ? (
             <Button type="primary" disabled={disabled} loading={saving} onClick={e => saveOrder(e)}>
               保存
             </Button>
-          </Fragment>
-        );
-      case REQUEST_ORDER_ACTION.EDIT:
-        return (
-          <Fragment>
-            {orderCode ? (
-              <>
-                <Popconfirm
-                  disabled={disabled}
-                  icon={<Icon type="question-circle-o" />}
-                  placement="bottom"
-                  trigger="click"
-                  title={
-                    <Tip topic="确定要直接生效吗？" description="警告：生效后预算可以被业务使用!" />
-                  }
-                  onConfirm={effective}
-                >
-                  <Button loading={effecting} disabled={disabled}>
-                    直接生效
-                  </Button>
-                </Popconfirm>
-                <StartFlow {...startFlowProps}>
-                  {loading => (
-                    <Button type="default" disabled={loading || disabled} loading={loading}>
-                      <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
-                    </Button>
-                  )}
-                </StartFlow>
-              </>
-            ) : null}
-            <Popconfirm
-              disabled={disabled}
-              icon={<Icon type="question-circle-o" />}
-              placement="bottom"
-              trigger="click"
-              title={<Tip topic="确定要返回吗？" description="未保存的数据将会丢失!" />}
-              onConfirm={closeOrder}
-            >
-              <Button disabled={disabled}>返回</Button>
-            </Popconfirm>
-            <Button type="primary" disabled={disabled} loading={saving} onClick={e => saveOrder(e)}>
-              保存
+          ) : null}
+        </Space>
+      );
+    }
+
+    if (status === REQUEST_VIEW_STATUS.CONFIRMING.key) {
+      return (
+        <Space>
+          <Button onClick={closeOrder} disabled={loadingGlobal}>
+            返回
+          </Button>
+          <Popconfirm
+            disabled={disabled}
+            icon={<Icon type="question-circle-o" />}
+            placement="bottomRight"
+            trigger="click"
+            title={
+              <Tip
+                topic="撤销确认"
+                description="提示:此操作会撤销之前的预算确认操作，其预占用的预算将会自动释放!"
+              />
+            }
+            onConfirm={cancel}
+          >
+            <Button disabled={disabled} loading={canceling}>
+              撤销确认
             </Button>
-          </Fragment>
-        );
-      case REQUEST_ORDER_ACTION.VIEW:
-        return (
-          <Fragment>
-            <Button onClick={closeOrder} disabled={loadingGlobal}>
-              退出查看
+          </Popconfirm>
+          <Popconfirm
+            disabled={disabled}
+            icon={<Icon type="question-circle-o" />}
+            placement="bottomRight"
+            trigger="click"
+            title={
+              <Tip
+                topic="预算确认"
+                description="提示:当前已经是预算确认中，确定要再次执行此操作吗？"
+              />
+            }
+            onConfirm={confirm}
+          >
+            <Button disabled={disabled} type="primary" loading={confirming}>
+              预算确认
             </Button>
-          </Fragment>
-        );
-      default:
+          </Popconfirm>
+        </Space>
+      );
+    }
+
+    if (status === REQUEST_VIEW_STATUS.CANCELING.key) {
+      return (
+        <Space>
+          <Button onClick={closeOrder} disabled={loadingGlobal}>
+            返回
+          </Button>
+          <Popconfirm
+            disabled={disabled}
+            icon={<Icon type="question-circle-o" />}
+            placement="bottomRight"
+            trigger="click"
+            title={
+              <Tip topic="撤销确认" description="提示:当前正在撤销，确定要再次执行此操作吗？" />
+            }
+            onConfirm={cancel}
+          >
+            <Button disabled={disabled} type="primary" loading={canceling}>
+              撤销确认
+            </Button>
+          </Popconfirm>
+        </Space>
+      );
+    }
+
+    if (status === REQUEST_VIEW_STATUS.CONFIRMED.key) {
+      return (
+        <Space>
+          <Button onClick={closeOrder} disabled={loadingGlobal}>
+            返回
+          </Button>
+          <Popconfirm
+            disabled={disabled}
+            icon={<Icon type="question-circle-o" />}
+            placement="bottom"
+            trigger="click"
+            title={<Tip topic="确定要直接生效吗？" description="警告：生效后预算可以被业务使用!" />}
+            onConfirm={effective}
+          >
+            <Button loading={effecting} disabled={disabled}>
+              直接生效
+            </Button>
+          </Popconfirm>
+          <StartFlow {...startFlowProps}>
+            {loading => (
+              <Button type="primary" disabled={loading || disabled} loading={loading}>
+                <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
+              </Button>
+            )}
+          </StartFlow>
+        </Space>
+      );
+    }
+
+    if (status === REQUEST_VIEW_STATUS.EFFECTING.key) {
+      return (
+        <Space>
+          <Button onClick={closeOrder} disabled={loadingGlobal}>
+            返回
+          </Button>
+          <Popconfirm
+            disabled={disabled}
+            icon={<Icon type="question-circle-o" />}
+            placement="bottom"
+            trigger="click"
+            title={<Tip topic="确定要直接生效吗？" description="警告：生效后预算可以被业务使用!" />}
+            onConfirm={effective}
+          >
+            <Button loading={effecting} disabled={disabled}>
+              直接生效
+            </Button>
+          </Popconfirm>
+        </Space>
+      );
     }
   };
 
   render() {
-    return <Fragment>{this.renderExtActions()}</Fragment>;
+    return <>{this.renderExtActions()}</>;
   }
 }
 

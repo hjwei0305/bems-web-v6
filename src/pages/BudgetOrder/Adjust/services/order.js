@@ -125,3 +125,31 @@ export async function effective(params) {
     data: {},
   });
 }
+
+/**
+ * 确认
+ * @orderId string
+ */
+export async function confirm(params) {
+  const url = `${SERVER_PATH}/bems-v6/order/confirmOrder`;
+  return request({
+    url,
+    method: 'POST',
+    params,
+    data: {},
+  });
+}
+
+/**
+ * 撤销
+ * @orderId string
+ */
+export async function cancel(params) {
+  const url = `${SERVER_PATH}/bems-v6/order/cancelConfirm`;
+  return request({
+    url,
+    method: 'POST',
+    params,
+    data: {},
+  });
+}

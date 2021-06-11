@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-06-11 09:38:33
+ * @Last Modified time: 2021-06-11 10:36:33
  */
 import { base } from '../../public/app.config.json';
 
@@ -176,6 +176,9 @@ const ADJUST_REQUEST_BTN_KEY = {
   DELETE: 'BEMS-ADJUST-SC',
   START_FLOW: 'BEMS-ADJUST-QDLC',
   FLOW_HISTORY: 'BEMS-ADJUST-LCLS',
+  CONFIRM: 'BEMS-ADJUST-CONFIRM',
+  CANCEL: 'BEMS-ADJUST-CANCEL',
+  EFFECT: 'BEMS-ADJUST-EFFECT',
 };
 
 /** 预算分解操作 */
@@ -186,6 +189,9 @@ const SPLIT_REQUEST_BTN_KEY = {
   DELETE: 'BEMS-SPLIT-SC',
   START_FLOW: 'BEMS-SPLIT-QDLC',
   FLOW_HISTORY: 'BEMS-SPLIT-LCLS',
+  CONFIRM: 'BEMS-SPLIT-CONFIRM',
+  CANCEL: 'BEMS-SPLIT-CANCEL',
+  EFFECT: 'BEMS-SPLIT-EFFECT',
 };
 
 /** 日期枚举 */
