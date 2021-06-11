@@ -86,11 +86,146 @@ class SplitRequestList extends Component {
       case SPLIT_REQUEST_BTN_KEY.DELETE:
         this.delConfirm(record);
         break;
+      case SPLIT_REQUEST_BTN_KEY.EFFECT:
+        this.effectConfirm(record);
+        break;
+      case SPLIT_REQUEST_BTN_KEY.CONFIRM:
+        this.confirmConfirm(record);
+        break;
+      case SPLIT_REQUEST_BTN_KEY.CANCEL:
+        this.cancelConfirm(record);
+        break;
       case SPLIT_REQUEST_BTN_KEY.START_FLOW:
         this.reloadData();
         break;
       default:
     }
+  };
+
+  effectConfirm = record => {
+    const { dispatch } = this.props;
+    const orderId = get(record, 'id');
+    this.confirmModal = Modal.confirm({
+      title: `直接生效`,
+      content: `提示:不用通过流程审批直接让预算进入预算池!`,
+      okButtonProps: { type: 'primary' },
+      style: { top: '20%' },
+      okText: '确定',
+      onOk: () => {
+        return new Promise(resolve => {
+          this.confirmModal.update({
+            okButtonProps: { type: 'primary', loading: true },
+            cancelButtonProps: { disabled: true },
+          });
+          dispatch({
+            type: 'splitRequestList/effective',
+            payload: {
+              orderId,
+            },
+            callback: res => {
+              if (res.success) {
+                resolve();
+                this.reloadData();
+              } else {
+                this.confirmModal.update({
+                  okButtonProps: { loading: false },
+                  cancelButtonProps: { disabled: false },
+                });
+              }
+            },
+          });
+        });
+      },
+      cancelText: '取消',
+      onCancel: () => {
+        this.confirmModal.destroy();
+        this.confirmModal = null;
+      },
+    });
+  };
+
+  confirmConfirm = record => {
+    const { dispatch } = this.props;
+    const orderId = get(record, 'id');
+    this.confirmModal = Modal.confirm({
+      title: `预算确认`,
+      content: `提示:预算确认过程中，将会对预算进行预算占用!`,
+      okButtonProps: { type: 'primary' },
+      style: { top: '20%' },
+      okText: '确定',
+      onOk: () => {
+        return new Promise(resolve => {
+          this.confirmModal.update({
+            okButtonProps: { type: 'primary', loading: true },
+            cancelButtonProps: { disabled: true },
+          });
+          dispatch({
+            type: 'splitRequestList/confirm',
+            payload: {
+              orderId,
+            },
+            callback: res => {
+              if (res.success) {
+                resolve();
+                this.reloadData();
+              } else {
+                this.confirmModal.update({
+                  okButtonProps: { loading: false },
+                  cancelButtonProps: { disabled: false },
+                });
+              }
+            },
+          });
+        });
+      },
+      cancelText: '取消',
+      onCancel: () => {
+        this.confirmModal.destroy();
+        this.confirmModal = null;
+      },
+    });
+  };
+
+  cancelConfirm = record => {
+    const { dispatch } = this.props;
+    const orderId = get(record, 'id');
+    this.confirmModal = Modal.confirm({
+      title: `撤销确认`,
+      content: `提示:此操作会撤销之前的预算确认操作，其预占用的预算将会自动释放!`,
+      okButtonProps: { type: 'primary' },
+      style: { top: '20%' },
+      okText: '确定',
+      onOk: () => {
+        return new Promise(resolve => {
+          this.confirmModal.update({
+            okButtonProps: { type: 'primary', loading: true },
+            cancelButtonProps: { disabled: true },
+          });
+          dispatch({
+            type: 'splitRequestList/cancel',
+            payload: {
+              orderId,
+            },
+            callback: res => {
+              if (res.success) {
+                resolve();
+                this.reloadData();
+              } else {
+                this.confirmModal.update({
+                  okButtonProps: { loading: false },
+                  cancelButtonProps: { disabled: false },
+                });
+              }
+            },
+          });
+        });
+      },
+      cancelText: '取消',
+      onCancel: () => {
+        this.confirmModal.destroy();
+        this.confirmModal = null;
+      },
+    });
   };
 
   delConfirm = record => {

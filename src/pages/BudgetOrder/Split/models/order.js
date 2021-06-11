@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-06-08 09:57:17
+ * @Last Modified time: 2021-06-11 11:01:57
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -17,6 +17,8 @@ import {
   getHead,
   saveItemMoney,
   effective,
+  confirm,
+  cancel,
 } from '../services/order';
 
 const { dvaModel } = utils;
@@ -195,16 +197,76 @@ export default modelExtend(model, {
         callback(re);
       }
     },
-    *effective({ payload, callback }, { call }) {
+    *effective({ payload, callbackSuccess }, { call, put }) {
       const res = yield call(effective, payload);
+      message.destroy();
       if (res.success) {
+        const resHeadData = res.data;
+        const processing = get(resHeadData, 'processing') || false;
+        yield put({
+          type: 'updateState',
+          payload: {
+            headData: resHeadData,
+            showProgressResult: processing,
+          },
+        });
+        if (callbackSuccess && callbackSuccess instanceof Function) {
+          callbackSuccess(res);
+        }
         message.success('操作成功');
       } else {
-        message.destroy();
         message.error(res.message);
       }
-      if (callback && callback instanceof Function) {
-        callback(res);
+    },
+    *confirm({ payload, callbackSuccess }, { put, call, select }) {
+      const { headData: originHeadData } = yield select(sel => sel.splitOrder);
+      const head = { ...originHeadData };
+      Object.assign(head, { ...payload });
+      message.destroy();
+      const re = yield call(save, head);
+      if (re.success) {
+        const reHeadData = re.data;
+        const res = yield call(confirm, { orderId: get(reHeadData, 'id') });
+        if (res.success) {
+          const resHeadData = res.data;
+          const processing = get(resHeadData, 'processing') || false;
+          yield put({
+            type: 'updateState',
+            payload: {
+              headData: resHeadData,
+              showProgressResult: processing,
+            },
+          });
+          if (callbackSuccess && callbackSuccess instanceof Function) {
+            callbackSuccess(re);
+          }
+          message.success('操作成功');
+        } else {
+          message.error(re.message);
+        }
+      } else {
+        message.error(re.message);
+      }
+    },
+    *cancel({ payload, callbackSuccess }, { put, call }) {
+      const res = yield call(cancel, payload);
+      message.destroy();
+      if (res.success) {
+        const resHeadData = res.data;
+        const processing = get(resHeadData, 'processing') || false;
+        yield put({
+          type: 'updateState',
+          payload: {
+            headData: resHeadData,
+            showProgressResult: processing,
+          },
+        });
+        if (callbackSuccess && callbackSuccess instanceof Function) {
+          callbackSuccess(res);
+        }
+        message.success('操作成功');
+      } else {
+        message.error(res.message);
       }
     },
   },

@@ -17,7 +17,7 @@ const menuData = () => [
   {
     title: '查看',
     key: SPLIT_REQUEST_BTN_KEY.VIEW,
-    disabled: true,
+    disabled: false,
     ignore: 'true',
   },
   {
@@ -35,6 +35,24 @@ const menuData = () => [
   {
     title: formatMessage({ id: 'global.delete', defaultMessage: '删除' }),
     key: SPLIT_REQUEST_BTN_KEY.DELETE,
+    disabled: true,
+    ignore: 'true',
+  },
+  {
+    title: '预算确认',
+    key: SPLIT_REQUEST_BTN_KEY.CONFIRM,
+    disabled: true,
+    ignore: 'true',
+  },
+  {
+    title: '撤销确认',
+    key: SPLIT_REQUEST_BTN_KEY.CANCEL,
+    disabled: true,
+    ignore: 'true',
+  },
+  {
+    title: '直接生效',
+    key: SPLIT_REQUEST_BTN_KEY.EFFECT,
     disabled: true,
     ignore: 'true',
   },
@@ -91,26 +109,34 @@ class ExtAction extends PureComponent {
     switch (status) {
       case REQUEST_VIEW_STATUS.DRAFT.key:
         menus.forEach(m => {
-          if (m.key !== SPLIT_REQUEST_BTN_KEY.FLOW_HISTORY) {
-            Object.assign(m, { disabled: false });
-          }
-        });
-        break;
-      case REQUEST_VIEW_STATUS.APPROVING.key:
-        menus.forEach(m => {
           if (
-            m.key === SPLIT_REQUEST_BTN_KEY.FLOW_HISTORY ||
-            m.key === SPLIT_REQUEST_BTN_KEY.VIEW
+            m.key === SPLIT_REQUEST_BTN_KEY.EDIT ||
+            m.key === SPLIT_REQUEST_BTN_KEY.DELETE ||
+            m.key === SPLIT_REQUEST_BTN_KEY.CONFIRM
           ) {
             Object.assign(m, { disabled: false });
           }
         });
         break;
-      case REQUEST_VIEW_STATUS.COMPLETED.key:
+      case REQUEST_VIEW_STATUS.CONFIRMING.key:
+        menus.forEach(m => {
+          if (m.key === SPLIT_REQUEST_BTN_KEY.CONFIRM || m.key === SPLIT_REQUEST_BTN_KEY.CANCEL) {
+            Object.assign(m, { disabled: false });
+          }
+        });
+        break;
+      case REQUEST_VIEW_STATUS.CANCELING.key:
+        menus.forEach(m => {
+          if (m.key === SPLIT_REQUEST_BTN_KEY.CANCEL) {
+            Object.assign(m, { disabled: false });
+          }
+        });
+        break;
+      case REQUEST_VIEW_STATUS.CONFIRMED.key:
         menus.forEach(m => {
           if (
-            m.key === SPLIT_REQUEST_BTN_KEY.FLOW_HISTORY ||
-            m.key === SPLIT_REQUEST_BTN_KEY.VIEW
+            m.key === SPLIT_REQUEST_BTN_KEY.START_FLOW ||
+            m.key === SPLIT_REQUEST_BTN_KEY.EFFECT
           ) {
             Object.assign(m, { disabled: false });
           }
@@ -118,7 +144,15 @@ class ExtAction extends PureComponent {
         break;
       case REQUEST_VIEW_STATUS.EFFECTING.key:
         menus.forEach(m => {
-          if (m.key === SPLIT_REQUEST_BTN_KEY.VIEW) {
+          if (m.key === SPLIT_REQUEST_BTN_KEY.EFFECT) {
+            Object.assign(m, { disabled: false });
+          }
+        });
+        break;
+      case REQUEST_VIEW_STATUS.APPROVING.key:
+      case REQUEST_VIEW_STATUS.COMPLETED.key:
+        menus.forEach(m => {
+          if (m.key === SPLIT_REQUEST_BTN_KEY.FLOW_HISTORY) {
             Object.assign(m, { disabled: false });
           }
         });
