@@ -223,7 +223,7 @@ class ExtAction extends PureComponent {
             title={<Tip topic="确定要直接生效吗？" description="警告：生效后预算可以被业务使用!" />}
             onConfirm={effective}
           >
-            <Button loading={effecting} disabled={disabled}>
+            <Button type="primary" loading={effecting} disabled={disabled}>
               直接生效
             </Button>
           </Popconfirm>
