@@ -220,7 +220,12 @@ class ExtAction extends PureComponent {
             icon={<Icon type="question-circle-o" />}
             placement="bottom"
             trigger="click"
-            title={<Tip topic="确定要直接生效吗？" description="警告：生效后预算可以被业务使用!" />}
+            title={
+              <Tip
+                topic="确定要直接生效吗？"
+                description="提示:当前生效进行中，确定要再次执行此操作吗？"
+              />
+            }
             onConfirm={effective}
           >
             <Button type="primary" loading={effecting} disabled={disabled}>
