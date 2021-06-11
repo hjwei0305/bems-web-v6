@@ -110,11 +110,8 @@ class RequestOrder extends Component {
       payload: {
         orderId,
       },
-      callback: res => {
-        if (res.success) {
-          this.needRefreshList = true;
-          this.closeOrder();
-        }
+      callbackSuccess: () => {
+        this.needRefreshList = true;
       },
     });
   };
@@ -128,11 +125,8 @@ class RequestOrder extends Component {
         payload: {
           ...data,
         },
-        callback: res => {
-          if (res.success) {
-            this.needRefreshList = true;
-            this.closeOrder();
-          }
+        callbackSuccess: () => {
+          this.needRefreshList = true;
         },
       });
     }
@@ -149,11 +143,8 @@ class RequestOrder extends Component {
       payload: {
         orderId,
       },
-      callback: res => {
-        if (res.success) {
-          this.needRefreshList = true;
-          this.closeOrder();
-        }
+      callbackSuccess: () => {
+        this.needRefreshList = true;
       },
     });
   };

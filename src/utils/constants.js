@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-06-10 17:27:05
+ * @Last Modified time: 2021-06-11 09:38:33
  */
 import { base } from '../../public/app.config.json';
 
@@ -163,6 +163,9 @@ const INJECTION_REQUEST_BTN_KEY = {
   DELETE: 'BEMS-INJECTION-SC',
   START_FLOW: 'BEMS-INJECTION-QDLC',
   FLOW_HISTORY: 'BEMS-INJECTION-LCLS',
+  CONFIRM: 'BEMS-INJECTION-CONFIRM',
+  CANCEL: 'BEMS-INJECTION-CANCEL',
+  EFFECT: 'BEMS-INJECTION-EFFECT',
 };
 
 /** 预算调整操作 */
