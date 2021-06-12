@@ -2,11 +2,12 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-06-11 10:33:31
+ * @Last Modified time: 2021-06-12 16:58:05
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
 import { get } from 'lodash';
+import { constants } from '@/utils';
 import {
   save,
   removeOrderItems,
@@ -23,7 +24,7 @@ import {
 
 const { dvaModel } = utils;
 const { modelExtend, model } = dvaModel;
-
+const { REQUEST_VIEW_STATUS } = constants;
 const setSubDimensionFields = dimensionsData => {
   const subDimensionFields = [];
   dimensionsData.forEach(d => {
@@ -223,7 +224,11 @@ export default modelExtend(model, {
       const head = { ...originHeadData };
       Object.assign(head, { ...payload });
       message.destroy();
-      const re = yield call(save, head);
+      const status = get(head, 'status');
+      let re = { success: true, data: head };
+      if (status === REQUEST_VIEW_STATUS.PREFAB.key || status === REQUEST_VIEW_STATUS.DRAFT.key) {
+        re = yield call(save, head);
+      }
       if (re.success) {
         const reHeadData = re.data;
         const res = yield call(confirm, { orderId: get(reHeadData, 'id') });
