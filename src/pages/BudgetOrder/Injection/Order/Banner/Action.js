@@ -131,7 +131,7 @@ class ExtAction extends PureComponent {
             }
             onConfirm={cancel}
           >
-            <Button disabled={disabled} loading={canceling}>
+            <Button disabled={disabled} type="danger" loading={canceling}>
               撤销确认
             </Button>
           </Popconfirm>
@@ -172,7 +172,7 @@ class ExtAction extends PureComponent {
             }
             onConfirm={cancel}
           >
-            <Button disabled={disabled} type="primary" loading={canceling}>
+            <Button type="danger" disabled={disabled} loading={canceling}>
               撤销确认
             </Button>
           </Popconfirm>
