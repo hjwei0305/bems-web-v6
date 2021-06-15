@@ -299,10 +299,7 @@ class RequestOrder extends Component {
   handlerItemCompleted = callBack => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'injectionOrder/updateState',
-      payload: {
-        showProgressResult: false,
-      },
+      type: 'injectionOrder/renewHead',
     });
     if (callBack && callBack instanceof Function) {
       callBack();

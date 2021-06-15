@@ -172,7 +172,7 @@ const SplitItem = ({
       const itemId = get(item, 'id');
       const itemSplit = getSplitItem(itemId);
       const amount = get(itemSplit, 'amount') || get(item, 'amount');
-      const errMsg = get(itemSplit, 'errMsg') || '';
+      const errMsg = get(itemSplit, 'errMsg') || get(item, 'errMsg');
       const poolAmount = get(item, 'poolAmount');
       return (
         <>
@@ -197,7 +197,9 @@ const SplitItem = ({
               allowEdit={!onlyView}
               onSave={handlerSaveMoney}
             />
-            {errMsg ? <Alert type="error" message={errMsg} banner closable /> : null}
+            {errMsg ? (
+              <Alert type="error" style={{ marginTop: 16 }} message={errMsg} banner closable />
+            ) : null}
           </div>
         </>
       );
@@ -220,6 +222,7 @@ const SplitItem = ({
     return items.map(item => {
       return (
         <Timeline.Item
+          key={item.id}
           color="gray"
           dot={<ExtIcon type="swap-right" antd style={{ fontSize: 24 }} />}
         >

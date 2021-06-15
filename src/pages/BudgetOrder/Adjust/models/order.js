@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-06-12 16:58:26
+ * @Last Modified time: 2021-06-15 13:35:03
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -99,6 +99,33 @@ export default modelExtend(model, {
       }
       if (callback && callback instanceof Function) {
         callback(res);
+      }
+    },
+    *renewHead(_, { call, put, select }) {
+      const { headData } = yield select(sel => sel.adjustOrder);
+      const orderId = get(headData, 'id');
+      if (orderId) {
+        const res = yield call(getHead, { id: orderId });
+        if (res.success) {
+          const processing = get(res.data, 'processing') || false;
+          yield put({
+            type: 'updateState',
+            payload: {
+              headData: res.data,
+              showProgressResult: processing,
+            },
+          });
+        } else {
+          message.destroy();
+          message.error(res.message);
+        }
+      } else {
+        yield put({
+          type: 'updateState',
+          payload: {
+            showProgressResult: false,
+          },
+        });
       }
     },
     *addOrderDetails({ payload, successCallback }, { call, put, select }) {

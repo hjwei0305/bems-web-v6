@@ -110,11 +110,41 @@ class RequestOrder extends Component {
       payload: {
         orderId,
       },
-      callback: res => {
-        if (res.success) {
+      callbackSuccess: () => {
+        this.needRefreshList = true;
+      },
+    });
+  };
+
+  handlerConfirm = () => {
+    const { dispatch } = this.props;
+    const { isValid, data } = this.requestHeadRef.getHeaderData();
+    if (isValid) {
+      dispatch({
+        type: 'splitOrder/confirm',
+        payload: {
+          ...data,
+        },
+        callbackSuccess: () => {
           this.needRefreshList = true;
-          this.closeOrder();
-        }
+        },
+      });
+    }
+  };
+
+  handlerCancel = () => {
+    const {
+      dispatch,
+      splitOrder: { headData },
+    } = this.props;
+    const orderId = get(headData, 'id');
+    dispatch({
+      type: 'splitOrder/cancel',
+      payload: {
+        orderId,
+      },
+      callbackSuccess: () => {
+        this.needRefreshList = true;
       },
     });
   };
@@ -350,6 +380,10 @@ class RequestOrder extends Component {
         handlerStartComlete: this.handlerStartComlete,
         effective: this.effective,
         effecting: loading.effects['splitOrder/effective'],
+        confirm: this.handlerConfirm,
+        confirming: loading.effects['splitOrder/confirm'],
+        cancel: this.handlerCancel,
+        canceling: loading.effects['splitOrder/cancel'],
       },
     };
     const requestHeadProps = {
