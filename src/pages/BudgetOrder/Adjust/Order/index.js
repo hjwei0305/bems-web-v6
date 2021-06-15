@@ -298,10 +298,7 @@ class RequestOrder extends Component {
   handlerItemCompleted = callBack => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'adjustOrder/updateState',
-      payload: {
-        showProgressResult: false,
-      },
+      type: 'adjustOrder/renewHead',
     });
     if (callBack && callBack instanceof Function) {
       callBack();

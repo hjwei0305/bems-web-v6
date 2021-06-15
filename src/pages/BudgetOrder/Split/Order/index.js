@@ -299,10 +299,7 @@ class RequestOrder extends Component {
   handlerItemCompleted = callBack => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'splitOrder/updateState',
-      payload: {
-        showProgressResult: false,
-      },
+      type: 'splitOrder/renewHead',
     });
     if (callBack && callBack instanceof Function) {
       callBack();
