@@ -392,7 +392,7 @@ class BudgetPool extends Component {
         </div>
         <div
           className={cls('master-title', { disabled: !actived })}
-        >{`${item.periodName} ${item.itemName}`}</div>
+        >{`${item.periodName} ${item.itemName}(${item.item})`}</div>
       </>
     );
   };
@@ -489,6 +489,7 @@ class BudgetPool extends Component {
       },
       searchProperties: [
         'code',
+        'item',
         'itemName',
         'periodName',
         'projectName',

@@ -246,7 +246,7 @@ class DetailItem extends PureComponent {
             <span className="title">池号</span>
             <span className="no">{poolCode}</span>
           </div>
-          <div className="master-title">{`${item.periodName} ${item.itemName}`}</div>
+          <div className="master-title">{`${item.periodName} ${item.itemName}(${item.item})`}</div>
         </>
       );
     }
@@ -357,6 +357,7 @@ class DetailItem extends PureComponent {
       onListCardRef: ref => (this.listCardRef = ref),
       customTool: this.renderCustomTool,
       searchProperties: [
+        'item',
         'itemName',
         'periodName',
         'projectName',

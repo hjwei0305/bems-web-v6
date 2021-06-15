@@ -147,7 +147,7 @@ const SplitItem = ({
               <span className="title">池号</span>
               <span className="no">{poolCode}</span>
             </div>
-            <div className="master-title">{`${item.periodName} ${item.itemName}`}</div>
+            <div className="master-title">{`${item.periodName} ${item.itemName}(${item.item})`}</div>
           </>
         );
       }

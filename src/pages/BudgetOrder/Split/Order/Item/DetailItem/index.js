@@ -254,6 +254,7 @@ class DetailItem extends PureComponent {
       onListCardRef: ref => (this.listCardRef = ref),
       customTool: this.renderCustomTool,
       searchProperties: [
+        'item',
         'itemName',
         'periodName',
         'projectName',
