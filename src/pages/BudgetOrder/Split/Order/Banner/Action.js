@@ -189,6 +189,23 @@ class ExtAction extends PureComponent {
           <Popconfirm
             disabled={disabled}
             icon={<Icon type="question-circle-o" />}
+            placement="bottomRight"
+            trigger="click"
+            title={
+              <Tip
+                topic="撤销确认"
+                description="提示:此操作会撤销之前的预算确认操作，其预占用的预算将会自动释放!"
+              />
+            }
+            onConfirm={cancel}
+          >
+            <Button disabled={disabled} loading={canceling}>
+              撤销确认
+            </Button>
+          </Popconfirm>
+          <Popconfirm
+            disabled={disabled}
+            icon={<Icon type="question-circle-o" />}
             placement="bottom"
             trigger="click"
             title={<Tip topic="确定要直接生效吗？" description="警告：生效后预算可以被业务使用!" />}

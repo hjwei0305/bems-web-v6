@@ -136,7 +136,8 @@ class ExtAction extends PureComponent {
         menus.forEach(m => {
           if (
             m.key === SPLIT_REQUEST_BTN_KEY.START_FLOW ||
-            m.key === SPLIT_REQUEST_BTN_KEY.EFFECT
+            m.key === SPLIT_REQUEST_BTN_KEY.EFFECT ||
+            m.key === SPLIT_REQUEST_BTN_KEY.CANCEL
           ) {
             Object.assign(m, { disabled: false });
           }
