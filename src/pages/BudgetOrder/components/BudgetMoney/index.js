@@ -18,9 +18,9 @@ const BudgetMoney = ({
   extra = null,
   onFocus = () => {},
 }) => {
-  let money = amount;
-
   const inputRef = useRef();
+
+  const [value, setValue] = useState(amount);
 
   const [rowKey, setRowKey] = useState('');
 
@@ -42,17 +42,45 @@ const BudgetMoney = ({
     }
   }, [allowEdit, rowItem, onFocus]);
 
-  const parser = value => {
+  const parser = v => {
     const reg = new RegExp(',', 'g');
-    return `${value}`.replace(reg, '') || 0;
+    return `${v}`.replace(reg, '') || 0;
   };
 
-  const handlerBlurAutoSave = e => {
-    money = Number(parser(e.target.value));
+  const handlerEnterSave = useCallback(
+    e => {
+      const money = Number(parser(e.target.value));
+      if (isNaN(money)) {
+        setValidFail(true);
+        return false;
+      }
+      setValue(money);
+      if (onSave && onSave instanceof Function) {
+        if (maxAmount !== null && maxAmount !== undefined && maxAmount < money) {
+          setValidFail(true);
+          return false;
+        }
+        if (minAmount !== null && minAmount !== undefined && minAmount > money) {
+          setValidFail(true);
+          return false;
+        }
+        onSave(rowItem, money, () => {
+          setRowKey('');
+        });
+        setEdit(false);
+      }
+    },
+    [maxAmount, minAmount, onSave, rowItem],
+  );
+
+  const handlerBlur = useCallback(() => {
+    const currentValue = inputRef.current.numberInputRef.inputNumberRef.input.value;
+    const money = Number(parser(currentValue));
     if (isNaN(money)) {
       setValidFail(true);
       return false;
     }
+    setValue(money);
     if (onSave && onSave instanceof Function) {
       if (maxAmount !== null && maxAmount !== undefined && maxAmount < money) {
         setValidFail(true);
@@ -67,16 +95,16 @@ const BudgetMoney = ({
       });
       setEdit(false);
     }
-  };
+  }, [maxAmount, minAmount, onSave, rowItem]);
 
   const getClassName = useMemo(() => {
-    if (money > 0) {
+    if (value > 0) {
       return 'blue';
     }
-    if (money < 0) {
+    if (value < 0) {
       return 'red';
     }
-  }, [money]);
+  }, [value]);
 
   const renderMoney = useMemo(() => {
     if (loading && rowKey === get(rowItem, 'id')) {
@@ -88,18 +116,21 @@ const BudgetMoney = ({
     }
     return (
       <div onClick={handlerEdit} className={allowEdit ? 'allow-edit' : 'only-read'}>
-        <Money value={money} className={getClassName} />
+        <Money value={value} className={getClassName} />
       </div>
     );
-  }, [money, rowItem, loading, rowKey, allowEdit, getClassName, handlerEdit]);
+  }, [value, rowItem, loading, rowKey, allowEdit, getClassName, handlerEdit]);
 
-  const restProps = {};
-  if (maxAmount != null && maxAmount !== undefined) {
-    Object.assign(restProps, { max: Number(maxAmount) });
-  }
-  if (minAmount != null && minAmount !== undefined) {
-    Object.assign(restProps, { min: Number(minAmount) });
-  }
+  const getMoneyInputProps = useCallback(() => {
+    return {
+      ref: inputRef,
+      textAlign: 'left',
+      value,
+      className: cls({ 'has-error': validFail }),
+      onBlur: handlerBlur,
+      onPressEnter: handlerEnterSave,
+    };
+  }, [handlerBlur, handlerEnterSave, validFail, value]);
 
   return (
     <div className={cls(styles['money-box'], className)} style={style}>
@@ -107,15 +138,7 @@ const BudgetMoney = ({
         <span className="label">{title}</span>
         {edit ? (
           <Space direction="vertical" size={0} onClick={e => e.stopPropagation()}>
-            <MoneyInput
-              ref={inputRef}
-              textAlign="left"
-              value={money}
-              className={cls({ 'has-error': validFail })}
-              onBlur={handlerBlurAutoSave}
-              onPressEnter={handlerBlurAutoSave}
-              {...restProps}
-            />
+            <MoneyInput {...getMoneyInputProps()} />
             {extra ? (
               <span
                 style={{
