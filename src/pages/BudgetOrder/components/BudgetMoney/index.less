@@ -14,11 +14,23 @@
           content: ':';
         }
       }
-      .has-error .ant-input,
-      .has-error .ant-input:hover {
-        background-color: #fff;
-        border-color: #f5222d;
+      .extra {
+        position: 'absolute';
+        min-width: 600px;
+        color: fade(@black, 35%);
+        font-size: 12;
       }
+      .has-error {
+        .ant-input,
+        .ant-input:hover {
+          background-color: #fff;
+          border-color: #f5222d;
+        }
+        &.extra {
+          color: #f5222d;
+        }
+      }
+
       .allow-edit {
         width: 160px;
         height: 32px;

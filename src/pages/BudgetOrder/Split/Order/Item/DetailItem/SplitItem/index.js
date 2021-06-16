@@ -200,7 +200,7 @@ const SplitItem = ({
               onSave={handlerSaveMoney}
             />
             {errMsg ? (
-              <Alert type="error" style={{ marginTop: 16 }} message={errMsg} banner closable />
+              <Alert type="error" style={{ marginTop: 26 }} message={errMsg} banner closable />
             ) : null}
           </div>
         </>

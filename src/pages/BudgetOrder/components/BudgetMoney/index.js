@@ -140,16 +140,7 @@ const BudgetMoney = ({
           <Space direction="vertical" size={0} onClick={e => e.stopPropagation()}>
             <MoneyInput {...getMoneyInputProps()} />
             {extra ? (
-              <span
-                style={{
-                  fontSize: 12,
-                  color: 'rgba(0,0,0,0.35)',
-                  position: 'absolute',
-                  minWidth: 600,
-                }}
-              >
-                {extra}
-              </span>
+              <span className={cls('extra', { 'has-error': validFail })}>{extra}</span>
             ) : null}
           </Space>
         ) : (
