@@ -483,13 +483,6 @@ class BudgetPool extends Component {
       onListCardRef: ref => (this.listCardRef = ref),
       customTool: ({ total }) => this.renderCustomTool(total, hasFilter),
       onSelectChange: this.handlerSelectPool,
-      cascadeParams: {
-        sortOrders: [
-          { property: 'itemName', direction: 'ASC' },
-          { property: 'startDate', direction: 'ASC' },
-        ],
-        filters,
-      },
       searchProperties: [
         'code',
         'item',
@@ -513,6 +506,13 @@ class BudgetPool extends Component {
     if (subjectId) {
       Object.assign(listProps, {
         remotePaging: true,
+        cascadeParams: {
+          sortOrders: [
+            { property: 'itemName', direction: 'ASC' },
+            { property: 'startDate', direction: 'ASC' },
+          ],
+          filters,
+        },
         store: {
           type: 'POST',
           url: `${SERVER_PATH}/bems-v6/pool/findByPage`,
