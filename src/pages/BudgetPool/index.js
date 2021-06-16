@@ -117,11 +117,14 @@ class BudgetPool extends Component {
 
   clearFilter = e => {
     e.stopPropagation();
-    const { dispatch } = this.props;
+    const { dispatch, budgetPool } = this.props;
+    const {
+      filterData: { subjectId },
+    } = budgetPool;
     dispatch({
       type: 'budgetPool/updateState',
       payload: {
-        filterData: {},
+        filterData: { subjectId },
       },
     });
   };
