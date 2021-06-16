@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { get, isEqual } from 'lodash';
-import { Input, Checkbox, Button, Popconfirm, Avatar } from 'antd';
+import { Input, Avatar } from 'antd';
 import { ListCard, Money, Space } from 'suid';
 import { FilterView } from '@/components';
 import { constants } from '@/utils';
@@ -34,7 +34,6 @@ class DetailItem extends PureComponent {
     super(props);
     const [itemStatus] = REQUEST_ITEM_STATUS_DATA;
     this.state = {
-      selectedKeys: [],
       globalDisabled: false,
       itemStatus,
     };
@@ -155,44 +154,24 @@ class DetailItem extends PureComponent {
     return { filters };
   };
 
-  onCancelBatchRemove = () => {
-    this.setState({
-      selectedKeys: [],
-    });
-  };
-
-  handlerRemoveItem = () => {
-    const { selectedKeys } = this.state;
+  handlerRemoveItem = (keys, callback) => {
     const { onRemoveItem } = this.props;
     if (onRemoveItem && onRemoveItem instanceof Function) {
-      onRemoveItem(selectedKeys, () => {
-        this.setState({ selectedKeys: [] }, this.reloadData);
+      onRemoveItem(keys, () => {
+        this.reloadData();
+        if (callback && onRemoveItem instanceof Function) {
+          callback();
+        }
       });
     }
   };
 
-  handerSelectChange = selectedKeys => {
-    this.setState({ selectedKeys });
-  };
-
-  handlerSelectAll = (e, item) => {
-    if (e.target.checked) {
-      const items = get(item, 'children');
-      this.setState({ selectedKeys: items.map(it => it.id) });
-    } else {
-      this.setState({ selectedKeys: [] });
-    }
-  };
-
   renderDescription = item => {
-    const { globalDisabled, selectedKeys } = this.state;
+    const { globalDisabled } = this.state;
     const { subDimensionFields, itemMoneySaving, onSaveItemMoney, removing } = this.props;
     const originPoolAmount = get(item, 'originPoolAmount');
     const originPoolCode = get(item, 'originPoolCode');
     const items = get(item, 'children');
-    const hasSelected = selectedKeys.length > 0;
-    const indeterminate = selectedKeys.length > 0 && selectedKeys.length < items.length;
-    const checked = selectedKeys.length > 0 && selectedKeys.length === items.length;
     const splitItemProps = {
       onlyView: globalDisabled,
       originPoolCode,
@@ -201,12 +180,12 @@ class DetailItem extends PureComponent {
       items,
       itemMoneySaving,
       onSaveItemMoney,
-      selectedKeys,
-      selectChange: this.handerSelectChange,
+      onRemoveItem: this.handlerRemoveItem,
+      removing,
     };
 
     return (
-      <>
+      <div key={item.id}>
         <div className="origin-money-box">
           <div className="field-item">
             <span className="label">预算余额</span>
@@ -214,38 +193,9 @@ class DetailItem extends PureComponent {
               <Money value={originPoolAmount} />
             </span>
           </div>
-          <div className="action-tool-box">
-            <Space>
-              {!globalDisabled ? (
-                <Checkbox
-                  checked={checked}
-                  indeterminate={indeterminate}
-                  onChange={e => this.handlerSelectAll(e, item)}
-                >
-                  全选
-                </Checkbox>
-              ) : null}
-              {hasSelected && !globalDisabled ? (
-                <>
-                  <Button size="small" onClick={this.onCancelBatchRemove} disabled={removing}>
-                    取消
-                  </Button>
-                  <Popconfirm
-                    disabled={removing}
-                    title="确定要删除吗？提示：删除后不能恢复"
-                    onConfirm={this.handlerRemoveItem}
-                  >
-                    <Button size="small" type="danger" loading={removing}>
-                      {`删除(${selectedKeys.length})`}
-                    </Button>
-                  </Popconfirm>
-                </>
-              ) : null}
-            </Space>
-          </div>
         </div>
         <SplitItem {...splitItemProps} />
-      </>
+      </div>
     );
   };
 

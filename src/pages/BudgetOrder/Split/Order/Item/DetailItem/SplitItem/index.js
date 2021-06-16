@@ -1,16 +1,14 @@
 import React, { useMemo, useCallback, useState } from 'react';
 import { get } from 'lodash';
 import { Decimal } from 'decimal.js';
-import { Descriptions, Alert, Timeline, Empty, Checkbox } from 'antd';
-import { Money, ExtIcon } from 'suid';
+import { Descriptions, Alert, Timeline, Empty, Checkbox, Button, Popconfirm } from 'antd';
+import { Money, ExtIcon, Space } from 'suid';
 import BudgetMoney from '../../../../../components/BudgetMoney';
 import styles from './index.less';
 
 const splitAmount = {};
 
 const SplitItem = ({
-  selectedKeys,
-  selectChange = () => {},
   onlyView = false,
   originPoolCode,
   originPoolAmount,
@@ -18,8 +16,12 @@ const SplitItem = ({
   items = [],
   itemMoneySaving = false,
   onSaveItemMoney = () => {},
+  removing,
+  onRemoveItem = () => {},
 }) => {
   const [maxAmount, setMaxAmount] = useState(0);
+
+  const [selectedKeys, setSelectedKeys] = useState([]);
 
   const setSplitItem = useCallback(
     (itemId, item) => {
@@ -123,9 +125,9 @@ const SplitItem = ({
       } else {
         keys = keys.filter(k => k !== itemId);
       }
-      selectChange(keys);
+      setSelectedKeys(keys);
     },
-    [selectChange, selectedKeys],
+    [selectedKeys],
   );
 
   const renderMasterTitle = useCallback(
@@ -233,7 +235,82 @@ const SplitItem = ({
     });
   }, [items, renderDescription, renderMasterTitle]);
 
-  return <Timeline className={styles['split-item-box']}>{renderContent}</Timeline>;
+  const onCancelBatchRemove = useCallback(() => {
+    setSelectedKeys([]);
+  }, []);
+
+  const handlerRemoveItem = useCallback(() => {
+    if (onRemoveItem && onRemoveItem instanceof Function) {
+      onRemoveItem(selectedKeys, () => {
+        setSelectedKeys([]);
+      });
+    }
+  }, [onRemoveItem, selectedKeys]);
+
+  const handlerSelectAll = useCallback(
+    e => {
+      if (e.target.checked) {
+        const keys = items.map(it => it.id);
+        setSelectedKeys(keys);
+      } else {
+        setSelectedKeys([]);
+      }
+    },
+    [items],
+  );
+
+  const renderToolBox = useMemo(() => {
+    if (onlyView) {
+      return null;
+    }
+    const hasSelected = selectedKeys.length > 0;
+    const indeterminate = selectedKeys.length > 0 && selectedKeys.length < items.length;
+    const checked = selectedKeys.length > 0 && selectedKeys.length === items.length;
+    return (
+      <div className="action-tool-box">
+        <Space>
+          <Checkbox
+            checked={checked}
+            indeterminate={indeterminate}
+            onChange={e => handlerSelectAll(e)}
+          >
+            全选
+          </Checkbox>
+          {hasSelected ? (
+            <>
+              <Button size="small" onClick={onCancelBatchRemove} disabled={removing}>
+                取消
+              </Button>
+              <Popconfirm
+                disabled={removing}
+                title="确定要删除吗？提示：删除后不能恢复"
+                onConfirm={handlerRemoveItem}
+              >
+                <Button size="small" type="danger" loading={removing}>
+                  {`删除(${selectedKeys.length})`}
+                </Button>
+              </Popconfirm>
+            </>
+          ) : null}
+        </Space>
+      </div>
+    );
+  }, [
+    handlerRemoveItem,
+    handlerSelectAll,
+    items.length,
+    onCancelBatchRemove,
+    onlyView,
+    removing,
+    selectedKeys.length,
+  ]);
+
+  return (
+    <>
+      {renderToolBox}
+      <Timeline className={styles['split-item-box']}>{renderContent}</Timeline>
+    </>
+  );
 };
 
 export default SplitItem;
