@@ -410,6 +410,7 @@ class RequestOrder extends Component {
       itemMoneySaving: loading.effects['splitOrder/saveItemMoney'],
       removeOrderItems: this.removeOrderItems,
       removing: loading.effects['splitOrder/removeOrderItems'],
+      completeImport: this.handlerCompleteImport,
     };
     const headLoading = loading.effects['splitOrder/getHead'];
     return (
