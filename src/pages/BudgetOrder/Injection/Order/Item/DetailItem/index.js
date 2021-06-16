@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
+import { get, isEqual } from 'lodash';
 import { Descriptions, Input, Button, Popconfirm, Checkbox, Alert } from 'antd';
 import { ListCard, Money, Space } from 'suid';
 import { FilterView } from '@/components';
@@ -8,7 +8,7 @@ import { constants } from '@/utils';
 import BudgetMoney from '../../../../components/BudgetMoney';
 import styles from './index.less';
 
-const { SERVER_PATH, REQUEST_ORDER_ACTION, REQUEST_ITEM_STATUS } = constants;
+const { SERVER_PATH, REQUEST_ORDER_ACTION, REQUEST_ITEM_STATUS, REQUEST_VIEW_STATUS } = constants;
 const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTION[key]);
 const REQUEST_ITEM_STATUS_DATA = Object.keys(REQUEST_ITEM_STATUS).map(
   key => REQUEST_ITEM_STATUS[key],
@@ -49,6 +49,18 @@ class DetailItem extends PureComponent {
       onDetailItemRef(this);
     }
     this.initGlobalAction();
+  }
+
+  componentDidUpdate(preProps) {
+    const { headData } = this.props;
+    const status = get(headData, 'status');
+    if (status && !isEqual(preProps.headData, headData)) {
+      let globalDisabled = true;
+      if (status === REQUEST_VIEW_STATUS.PREFAB.key || status === REQUEST_VIEW_STATUS.DRAFT.key) {
+        globalDisabled = false;
+      }
+      this.setState({ globalDisabled });
+    }
   }
 
   componentWillUnmount() {
@@ -150,28 +162,30 @@ class DetailItem extends PureComponent {
         <div>
           <Space>
             {!globalDisabled ? (
-              <Checkbox
-                checked={checked}
-                indeterminate={indeterminate}
-                onChange={this.handlerSelectAll}
-              >
-                全选
-              </Checkbox>
-            ) : null}
-            {hasSelected && !globalDisabled ? (
               <>
-                <Button onClick={this.onCancelBatchRemove} disabled={removing}>
-                  取消
-                </Button>
-                <Popconfirm
-                  disabled={removing}
-                  title="确定要删除吗？提示：删除后不能恢复"
-                  onConfirm={this.handlerRemoveItem}
+                <Checkbox
+                  checked={checked}
+                  indeterminate={indeterminate}
+                  onChange={this.handlerSelectAll}
                 >
-                  <Button type="danger" loading={removing}>
-                    {`删除(${selectedKeys.length})`}
-                  </Button>
-                </Popconfirm>
+                  全选
+                </Checkbox>
+                {hasSelected ? (
+                  <>
+                    <Button onClick={this.onCancelBatchRemove} disabled={removing}>
+                      取消
+                    </Button>
+                    <Popconfirm
+                      disabled={removing}
+                      title="确定要删除吗？提示：删除后不能恢复"
+                      onConfirm={this.handlerRemoveItem}
+                    >
+                      <Button type="danger" loading={removing}>
+                        {`删除(${selectedKeys.length})`}
+                      </Button>
+                    </Popconfirm>
+                  </>
+                ) : null}
               </>
             ) : null}
           </Space>

@@ -1,7 +1,7 @@
 import React, { PureComponent, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import cls from 'classnames';
-import { get } from 'lodash';
+import { get, isEqual } from 'lodash';
 import { Button, Popconfirm, Tabs } from 'antd';
 import { Space, Attachment, PageLoader } from 'suid';
 import { constants } from '@/utils';
@@ -13,7 +13,7 @@ const DimensionSelection = React.lazy(() => import('../../../components/Dimensio
 const ProgressResult = React.lazy(() => import('../../../components/ProgressResult'));
 const BatchItem = React.lazy(() => import('../../../components/BatchItem'));
 const { TabPane } = Tabs;
-const { REQUEST_ORDER_ACTION, SERVER_PATH } = constants;
+const { REQUEST_ORDER_ACTION, SERVER_PATH, REQUEST_VIEW_STATUS } = constants;
 const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTION[key]);
 
 class RequestItem extends PureComponent {
@@ -52,11 +52,20 @@ class RequestItem extends PureComponent {
     this.state = {
       activeKey: 'item',
       showBatch: false,
-      allowEdit:
-        action === REQUEST_ORDER_ACTION.ADD ||
-        action === REQUEST_ORDER_ACTION.EDIT ||
-        action === REQUEST_ORDER_ACTION.UPDATE_APPROVE_FLOW,
+      allowEdit: action === REQUEST_ORDER_ACTION.ADD || action === REQUEST_ORDER_ACTION.EDIT,
     };
+  }
+
+  componentDidUpdate(preProps) {
+    const { headData } = this.props;
+    const status = get(headData, 'status');
+    if (status && !isEqual(preProps.headData, headData)) {
+      let allowEdit = false;
+      if (status === REQUEST_VIEW_STATUS.PREFAB.key || status === REQUEST_VIEW_STATUS.DRAFT.key) {
+        allowEdit = true;
+      }
+      this.setState({ allowEdit });
+    }
   }
 
   handlerTabChange = activeKey => {
