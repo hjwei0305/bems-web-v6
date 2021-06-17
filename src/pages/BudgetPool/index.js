@@ -240,7 +240,7 @@ class BudgetPool extends Component {
 
   trundleConfirm = item => {
     const { dispatch } = this.props;
-    const rowId = get(item, 'id');
+    const id = get(item, 'id');
     const poolCode = get(item, 'code');
     this.confirmModal = Modal.confirm({
       title: `滚动结转确认`,
@@ -256,7 +256,7 @@ class BudgetPool extends Component {
           });
           dispatch({
             type: 'budgetPool/trundle',
-            payload: [rowId],
+            payload: { id },
             callback: res => {
               if (res.success) {
                 resolve();
