@@ -1,5 +1,5 @@
 import { utils, message } from 'suid';
-import { getDimensionAll, poolItemDisable, poolItemEnable } from './service';
+import { getDimensionAll, poolItemDisable, poolItemEnable, trundle } from './service';
 
 const { dvaModel, pathMatchRegexp } = utils;
 const { modelExtend, model } = dvaModel;
@@ -72,6 +72,18 @@ export default modelExtend(model, {
       message.destroy();
       if (re.success) {
         message.success('停用成功');
+      } else {
+        message.error(re.message);
+      }
+      if (callback && callback instanceof Function) {
+        callback(re);
+      }
+    },
+    *trundle({ payload, callback }, { call }) {
+      const re = yield call(trundle, payload);
+      message.destroy();
+      if (re.success) {
+        message.success('滚动结转成功');
       } else {
         message.error(re.message);
       }

@@ -112,7 +112,21 @@ class BudgetEvent extends Component {
     if (loading.effects['budgetEvent/del'] && delRowId === row.id) {
       return <ExtIcon className="del-loading" type="loading" antd />;
     }
-    return <ExtIcon className="del" type="delete" antd />;
+    if (row.required === true) {
+      return <ExtIcon className="disabled" type="delete" antd />;
+    }
+    return (
+      <Popconfirm
+        placement="topLeft"
+        title={formatMessage({
+          id: 'global.delete.confirm',
+          defaultMessage: '确定要删除吗？提示：删除后不可恢复',
+        })}
+        onConfirm={() => this.del(row)}
+      >
+        <ExtIcon className="del" type="delete" antd />
+      </Popconfirm>
+    );
   };
 
   renderName = (t, r) => {
@@ -149,16 +163,7 @@ class BudgetEvent extends Component {
         render: (text, record) => (
           <span className={cls('action-box')}>
             <ExtIcon className="edit" onClick={() => this.edit(record)} type="edit" antd />
-            <Popconfirm
-              placement="topLeft"
-              title={formatMessage({
-                id: 'global.delete.confirm',
-                defaultMessage: '确定要删除吗？提示：删除后不可恢复',
-              })}
-              onConfirm={() => this.del(record)}
-            >
-              {this.renderDelBtn(record)}
-            </Popconfirm>
+            {this.renderDelBtn(record)}
           </span>
         ),
       },

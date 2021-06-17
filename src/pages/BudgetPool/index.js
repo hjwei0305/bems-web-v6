@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { get, isEmpty, isNumber, isEqual } from 'lodash';
 import cls from 'classnames';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import { Input, Descriptions, Tag, Modal, Layout } from 'antd';
+import { Input, Descriptions, Tag, Modal, Layout, Button } from 'antd';
 import { ListCard, ExtIcon, Money, Space, PageLoader } from 'suid';
 import { constants } from '@/utils';
 import Filter from './components/Filter';
@@ -32,9 +32,6 @@ class BudgetPool extends Component {
   constructor() {
     super();
     this.total = 0;
-    this.state = {
-      rowId: null,
-    };
   }
 
   componentWillUnmount() {
@@ -175,12 +172,10 @@ class BudgetPool extends Component {
             okButtonProps: { type: 'primary', loading: true },
             cancelButtonProps: { disabled: true },
           });
-          this.setState({ rowId });
           dispatch({
             type: 'budgetPool/poolItemEnable',
             payload: [rowId],
             callback: res => {
-              this.setState({ rowId: null });
               if (res.success) {
                 resolve();
                 this.reloadData();
@@ -218,12 +213,51 @@ class BudgetPool extends Component {
             okButtonProps: { type: 'primary', loading: true },
             cancelButtonProps: { disabled: true },
           });
-          this.setState({ rowId });
           dispatch({
             type: 'budgetPool/poolItemDisable',
             payload: [rowId],
             callback: res => {
-              this.setState({ rowId: null });
+              if (res.success) {
+                resolve();
+                this.reloadData();
+              } else {
+                this.confirmModal.update({
+                  okButtonProps: { loading: false },
+                  cancelButtonProps: { disabled: false },
+                });
+              }
+            },
+          });
+        });
+      },
+      cancelText: '取消',
+      onCancel: () => {
+        this.confirmModal.destroy();
+        this.confirmModal = null;
+      },
+    });
+  };
+
+  trundleConfirm = item => {
+    const { dispatch } = this.props;
+    const rowId = get(item, 'id');
+    const poolCode = get(item, 'code');
+    this.confirmModal = Modal.confirm({
+      title: `滚动结转确认`,
+      content: `确定要滚动结转池号为 ${poolCode} 的预算吗？`,
+      okButtonProps: { type: 'primary' },
+      style: { top: '20%' },
+      okText: '确定',
+      onOk: () => {
+        return new Promise(resolve => {
+          this.confirmModal.update({
+            okButtonProps: { type: 'primary', loading: true },
+            cancelButtonProps: { disabled: true },
+          });
+          dispatch({
+            type: 'budgetPool/trundle',
+            payload: [rowId],
+            callback: res => {
               if (res.success) {
                 resolve();
                 this.reloadData();
@@ -414,47 +448,34 @@ class BudgetPool extends Component {
   };
 
   renderActivedBtn = item => {
-    const { loading } = this.props;
     const actived = get(item, 'actived');
-    const { rowId } = this.state;
-    const doing =
-      loading.effects['budgetPool/poolItemEnable'] || loading.effects['budgetPool/poolItemDisable'];
-    if (doing && rowId === item.id) {
-      return <ExtIcon className="del-loading" type="loading" antd />;
-    }
     if (actived) {
       return (
-        <ExtIcon
-          className="action-item item-disabled"
-          tooltip={{ title: '停用', placement: 'bottom' }}
-          type="close-circle"
-          onClick={() => this.itemDiableConfirm(item)}
-          antd
-        />
+        <Button type="danger" size="small" onClick={() => this.itemDiableConfirm(item)}>
+          停用{' '}
+        </Button>
       );
     }
     return (
-      <ExtIcon
-        className="action-item item-enable"
-        tooltip={{ title: '启用', placement: 'bottom' }}
-        type="check-circle"
-        onClick={() => this.itemEnableConfirm(item)}
-        antd
-      />
+      <Button type="primary" ghost size="small" onClick={() => this.itemEnableConfirm(item)}>
+        启用{' '}
+      </Button>
     );
   };
 
   renderAction = item => {
+    const roll = get(item, 'roll') || false;
     return (
       <Space size={16}>
+        {roll ? (
+          <Button size="small" onClick={() => this.trundleConfirm(item)}>
+            滚动结转{' '}
+          </Button>
+        ) : null}
         {this.renderActivedBtn(item)}
-        <ExtIcon
-          className="action-item"
-          onClick={() => this.showLogDetail(item)}
-          tooltip={{ title: '日志', placement: 'bottom' }}
-          type="profile"
-          antd
-        />
+        <Button size="small" onClick={() => this.showLogDetail(item)}>
+          日志{' '}
+        </Button>
       </Space>
     );
   };

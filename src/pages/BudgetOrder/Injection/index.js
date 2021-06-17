@@ -16,6 +16,7 @@ import styles from './index.less';
 const CreateRequestOrder = React.lazy(() => import('./Request/CreateOrder'));
 const UpdateRequestOrder = React.lazy(() => import('./Request/UpdateOrder'));
 const ViewRequestOrder = React.lazy(() => import('./Request/ViewOrder'));
+const Prefab = React.lazy(() => import('../components/Prefab'));
 const {
   SERVER_PATH,
   INJECTION_REQUEST_BTN_KEY,
@@ -275,56 +276,36 @@ class InjectionRequestList extends Component {
     });
   };
 
-  resumeConfirm = record => {
-    const { dispatch } = this.props;
-    const orderId = get(record, 'id');
-    const createdDate = get(record, 'createdDate', '-');
-    this.confirmModal = Modal.confirm({
-      title: `恢复确认`,
-      content: `你于[${createdDate}]创建的申请单未保存，是否需要恢复!`,
-      okButtonProps: { type: 'primary' },
-      style: { top: '20%' },
-      okText: '恢复',
-      onOk: () => {
-        dispatch({
-          type: 'injectionRequestList/updateState',
-          payload: {
-            recordItem: record,
-            showUpdate: true,
-          },
-        });
+  handlerTrash = item => {
+    const { dispatch, injectionRequestList } = this.props;
+    const { prefabData: originPrefabData } = injectionRequestList;
+    const orderId = get(item, 'id');
+    dispatch({
+      type: 'injectionRequestList/trash',
+      payload: {
+        id: orderId,
       },
-      cancelText: '取消',
-      onCancel: () => {
-        return new Promise(resolve => {
-          this.confirmModal.update({
-            okButtonProps: { type: 'primary', disabled: true },
-            cancelButtonProps: { loading: true },
-          });
+      callback: res => {
+        if (res.success) {
+          const prefabData = originPrefabData.filter(it => it.id !== orderId);
           dispatch({
-            type: 'injectionRequestList/trash',
+            type: 'injectionRequestList/updateState',
             payload: {
-              id: orderId,
-            },
-            callback: res => {
-              if (res.success) {
-                resolve();
-                dispatch({
-                  type: 'injectionRequestList/updateState',
-                  payload: {
-                    recordItem: null,
-                    showCreate: true,
-                  },
-                });
-              } else {
-                this.confirmModal.update({
-                  okButtonProps: { disabled: false },
-                  cancelButtonProps: { disabled: false, loading: false },
-                });
-              }
+              prefabData,
             },
           });
-        });
+        }
+      },
+    });
+  };
+
+  handlerRecovery = item => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'injectionRequestList/updateState',
+      payload: {
+        recordItem: item,
+        showUpdate: true,
       },
     });
   };
@@ -333,17 +314,17 @@ class InjectionRequestList extends Component {
     const { dispatch } = this.props;
     dispatch({
       type: 'injectionRequestList/checkInjectPrefab',
-      successCallback: recordItem => {
-        if (recordItem) {
-          this.resumeConfirm(recordItem);
-        } else {
-          dispatch({
-            type: 'injectionRequestList/updateState',
-            payload: {
-              showCreate: true,
-            },
-          });
-        }
+    });
+  };
+
+  handlerAdd = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'injectionRequestList/updateState',
+      payload: {
+        recordItem: null,
+        showCreate: true,
+        showPrefab: false,
       },
     });
   };
@@ -403,6 +384,8 @@ class InjectionRequestList extends Component {
         showUpdate: false,
         showView: false,
         recordItem: null,
+        showPrefab: false,
+        prefabData: [],
       },
     });
     if (needRefresh === true) {
@@ -679,6 +662,8 @@ class InjectionRequestList extends Component {
       showCreate,
       showUpdate,
       showView,
+      showPrefab,
+      prefabData,
       recordItem,
     } = injectionRequestList;
     const filterProps = {
@@ -707,6 +692,16 @@ class InjectionRequestList extends Component {
             requestId={get(recordItem, 'id', null)}
             showView={showView}
             onCloseModal={this.handlerCancel}
+          />
+        </Suspense>
+        <Suspense fallback={<PageLoader />}>
+          <Prefab
+            showPrefab={showPrefab}
+            handlerClosePrefab={this.handlerCancel}
+            prefabData={prefabData}
+            onAdd={this.handlerAdd}
+            onTrash={this.handlerTrash}
+            onRecovery={this.handlerRecovery}
           />
         </Suspense>
       </div>

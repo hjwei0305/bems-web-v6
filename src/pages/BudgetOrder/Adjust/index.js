@@ -16,6 +16,7 @@ import styles from './index.less';
 const CreateRequestOrder = React.lazy(() => import('./Request/CreateOrder'));
 const UpdateRequestOrder = React.lazy(() => import('./Request/UpdateOrder'));
 const ViewRequestOrder = React.lazy(() => import('./Request/ViewOrder'));
+const Prefab = React.lazy(() => import('../components/Prefab'));
 const { SERVER_PATH, ADJUST_REQUEST_BTN_KEY, REQUEST_VIEW_STATUS, SEARCH_DATE_PERIOD } = constants;
 const startFormat = 'YYYY-MM-DD 00:00:00';
 const endFormat = 'YYYY-MM-DD 23:59:59';
@@ -270,56 +271,36 @@ class AdjustRequestList extends Component {
     });
   };
 
-  resumeConfirm = record => {
-    const { dispatch } = this.props;
-    const orderId = get(record, 'id');
-    const createdDate = get(record, 'createdDate', '-');
-    this.confirmModal = Modal.confirm({
-      title: `恢复确认`,
-      content: `你于[${createdDate}]创建的申请单未保存，是否需要恢复!`,
-      okButtonProps: { type: 'primary' },
-      style: { top: '20%' },
-      okText: '恢复',
-      onOk: () => {
-        dispatch({
-          type: 'adjustRequestList/updateState',
-          payload: {
-            recordItem: record,
-            showUpdate: true,
-          },
-        });
+  handlerTrash = item => {
+    const { dispatch, adjustRequestList } = this.props;
+    const { prefabData: originPrefabData } = adjustRequestList;
+    const orderId = get(item, 'id');
+    dispatch({
+      type: 'adjustRequestList/trash',
+      payload: {
+        id: orderId,
       },
-      cancelText: '取消',
-      onCancel: () => {
-        return new Promise(resolve => {
-          this.confirmModal.update({
-            okButtonProps: { type: 'primary', disabled: true },
-            cancelButtonProps: { loading: true },
-          });
+      callback: res => {
+        if (res.success) {
+          const prefabData = originPrefabData.filter(it => it.id !== orderId);
           dispatch({
-            type: 'adjustRequestList/trash',
+            type: 'adjustRequestList/updateState',
             payload: {
-              id: orderId,
-            },
-            callback: res => {
-              if (res.success) {
-                resolve();
-                dispatch({
-                  type: 'adjustRequestList/updateState',
-                  payload: {
-                    recordItem: null,
-                    showCreate: true,
-                  },
-                });
-              } else {
-                this.confirmModal.update({
-                  okButtonProps: { disabled: false },
-                  cancelButtonProps: { disabled: false, loading: false },
-                });
-              }
+              prefabData,
             },
           });
-        });
+        }
+      },
+    });
+  };
+
+  handlerRecovery = item => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'adjustRequestList/updateState',
+      payload: {
+        recordItem: item,
+        showUpdate: true,
       },
     });
   };
@@ -328,17 +309,17 @@ class AdjustRequestList extends Component {
     const { dispatch } = this.props;
     dispatch({
       type: 'adjustRequestList/checkAdjustPrefab',
-      successCallback: recordItem => {
-        if (recordItem) {
-          this.resumeConfirm(recordItem);
-        } else {
-          dispatch({
-            type: 'adjustRequestList/updateState',
-            payload: {
-              showCreate: true,
-            },
-          });
-        }
+    });
+  };
+
+  handlerAdd = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'adjustRequestList/updateState',
+      payload: {
+        recordItem: null,
+        showCreate: true,
+        showPrefab: false,
       },
     });
   };
@@ -673,6 +654,8 @@ class AdjustRequestList extends Component {
       showCreate,
       showUpdate,
       showView,
+      showPrefab,
+      prefabData,
       recordItem,
     } = adjustRequestList;
     const filterProps = {
@@ -701,6 +684,16 @@ class AdjustRequestList extends Component {
             requestId={get(recordItem, 'id', null)}
             showView={showView}
             onCloseModal={this.handlerCancel}
+          />
+        </Suspense>
+        <Suspense fallback={<PageLoader />}>
+          <Prefab
+            showPrefab={showPrefab}
+            handlerClosePrefab={this.handlerCancel}
+            prefabData={prefabData}
+            onAdd={this.handlerAdd}
+            onTrash={this.handlerTrash}
+            onRecovery={this.handlerRecovery}
           />
         </Suspense>
       </div>

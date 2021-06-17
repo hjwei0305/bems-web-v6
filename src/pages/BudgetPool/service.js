@@ -38,3 +38,17 @@ export async function poolItemEnable(data) {
     data,
   });
 }
+
+/**
+ * 滚动结转
+ * @id string
+ */
+export async function trundle(params) {
+  const url = `${SERVER_PATH}/bems-v6/pool/trundle`;
+  return request({
+    method: 'POST',
+    url,
+    params,
+    data: {},
+  });
+}

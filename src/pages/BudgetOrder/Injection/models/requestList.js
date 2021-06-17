@@ -27,6 +27,8 @@ export default modelExtend(model, {
     showUpdate: false,
     showView: false,
     showFilter: false,
+    showPrefab: false,
+    prefabData: [],
     filterData: {},
   },
   effects: {
@@ -52,11 +54,25 @@ export default modelExtend(model, {
         callback(re);
       }
     },
-    *checkInjectPrefab({ successCallback }, { call }) {
-      const res = yield call(checkInjectPrefab);
+    *checkInjectPrefab({ payload }, { call, put }) {
+      const res = yield call(checkInjectPrefab, payload);
       if (res.success) {
-        if (successCallback && successCallback instanceof Function) {
-          successCallback(res.data);
+        const prefabData = res.data || [];
+        if (prefabData.length > 0) {
+          yield put({
+            type: 'updateState',
+            payload: {
+              showPrefab: true,
+              prefabData,
+            },
+          });
+        } else {
+          yield put({
+            type: 'updateState',
+            payload: {
+              showCreate: true,
+            },
+          });
         }
       } else {
         message.destroy();
