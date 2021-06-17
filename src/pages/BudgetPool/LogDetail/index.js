@@ -207,7 +207,6 @@ const LogDetail = ({ poolItem, handlerClose }) => {
       title: '操作者',
       dataIndex: 'opUserName',
       width: 160,
-      optional: true,
       render: (t, r) => `${t}(${r.opUserAccount})`,
     },
     {
