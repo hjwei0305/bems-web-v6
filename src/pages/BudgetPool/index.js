@@ -156,7 +156,8 @@ class BudgetPool extends Component {
     });
   };
 
-  itemEnableConfirm = item => {
+  itemEnableConfirm = (item, e) => {
+    e.stopPropagation();
     const { dispatch } = this.props;
     const rowId = get(item, 'id');
     const poolCode = get(item, 'code');
@@ -197,7 +198,8 @@ class BudgetPool extends Component {
     });
   };
 
-  itemDiableConfirm = item => {
+  itemDiableConfirm = (item, e) => {
+    e.stopPropagation();
     const { dispatch } = this.props;
     const rowId = get(item, 'id');
     const poolCode = get(item, 'code');
@@ -238,7 +240,8 @@ class BudgetPool extends Component {
     });
   };
 
-  trundleConfirm = item => {
+  trundleConfirm = (item, e) => {
+    e.stopPropagation();
     const { dispatch } = this.props;
     const id = get(item, 'id');
     const poolCode = get(item, 'code');
@@ -451,13 +454,13 @@ class BudgetPool extends Component {
     const actived = get(item, 'actived');
     if (actived) {
       return (
-        <Button type="danger" size="small" onClick={() => this.itemDiableConfirm(item)}>
+        <Button type="danger" size="small" onClick={e => this.itemDiableConfirm(item, e)}>
           停用{' '}
         </Button>
       );
     }
     return (
-      <Button type="primary" ghost size="small" onClick={() => this.itemEnableConfirm(item)}>
+      <Button type="primary" ghost size="small" onClick={e => this.itemEnableConfirm(item, e)}>
         启用{' '}
       </Button>
     );
@@ -468,7 +471,7 @@ class BudgetPool extends Component {
     return (
       <Space size={16}>
         {roll ? (
-          <Button size="small" onClick={() => this.trundleConfirm(item)}>
+          <Button size="small" onClick={e => this.trundleConfirm(item, e)}>
             滚动结转{' '}
           </Button>
         ) : null}
