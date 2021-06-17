@@ -295,7 +295,7 @@ class DetailItem extends PureComponent {
           <BudgetMoney
             className="inject-money"
             amount={amount}
-            title="下达金额"
+            title="注入金额"
             rowItem={item}
             loading={itemMoneySaving}
             allowEdit={!globalDisabled}

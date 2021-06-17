@@ -32,7 +32,7 @@ class CreateOrder extends PureComponent {
       destroyOnClose: true,
     };
     const orderProps = {
-      title: '预算下达申请',
+      title: '预算注入申请',
       action: REQUEST_ORDER_ACTION.ADD,
       onCloseModal: this.handlerCloseModal,
     };
