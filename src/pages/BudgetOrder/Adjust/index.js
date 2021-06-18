@@ -378,6 +378,8 @@ class AdjustRequestList extends Component {
         showCreate: false,
         showUpdate: false,
         showView: false,
+        showPrefab: false,
+        prefabData: [],
       },
     });
     if (needRefresh === true) {
