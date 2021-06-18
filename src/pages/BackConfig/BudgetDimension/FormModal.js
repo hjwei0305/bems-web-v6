@@ -149,7 +149,7 @@ class FormModal extends PureComponent {
           </FormItem>
           <FormItem label="序号">
             {getFieldDecorator('rank', {
-              initialValue: get(rowData, 'rank'),
+              initialValue: get(rowData, 'rank') || 0,
               rules: [
                 {
                   required: true,
