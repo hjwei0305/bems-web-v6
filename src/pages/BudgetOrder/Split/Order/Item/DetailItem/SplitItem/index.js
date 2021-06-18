@@ -261,13 +261,13 @@ const SplitItem = ({
 
   const renderToolBox = useMemo(() => {
     if (onlyView) {
-      return <div className="action-tool-box" />;
+      return <div className={styles['action-tool-box']} />;
     }
     const hasSelected = selectedKeys.length > 0;
     const indeterminate = selectedKeys.length > 0 && selectedKeys.length < items.length;
     const checked = selectedKeys.length > 0 && selectedKeys.length === items.length;
     return (
-      <div className="action-tool-box">
+      <div className={styles['action-tool-box']}>
         <Space>
           <Checkbox
             checked={checked}
