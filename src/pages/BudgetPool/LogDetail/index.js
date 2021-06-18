@@ -212,7 +212,7 @@ const LogDetail = ({ poolItem, handlerClose }) => {
     {
       title: '业务编号',
       dataIndex: 'bizCode',
-      width: 120,
+      width: 180,
       ...getColumnSearchProps('bizCode'),
     },
     {
