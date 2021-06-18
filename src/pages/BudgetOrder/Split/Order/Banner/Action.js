@@ -80,7 +80,12 @@ class ExtAction extends PureComponent {
             icon={<Icon type="question-circle-o" />}
             placement="bottom"
             trigger="click"
-            title={<Tip topic="确定要返回吗？" description="未保存的数据将会丢失!" />}
+            title={
+              <Tip
+                topic="确定要返回吗？"
+                description={action === REQUEST_ORDER_ACTION.VIEW ? '' : '未保存的数据将会丢失!'}
+              />
+            }
             onConfirm={closeOrder}
           >
             <Button disabled={loadingGlobal}>返回</Button>
