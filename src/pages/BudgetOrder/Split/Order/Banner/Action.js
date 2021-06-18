@@ -76,14 +76,14 @@ class ExtAction extends PureComponent {
       return (
         <Space>
           <Popconfirm
-            disabled={disabled}
+            disabled={loadingGlobal}
             icon={<Icon type="question-circle-o" />}
             placement="bottom"
             trigger="click"
             title={<Tip topic="确定要返回吗？" description="未保存的数据将会丢失!" />}
             onConfirm={closeOrder}
           >
-            <Button disabled={disabled}>返回</Button>
+            <Button disabled={loadingGlobal}>返回</Button>
           </Popconfirm>
           <Popconfirm
             disabled={disabled}
