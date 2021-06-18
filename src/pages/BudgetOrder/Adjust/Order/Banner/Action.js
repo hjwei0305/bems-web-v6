@@ -120,9 +120,16 @@ class ExtAction extends PureComponent {
     if (status === REQUEST_VIEW_STATUS.CONFIRMING.key) {
       return (
         <Space>
-          <Button onClick={closeOrder} disabled={loadingGlobal}>
-            返回
-          </Button>
+          <Popconfirm
+            disabled={loadingGlobal}
+            icon={<Icon type="question-circle-o" />}
+            placement="bottom"
+            trigger="click"
+            title={<Tip topic="确定要返回吗？" />}
+            onConfirm={closeOrder}
+          >
+            <Button disabled={loadingGlobal}>返回</Button>
+          </Popconfirm>
           <Popconfirm
             disabled={disabled}
             icon={<Icon type="question-circle-o" />}
@@ -164,9 +171,16 @@ class ExtAction extends PureComponent {
     if (status === REQUEST_VIEW_STATUS.CANCELING.key) {
       return (
         <Space>
-          <Button onClick={closeOrder} disabled={loadingGlobal}>
-            返回
-          </Button>
+          <Popconfirm
+            disabled={loadingGlobal}
+            icon={<Icon type="question-circle-o" />}
+            placement="bottom"
+            trigger="click"
+            title={<Tip topic="确定要返回吗？" />}
+            onConfirm={closeOrder}
+          >
+            <Button disabled={loadingGlobal}>返回</Button>
+          </Popconfirm>
           <Popconfirm
             disabled={disabled}
             icon={<Icon type="question-circle-o" />}
@@ -188,9 +202,16 @@ class ExtAction extends PureComponent {
     if (status === REQUEST_VIEW_STATUS.CONFIRMED.key) {
       return (
         <Space>
-          <Button onClick={closeOrder} disabled={loadingGlobal}>
-            返回
-          </Button>
+          <Popconfirm
+            disabled={loadingGlobal}
+            icon={<Icon type="question-circle-o" />}
+            placement="bottom"
+            trigger="click"
+            title={<Tip topic="确定要返回吗？" />}
+            onConfirm={closeOrder}
+          >
+            <Button disabled={loadingGlobal}>返回</Button>
+          </Popconfirm>
           <Popconfirm
             disabled={disabled}
             icon={<Icon type="question-circle-o" />}
@@ -234,9 +255,16 @@ class ExtAction extends PureComponent {
     if (status === REQUEST_VIEW_STATUS.EFFECTING.key) {
       return (
         <Space>
-          <Button onClick={closeOrder} disabled={loadingGlobal}>
-            返回
-          </Button>
+          <Popconfirm
+            disabled={loadingGlobal}
+            icon={<Icon type="question-circle-o" />}
+            placement="bottom"
+            trigger="click"
+            title={<Tip topic="确定要返回吗？" />}
+            onConfirm={closeOrder}
+          >
+            <Button disabled={loadingGlobal}>返回</Button>
+          </Popconfirm>
           <Popconfirm
             disabled={disabled}
             icon={<Icon type="question-circle-o" />}
