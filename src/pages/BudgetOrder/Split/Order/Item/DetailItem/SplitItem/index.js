@@ -261,7 +261,7 @@ const SplitItem = ({
 
   const renderToolBox = useMemo(() => {
     if (onlyView) {
-      return null;
+      return <div className="action-tool-box" />;
     }
     const hasSelected = selectedKeys.length > 0;
     const indeterminate = selectedKeys.length > 0 && selectedKeys.length < items.length;
