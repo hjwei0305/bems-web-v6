@@ -194,7 +194,7 @@ const SplitItem = ({
               maxAmount={maxAmount}
               minAmount={-poolAmount}
               onFocus={it => setCurrentItemMaxAmount(it)}
-              extra={`允许输入的最小值金额：${-poolAmount}，最大金额：${maxAmount}`}
+              extra={`允许输入的最小金额：${-poolAmount}，最大金额：${maxAmount}`}
               loading={itemMoneySaving}
               allowEdit={!onlyView}
               onSave={handlerSaveMoney}
