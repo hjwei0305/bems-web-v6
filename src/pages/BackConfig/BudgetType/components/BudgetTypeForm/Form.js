@@ -169,7 +169,7 @@ class BudgetTypeForm extends PureComponent {
                 </Checkbox.Group>
               )}
             </FormItem>
-            <FormItem required label="预算池选项">
+            <FormItem label="预算池选项">
               <Row>
                 <Col span={10}>
                   <FormItem {...formItemInlineLayout} style={{ marginBottom: 0 }} label="可结转">
