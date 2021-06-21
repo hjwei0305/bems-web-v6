@@ -54,13 +54,12 @@ class Filter extends PureComponent {
     if (e) {
       e.preventDefault();
     }
-    const { filterData } = this.state;
     const { form, onFilterSubmit } = this.props;
     form.validateFields((err, formData) => {
       if (err) {
         return;
       }
-      const submitData = { ...filterData, ...formData };
+      const submitData = { ...formData };
       onFilterSubmit(submitData);
     });
   };
