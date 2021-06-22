@@ -451,6 +451,7 @@ class SplitRequestList extends Component {
         filters.push({
           fieldName: 'createdDate',
           operator: 'GE',
+          fieldType: 'date',
           value: currentDate.format(startFormat),
         });
         filters.push({
