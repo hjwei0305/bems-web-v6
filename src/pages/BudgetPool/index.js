@@ -17,8 +17,8 @@ const { Sider, Content } = Layout;
 const filterFields = {
   subjectId: { fieldName: 'subjectId', operation: 'EQ', form: false },
   periodType: { fieldName: 'periodType', operation: 'EQ', form: true },
-  startDate: { fieldName: 'startDate', operation: 'LE', fieldType: 'date8', form: true },
-  endDate: { fieldName: 'endDate', operation: 'GE', fieldType: 'date8', form: true },
+  startDate: { fieldName: 'startDate', operation: 'LE', fieldType: 'date', form: true },
+  endDate: { fieldName: 'endDate', operation: 'GE', fieldType: 'date', form: true },
 };
 
 @connect(({ budgetPool, loading }) => ({ budgetPool, loading }))
