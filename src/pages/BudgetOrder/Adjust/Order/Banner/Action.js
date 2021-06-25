@@ -59,7 +59,10 @@ class ExtAction extends PureComponent {
     const disabled = tempDisabled || saving || effecting || confirming || canceling;
     const orderCode = get(headData, 'code');
     const status = get(headData, 'status');
-    if (status === REQUEST_VIEW_STATUS.COMPLETED.key) {
+    if (
+      status === REQUEST_VIEW_STATUS.COMPLETED.key ||
+      status === REQUEST_VIEW_STATUS.APPROVING.key
+    ) {
       return (
         <>
           <Button onClick={closeOrder} disabled={loadingGlobal}>
