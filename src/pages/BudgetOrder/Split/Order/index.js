@@ -192,47 +192,6 @@ class RequestOrder extends Component {
     }
   };
 
-  beforeStartFlow = () => {
-    return new Promise(resolve => {
-      if (this.requestHeadRef) {
-        const { data, isValid } = this.requestHeadRef.getHeaderData();
-        if (isValid) {
-          const { dispatch } = this.props;
-          dispatch({
-            type: 'splitOrder/save',
-            payload: {
-              ...data,
-              beforeStartFlow: true,
-            },
-            callback: res => {
-              const { success, message: msg, data: returnData } = res;
-              if (res.success) {
-                this.needRefreshList = true;
-                dispatch({
-                  type: 'splitOrder/updateState',
-                  payload: {
-                    headData: res.data,
-                  },
-                });
-              }
-              resolve({
-                success,
-                message: msg,
-                data: {
-                  businessKey: get(returnData, 'id', null),
-                },
-              });
-            },
-          });
-        } else {
-          resolve({ success: false, message: '单据验证未通过' });
-        }
-      } else {
-        resolve({ success: false });
-      }
-    });
-  };
-
   checkDimensionForSelect = () => {
     const { isValid, data } = this.requestHeadRef.getHeaderData();
     if (isValid) {
@@ -373,7 +332,6 @@ class RequestOrder extends Component {
         saving: loading.effects['splitOrder/save'],
         closeOrder: this.closeOrder,
         loadingGlobal: loading.global,
-        beforeStartFlow: this.beforeStartFlow,
         handlerStartComlete: this.handlerStartComlete,
         effective: this.effective,
         effecting: loading.effects['splitOrder/effective'],

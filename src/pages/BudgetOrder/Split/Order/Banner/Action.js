@@ -21,7 +21,6 @@ class ExtAction extends PureComponent {
     saving: PropTypes.bool,
     loadingGlobal: PropTypes.bool,
     flowStatus: PropTypes.string,
-    beforeStartFlow: PropTypes.func,
     handlerStartComlete: PropTypes.func,
     tempDisabled: PropTypes.bool,
     effective: PropTypes.func,
@@ -40,7 +39,6 @@ class ExtAction extends PureComponent {
       closeOrder,
       loadingGlobal,
       saving,
-      beforeStartFlow,
       handlerStartComlete,
       tempDisabled,
       effective,
@@ -53,7 +51,6 @@ class ExtAction extends PureComponent {
     const startFlowProps = {
       businessModelCode: 'SPLIT',
       startComplete: handlerStartComlete,
-      beforeStart: beforeStartFlow,
       needStartConfirm: true,
     };
     const disabled = tempDisabled || saving || effecting || confirming || canceling;
@@ -61,7 +58,7 @@ class ExtAction extends PureComponent {
     const status = get(headData, 'status');
     if (
       status === REQUEST_VIEW_STATUS.COMPLETED.key ||
-      status === REQUEST_VIEW_STATUS.APPROVING.key
+      (status === REQUEST_VIEW_STATUS.APPROVING.key && action === REQUEST_ORDER_ACTION.VIEW)
     ) {
       return (
         <>
