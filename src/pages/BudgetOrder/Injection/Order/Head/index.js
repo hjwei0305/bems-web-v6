@@ -136,7 +136,12 @@ class RequestHead extends PureComponent {
         url: `${SERVER_PATH}/bems-v6/subject/getUserAuthorizedEntities`,
       },
       afterSelect: () => {
-        form.resetFields(['categoryId', 'categoryName']);
+        form.setFieldsValue({
+          categoryId: '',
+          categoryName: '',
+          orderCategory: '',
+          periodType: '',
+        });
       },
       reader: {
         name: 'name',
