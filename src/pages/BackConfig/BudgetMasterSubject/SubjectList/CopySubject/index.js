@@ -80,6 +80,7 @@ class CopySubject extends PureComponent {
         <div>
           <Tooltip title="输入主体代码、名称关键字">
             <Search
+              allowClear
               placeholder="输入主体代码、名称关键字"
               onChange={e => this.handlerSearchChange(e.target.value)}
               onSearch={this.handlerSearch}
@@ -117,7 +118,7 @@ class CopySubject extends PureComponent {
       selectedKeys,
       itemField: {
         avatar: this.renderAvatar,
-        title: item => item.name,
+        title: item => `${item.name}(${item.code})`,
         description: item => (
           <>
             <Descriptions column={1} bordered={false}>
