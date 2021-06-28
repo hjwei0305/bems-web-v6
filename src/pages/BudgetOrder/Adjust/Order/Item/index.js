@@ -51,7 +51,10 @@ class RequestItem extends PureComponent {
     this.state = {
       activeKey: 'item',
       showBatch: false,
-      allowEdit: action === REQUEST_ORDER_ACTION.ADD || action === REQUEST_ORDER_ACTION.EDIT,
+      allowEdit:
+        action === REQUEST_ORDER_ACTION.ADD ||
+        action === REQUEST_ORDER_ACTION.EDIT ||
+        action === REQUEST_ORDER_ACTION.UPDATE_APPROVE_FLOW,
     };
   }
 
@@ -180,9 +183,8 @@ class RequestItem extends PureComponent {
   };
 
   render() {
-    const { activeKey, showBatch } = this.state;
+    const { activeKey, showBatch, allowEdit } = this.state;
     const {
-      globalDisabled,
       action,
       showDimensionSelection,
       showProgressResult,
@@ -200,8 +202,8 @@ class RequestItem extends PureComponent {
       multiple: true,
       customBatchDownloadFileName: true,
       onAttachmentRef: ref => (this.attachmentRef = ref),
-      allowUpload: !globalDisabled,
-      allowDelete: !globalDisabled,
+      allowUpload: allowEdit,
+      allowDelete: allowEdit,
       entityId: orderId,
       showViewType: false,
     };
