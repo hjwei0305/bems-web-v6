@@ -414,34 +414,32 @@ class DetailItem extends PureComponent {
     return (
       <div className={styles['detail-item-box']}>
         <ListCard {...listProps} />
-        {globalDisabled ? null : (
-          <div className="detail-summary">
-            <Tag color="green">
-              <Money
-                prefix={
-                  <>
-                    <ExtIcon type="arrow-up" antd />
-                    调增
-                  </>
-                }
-                style={{ color: '#52c41a' }}
-                value={this.updownAmount.up}
-              />
-            </Tag>
-            <Tag color="red">
-              <Money
-                prefix={
-                  <>
-                    <ExtIcon type="arrow-down" antd />
-                    调减
-                  </>
-                }
-                style={{ color: '#f5222d' }}
-                value={this.updownAmount.down}
-              />
-            </Tag>
-          </div>
-        )}
+        <div className="detail-summary">
+          <Tag color="green">
+            <Money
+              prefix={
+                <>
+                  <ExtIcon type="arrow-up" antd />
+                  调增
+                </>
+              }
+              style={{ color: '#52c41a' }}
+              value={this.updownAmount.up}
+            />
+          </Tag>
+          <Tag color="red">
+            <Money
+              prefix={
+                <>
+                  <ExtIcon type="arrow-down" antd />
+                  调减
+                </>
+              }
+              style={{ color: '#f5222d' }}
+              value={this.updownAmount.down}
+            />
+          </Tag>
+        </div>
       </div>
     );
   }
