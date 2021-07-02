@@ -48,14 +48,15 @@ class ExtAction extends PureComponent {
       cancel,
       canceling,
     } = this.props;
+    const disabled = tempDisabled || saving || effecting || confirming || canceling;
+    const orderCode = get(headData, 'code');
+    const status = get(headData, 'status');
     const startFlowProps = {
+      businessKey: get(headData, 'id'),
       businessModelCode: 'INJECTION',
       startComplete: handlerStartComlete,
       needStartConfirm: true,
     };
-    const disabled = tempDisabled || saving || effecting || confirming || canceling;
-    const orderCode = get(headData, 'code');
-    const status = get(headData, 'status');
     if (
       status === REQUEST_VIEW_STATUS.COMPLETED.key ||
       (status === REQUEST_VIEW_STATUS.APPROVING.key && action === REQUEST_ORDER_ACTION.VIEW)
