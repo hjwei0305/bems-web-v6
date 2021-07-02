@@ -524,7 +524,7 @@ class AdjustRequestList extends Component {
         width: 140,
         align: 'right',
         render: (t, record) => {
-          return <Money value={t} prefix={get(record, 'currencyCode', '')} />;
+          return <Money value={t || 0} prefix={get(record, 'currencyCode', '')} />;
         },
       },
       {
