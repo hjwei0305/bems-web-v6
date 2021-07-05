@@ -3,8 +3,9 @@ import { connect } from 'dva';
 import { get, isEmpty, isNumber, isEqual } from 'lodash';
 import cls from 'classnames';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import { Input, Descriptions, Tag, Modal, Layout, Button } from 'antd';
+import { Input, Descriptions, Tag, Modal, Layout, Button, Avatar, Tooltip } from 'antd';
 import { ListCard, ExtIcon, Money, Space, PageLoader } from 'suid';
+import { PeriodType } from '@/components';
 import { constants } from '@/utils';
 import Filter from './components/Filter';
 import MasterView from './components/MasterView';
@@ -483,6 +484,16 @@ class BudgetPool extends Component {
     );
   };
 
+  renderAvatar = ({ item }) => {
+    return (
+      <Tooltip title="预算期间类型" placement="bottomRight">
+        <Avatar style={{ verticalAlign: 'middle', backgroundColor: '#aaa' }}>
+          <PeriodType periodTypeKey={item.periodType} />
+        </Avatar>
+      </Tooltip>
+    );
+  };
+
   render() {
     const { budgetPool } = this.props;
     const { showFilter, filterData, recordItem, showLog } = budgetPool;
@@ -521,6 +532,7 @@ class BudgetPool extends Component {
         'udf5Name',
       ],
       itemField: {
+        avatar: this.renderAvatar,
         title: this.renderMasterTitle,
         description: this.renderDescription,
         extra: this.renderAction,
