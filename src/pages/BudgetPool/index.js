@@ -7,6 +7,7 @@ import { Input, Descriptions, Tag, Modal, Layout, Button, Avatar, Tooltip } from
 import { ListCard, ExtIcon, Money, Space, PageLoader } from 'suid';
 import { PeriodType } from '@/components';
 import { constants } from '@/utils';
+import noUse from '@/assets/no_use.svg';
 import Filter from './components/Filter';
 import MasterView from './components/MasterView';
 import styles from './index.less';
@@ -393,6 +394,9 @@ class BudgetPool extends Component {
     const actived = get(item, 'actived');
     return (
       <>
+        {!actived ? (
+          <embed src={noUse} style={{ position: 'absolute' }} type="image/svg+xml" />
+        ) : null}
         {this.renderSubField(item)}
         <div className="money-box">
           <div className={cls('field-item', { disabled: !actived })}>
@@ -427,9 +431,6 @@ class BudgetPool extends Component {
         <div className={cls('pool-box', { disabled: !actived })}>
           <span className="title">池号</span>
           <span className="no">{poolCode}</span>
-          {actived === false ? (
-            <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
-          ) : null}
         </div>
         <div
           className={cls('master-title', { disabled: !actived })}
