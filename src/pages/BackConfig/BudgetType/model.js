@@ -88,7 +88,7 @@ export default modelExtend(model, {
       message.destroy();
       if (re.success) {
         yield put({
-          type: 'budgetType/updateState',
+          type: 'updateState',
           payload: {
             showAssign: false,
           },
