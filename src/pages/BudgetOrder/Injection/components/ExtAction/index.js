@@ -87,10 +87,7 @@ class ExtAction extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { currentViewType, recordItem } = this.props;
-    if (!isEqual(prevProps.currentViewType, currentViewType)) {
-      this.initActionMenus();
-    }
+    const { recordItem } = this.props;
     if (!isEqual(prevProps.recordItem, recordItem)) {
       this.initActionMenus();
     }
