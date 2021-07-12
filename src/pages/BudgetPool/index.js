@@ -307,6 +307,7 @@ class BudgetPool extends Component {
         }
       }
     });
+    console.log(filters);
     return { filters, hasFilter };
   };
 

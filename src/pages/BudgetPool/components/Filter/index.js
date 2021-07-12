@@ -3,7 +3,7 @@ import cls from 'classnames';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { get, isEqual, omit } from 'lodash';
+import { get, isEqual, omit, pick } from 'lodash';
 import { Drawer, Form, Button } from 'antd';
 import { ScrollBar, ComboList, ScopeDatePicker } from 'suid';
 import { constants } from '@/utils';
@@ -80,9 +80,11 @@ class Filter extends PureComponent {
 
   handlerReset = () => {
     const { form } = this.props;
+    const { filterData } = this.state;
     form.resetFields();
+    const filter = pick(filterData, ['subjectId']);
     this.setState({
-      filterData: {},
+      filterData: filter,
     });
   };
 
