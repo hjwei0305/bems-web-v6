@@ -89,13 +89,13 @@ const TYPE_CLASS = {
 
 /** 操作类型 */
 const ACTION_TYPE = {
-  GENERAL: { key: '', title: '下达' },
+  GENERAL: { key: '', title: '注入' },
   CUSTOMIZE: { key: '', title: '使用' },
 };
 
 /** 预算管理类型 */
 const ORDER_CATEGORY = {
-  INJECTION: { key: 'INJECTION', title: '下达', color: '#108ee9' },
+  INJECTION: { key: 'INJECTION', title: '注入', color: '#108ee9' },
   ADJUSTMENT: { key: 'ADJUSTMENT', title: '调整', color: '#108ee9' },
   SPLIT: { key: 'SPLIT', title: '分解', color: '#108ee9' },
 };
@@ -155,7 +155,7 @@ const BUDGET_POOL_ACTION = {
   UNFROZEN: 'unfrozen',
 };
 
-/** 预算下达操作 */
+/** 预算注入操作 */
 const INJECTION_REQUEST_BTN_KEY = {
   CREATE: 'BEMS-INJECTION-CJ',
   EDIT: 'BEMS-INJECTION-XG',
@@ -226,7 +226,7 @@ const SEARCH_DATE_PERIOD = {
 const POOL_OPERATION = {
   ALL: { key: 'ALL', title: '全部', color: '' },
   FREED: { key: 'FREED', title: '释放', color: 'orange' },
-  RELEASE: { key: 'RELEASE', title: '下达', color: 'green' },
+  RELEASE: { key: 'RELEASE', title: '注入', color: 'green' },
   USE: { key: 'USE', title: '占用', color: 'blue' },
 };
 
