@@ -5,7 +5,7 @@ import cls from 'classnames';
 import moment from 'moment';
 import { FormattedMessage } from 'umi-plugin-react/locale';
 import { Button, Modal } from 'antd';
-import { ExtTable, ExtIcon, Money, PageLoader, Space } from 'suid';
+import { ExtTable, ExtIcon, PageLoader, Space } from 'suid';
 import { FilterView, FilterDate } from '@/components';
 import { constants } from '@/utils';
 import ExtAction from './components/ExtAction';
@@ -517,15 +517,6 @@ class SplitRequestList extends Component {
         title: '预算类型',
         dataIndex: 'categoryName',
         width: 110,
-      },
-      {
-        title: '预算总金额',
-        dataIndex: 'applyAmount',
-        width: 140,
-        align: 'right',
-        render: (t, record) => {
-          return <Money value={t || 0} prefix={get(record, 'currencyCode', '')} />;
-        },
       },
       {
         title: '预算主体',
