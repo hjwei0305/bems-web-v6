@@ -10,7 +10,7 @@ import styles from './index.less';
 const { Search } = Input;
 const { SERVER_PATH } = constants;
 
-class BudgetPeriod extends Component {
+class BudgetMasterList extends Component {
   static listCardRef = null;
 
   static propTypes = {
@@ -91,4 +91,4 @@ class BudgetPeriod extends Component {
     );
   }
 }
-export default BudgetPeriod;
+export default BudgetMasterList;
