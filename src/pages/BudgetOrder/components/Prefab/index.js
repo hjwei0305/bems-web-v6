@@ -1,11 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
 import cls from 'classnames';
 import { get } from 'lodash';
-import { Button, Popconfirm, Card, Tag, Badge } from 'antd';
+import { Button, Popconfirm, Tag, Badge, Alert } from 'antd';
 import { ExtModal, ListCard, Space } from 'suid';
 import styles from './index.less';
 
-const { Meta } = Card;
 const Prefab = ({
   showPrefab,
   handlerClosePrefab,
@@ -14,22 +13,6 @@ const Prefab = ({
   onTrash = () => {},
   onRecovery = () => {},
 }) => {
-  const renderCustomTool = useCallback(
-    ({ total }) => {
-      return (
-        <>
-          <div>{`共${total}项`}</div>
-          <Space>
-            <Button type="primary" onClick={onAdd}>
-              全新创建
-            </Button>
-          </Space>
-        </>
-      );
-    },
-    [onAdd],
-  );
-
   const renderItemAction = useCallback(
     item => {
       return (
@@ -75,10 +58,24 @@ const Prefab = ({
         description: item => item.createdDate,
         extra: item => renderItemAction(item),
       },
-      customTool: renderCustomTool,
+      customTool: () => null,
     };
-    return <ListCard {...listProps} />;
-  }, [prefabData, renderCustomTool, renderItemAction, renderTitle]);
+    return (
+      <>
+        <div className="btn-box">
+          <Button type="primary" icon="plus" size="large" onClick={onAdd} block ghost>
+            全新创建
+          </Button>
+        </div>
+        <div className="alert-box">
+          <Alert type="warning" message="未保存的申请,是否需要处理?" banner />
+        </div>
+        <div className="body-box">
+          <ListCard {...listProps} />
+        </div>
+      </>
+    );
+  }, [onAdd, prefabData, renderItemAction, renderTitle]);
 
   const getExtModalProps = useCallback(() => {
     const modalProps = {
@@ -91,7 +88,7 @@ const Prefab = ({
       footer: null,
       closable: true,
       bodyStyle: { padding: 0, height: 420 },
-      title: <Meta title="存在未保存的申请" description="申请单未保存，是否需要处理" />,
+      title: '新建单据',
       onCancel: handlerClosePrefab,
     };
     return modalProps;
