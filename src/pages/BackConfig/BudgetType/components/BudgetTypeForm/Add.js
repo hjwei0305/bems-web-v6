@@ -4,7 +4,7 @@ import cls from 'classnames';
 import Form from './Form';
 import styles from './index.less';
 
-class GroupAdd extends Component {
+class BudgetAdd extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -49,4 +49,4 @@ class GroupAdd extends Component {
   }
 }
 
-export default GroupAdd;
+export default BudgetAdd;

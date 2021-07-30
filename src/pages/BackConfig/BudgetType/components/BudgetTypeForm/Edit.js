@@ -5,7 +5,7 @@ import { ExtIcon } from 'suid';
 import Form from './Form';
 import styles from './index.less';
 
-class GroupEdit extends Component {
+class BudgetEdit extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -48,4 +48,4 @@ class GroupEdit extends Component {
   }
 }
 
-export default GroupEdit;
+export default BudgetEdit;
