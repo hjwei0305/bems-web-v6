@@ -109,6 +109,7 @@ class UnAssignDimension extends Component {
       onSelectChange: this.handlerSelectRow,
       checkbox: true,
       rowKey: 'code',
+      showArrow: false,
       itemField: {
         title: item => item.name,
         description: item => item.code,
