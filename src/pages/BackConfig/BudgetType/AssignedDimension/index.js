@@ -129,24 +129,6 @@ class AssignedDimension extends Component {
           <Button onClick={this.reloadData}>
             <FormattedMessage id="global.refresh" defaultMessage="刷新" />
           </Button>
-          <Drawer
-            placement="top"
-            closable={false}
-            mask={false}
-            height={44}
-            getContainer={false}
-            style={{ position: 'absolute' }}
-            visible={hasSelected}
-          >
-            <Button onClick={this.onCancelBatchRemoveAssigned} disabled={removeLoading}>
-              取消
-            </Button>
-            <Popconfirm title="确定要移除选择的维度吗？" onConfirm={this.removeAssigned}>
-              <Button type="danger" loading={removeLoading}>
-                {`移除维度(${selectedRowKeys.length})`}
-              </Button>
-            </Popconfirm>
-          </Drawer>
         </>
       ),
     };
@@ -182,6 +164,25 @@ class AssignedDimension extends Component {
         <Card title={<BannerTitle title={this.renderName()} subTitle="维度" />} bordered={false}>
           <ExtTable {...extTableProps} />
         </Card>
+        <Drawer
+          placement="top"
+          closable={false}
+          mask={false}
+          height={44}
+          getContainer={false}
+          className={styles['float-tool']}
+          style={{ position: 'absolute' }}
+          visible={hasSelected}
+        >
+          <Button onClick={this.onCancelBatchRemoveAssigned} disabled={removeLoading}>
+            取消
+          </Button>
+          <Popconfirm title="确定要移除选择的维度吗？" onConfirm={this.removeAssigned}>
+            <Button type="danger" loading={removeLoading}>
+              {`移除维度(${selectedRowKeys.length})`}
+            </Button>
+          </Popconfirm>
+        </Drawer>
       </div>
     );
   }

@@ -25,24 +25,6 @@
             width: 100%;
             height: 100% !important;
             max-height: 100% !important;
-            .left-box {
-              .ant-drawer-top.ant-drawer-open .ant-drawer-content-wrapper {
-                box-shadow: none;
-              }
-              .ant-drawer-body {
-                display: flex;
-                align-items: center;
-                height: 44px;
-                padding: 0;
-                line-height: 44px;
-                background-color: @white;
-                .select {
-                  display: inline-block;
-                  min-width: 120px;
-                  color: fade(@black, 65%);
-                }
-              }
-            }
           }
         }
         .suid-tool-bar {
@@ -50,6 +32,27 @@
             margin-right: 8px;
           }
         }
+      }
+    }
+  }
+}
+
+.float-tool {
+  :global {
+    .ant-drawer-content-wrapper {
+      box-shadow: none !important;
+    }
+    .ant-drawer-body {
+      display: flex;
+      align-items: center;
+      height: 44px;
+      padding: 0;
+      line-height: 44px;
+      background-color: @white;
+      .select {
+        display: inline-block;
+        min-width: 120px;
+        color: fade(@black, 65%);
       }
     }
   }
