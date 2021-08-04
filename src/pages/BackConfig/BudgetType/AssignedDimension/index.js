@@ -4,7 +4,7 @@ import cls from 'classnames';
 import { get } from 'lodash';
 import { FormattedMessage } from 'umi-plugin-react/locale';
 import { Button, Card, Drawer, Popconfirm } from 'antd';
-import { ExtTable, BannerTitle } from 'suid';
+import { ExtTable, BannerTitle, Space } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
@@ -162,27 +162,29 @@ class AssignedDimension extends Component {
     return (
       <div className={cls(styles['user-box'])}>
         <Card title={<BannerTitle title={this.renderName()} subTitle="维度" />} bordered={false}>
+          <Drawer
+            placement="top"
+            closable={false}
+            mask={false}
+            height={44}
+            getContainer={false}
+            className={styles['float-tool']}
+            style={{ position: 'absolute' }}
+            visible={hasSelected}
+          >
+            <Space>
+              <Button onClick={this.onCancelBatchRemoveAssigned} disabled={removeLoading}>
+                取消
+              </Button>
+              <Popconfirm title="确定要移除选择的维度吗？" onConfirm={this.removeAssigned}>
+                <Button type="danger" loading={removeLoading}>
+                  {`移除维度(${selectedRowKeys.length})`}
+                </Button>
+              </Popconfirm>
+            </Space>
+          </Drawer>
           <ExtTable {...extTableProps} />
         </Card>
-        <Drawer
-          placement="top"
-          closable={false}
-          mask={false}
-          height={44}
-          getContainer={false}
-          className={styles['float-tool']}
-          style={{ position: 'absolute' }}
-          visible={hasSelected}
-        >
-          <Button onClick={this.onCancelBatchRemoveAssigned} disabled={removeLoading}>
-            取消
-          </Button>
-          <Popconfirm title="确定要移除选择的维度吗？" onConfirm={this.removeAssigned}>
-            <Button type="danger" loading={removeLoading}>
-              {`移除维度(${selectedRowKeys.length})`}
-            </Button>
-          </Popconfirm>
-        </Drawer>
       </div>
     );
   }
