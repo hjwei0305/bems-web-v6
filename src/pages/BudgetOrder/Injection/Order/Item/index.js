@@ -17,8 +17,6 @@ const { REQUEST_ORDER_ACTION, SERVER_PATH, REQUEST_VIEW_STATUS } = constants;
 const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTION[key]);
 
 class RequestItem extends PureComponent {
-  static attachmentRef;
-
   static detailItemRef;
 
   static messageSocket;
@@ -44,6 +42,7 @@ class RequestItem extends PureComponent {
     removing: PropTypes.bool,
     headCheck: PropTypes.func,
     completeImport: PropTypes.func,
+    onAttachmentRef: PropTypes.func,
   };
 
   constructor(props) {
@@ -196,13 +195,14 @@ class RequestItem extends PureComponent {
       itemMoneySaving,
       removeOrderItems,
       removing,
+      onAttachmentRef,
     } = this.props;
     const orderId = get(headData, 'id');
     const attachmentProps = {
       serviceHost: `${SERVER_PATH}/edm-service`,
       multiple: true,
       customBatchDownloadFileName: true,
-      onAttachmentRef: ref => (this.attachmentRef = ref),
+      onAttachmentRef,
       allowUpload: allowEdit,
       allowDelete: allowEdit,
       entityId: orderId,

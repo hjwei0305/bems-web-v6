@@ -18,6 +18,8 @@ const { Content } = Layout;
 
 @connect(({ injectionOrder, loading }) => ({ injectionOrder, loading }))
 class RequestOrder extends Component {
+  static requestAttachmentRef;
+
   static requestHeadRef;
 
   static needRefreshList;
@@ -149,6 +151,10 @@ class RequestOrder extends Component {
     });
   };
 
+  handlerAttachmentRef = ref => {
+    this.requestAttachmentRef = ref;
+  };
+
   /** 流程中保存单据的代理方法 */
   linkSaveOrder = callBack => {
     this.saveOrder(null, callBack);
@@ -160,11 +166,13 @@ class RequestOrder extends Component {
     }
     const { dispatch } = this.props;
     const { isValid, data } = this.requestHeadRef.getHeaderData();
-    if (isValid) {
+    const { ready, fileList, errorFileCount } = this.requestAttachmentRef.getAttachmentStatus();
+    if (isValid && ready === true && errorFileCount === 0) {
       dispatch({
         type: 'injectionOrder/save',
         payload: {
           ...data,
+          docIds: (fileList || []).map(f => f.id),
         },
         callback: res => {
           if (flowCallBack && flowCallBack instanceof Function) {
@@ -369,6 +377,7 @@ class RequestOrder extends Component {
       removeOrderItems: this.removeOrderItems,
       removing: loading.effects['injectionOrder/removeOrderItems'],
       completeImport: this.handlerCompleteImport,
+      onAttachmentRef: this.handlerAttachmentRef,
     };
     const headLoading = loading.effects['injectionOrder/getHead'];
     return (
