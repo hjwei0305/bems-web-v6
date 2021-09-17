@@ -574,7 +574,7 @@ class BudgetPool extends Component {
             <Filter {...filterProps} />
             <span className="page-summary">{`共 ${this.total} 项`}</span>
           </Content>
-          <Sider width={showLog ? 580 : 0} className="auto-height" theme="light">
+          <Sider width={showLog ? 480 : 0} className="auto-height" theme="light">
             <Suspense fallback={<PageLoader />}>
               <LogDetail {...logDetailProps} />
             </Suspense>
