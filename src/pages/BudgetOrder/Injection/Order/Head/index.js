@@ -125,9 +125,10 @@ class RequestHead extends PureComponent {
     const { globalDisabled } = this.state;
     const { getFieldDecorator } = form;
     const disabled = tempDisabled || globalDisabled;
+    const orderId = get(headData, 'id');
     this.initBindFormFields();
     const subjectProps = {
-      disabled,
+      disabled: disabled || !!orderId,
       placeholder: '请选择预算主体',
       form,
       name: 'subjectName',
@@ -178,7 +179,7 @@ class RequestHead extends PureComponent {
       },
     };
     const budgetTypeProps = {
-      disabled,
+      disabled: disabled || !!orderId,
       form,
       name: 'categoryName',
       field: ['categoryId', 'orderCategory', 'periodType'],

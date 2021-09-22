@@ -3,7 +3,18 @@ import { connect } from 'dva';
 import { get, isEmpty, isNumber, isEqual } from 'lodash';
 import cls from 'classnames';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import { Input, Descriptions, Tag, Modal, Layout, Button, Avatar, Tooltip } from 'antd';
+import {
+  Input,
+  Descriptions,
+  Tag,
+  Modal,
+  Layout,
+  Button,
+  Avatar,
+  Tooltip,
+  Progress,
+  Divider,
+} from 'antd';
 import { ListCard, ExtIcon, Money, Space, PageLoader } from 'suid';
 import { PeriodType } from '@/components';
 import { constants } from '@/utils';
@@ -470,17 +481,57 @@ class BudgetPool extends Component {
 
   renderAction = item => {
     const roll = get(item, 'roll') || false;
+    const { totalAmount, usedAmount, balance } = item;
+    let percent = 0;
+    if (totalAmount > 0) {
+      percent = (usedAmount / totalAmount) * 100;
+    }
+    let status = 'active';
+    if (percent >= 80) {
+      status = 'exception';
+    }
     return (
-      <Space size={16}>
-        {roll ? (
-          <Button size="small" onClick={e => this.trundleConfirm(item, e)}>
-            滚动结转{' '}
-          </Button>
-        ) : null}
-        {this.renderActivedBtn(item)}
-        <Button size="small" onClick={() => this.showLogDetail(item)}>
-          日志{' '}
-        </Button>
+      <Space size={40}>
+        <Space direction="vertical" size={0}>
+          <Progress
+            style={{ width: 420 }}
+            showInfo={false}
+            status={status}
+            strokeLinecap="square"
+            percent={percent}
+            size="small"
+          />
+          <Space split={<Divider type="vertical" />}>
+            <Money
+              style={{ color: '#666', fontStyle: 'normal', fontWeight: 'normal' }}
+              prefix="总额"
+              value={totalAmount}
+            />
+            <Money
+              style={{ color: '#fa8c16', fontStyle: 'normal', fontWeight: 'normal' }}
+              prefix="已使用"
+              value={usedAmount}
+            />
+            <Money
+              style={{ color: '#52c41a', fontStyle: 'normal', fontWeight: 'normal' }}
+              prefix="余额"
+              value={balance}
+            />
+          </Space>
+        </Space>
+        <Space direction="vertical" style={{ width: 200 }} align="end">
+          <Space>
+            {roll ? (
+              <Button size="small" onClick={e => this.trundleConfirm(item, e)}>
+                滚动结转{' '}
+              </Button>
+            ) : null}
+            {this.renderActivedBtn(item)}
+            <Button size="small" onClick={() => this.showLogDetail(item)}>
+              日志{' '}
+            </Button>
+          </Space>
+        </Space>
       </Space>
     );
   };
