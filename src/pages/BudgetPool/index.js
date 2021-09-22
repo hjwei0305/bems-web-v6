@@ -480,6 +480,9 @@ class BudgetPool extends Component {
   };
 
   renderAction = item => {
+    const {
+      budgetPool: { showLog },
+    } = this.props;
     const roll = get(item, 'roll') || false;
     const { totalAmount, usedAmount, balance } = item;
     let percent = 0;
@@ -491,7 +494,7 @@ class BudgetPool extends Component {
       status = 'exception';
     }
     return (
-      <Space size={40}>
+      <Space size={40} direction={showLog ? 'vertical' : 'horizontal'}>
         <Space direction="vertical" size={0}>
           <Progress
             style={{ width: 420 }}
