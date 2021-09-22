@@ -494,34 +494,68 @@ class BudgetPool extends Component {
       status = 'exception';
     }
     return (
-      <Space size={40} direction={showLog ? 'vertical' : 'horizontal'}>
-        <Space direction="vertical" size={0}>
-          <Progress
-            style={{ width: 420 }}
-            showInfo={false}
-            status={status}
-            strokeLinecap="square"
-            percent={percent}
-            size="small"
-          />
-          <Space split={<Divider type="vertical" />}>
-            <Money
-              style={{ color: '#666', fontStyle: 'normal', fontWeight: 'normal' }}
-              prefix="总额"
-              value={totalAmount}
+      <Space size={showLog ? 0 : 40} direction={showLog ? 'vertical' : 'horizontal'}>
+        {!showLog ? (
+          <Space direction="vertical" size={0}>
+            <Progress
+              style={{ width: 420 }}
+              showInfo={false}
+              status={status}
+              strokeLinecap="square"
+              percent={percent}
+              size="small"
             />
-            <Money
-              style={{ color: '#fa8c16', fontStyle: 'normal', fontWeight: 'normal' }}
-              prefix="已使用"
-              value={usedAmount}
-            />
-            <Money
-              style={{ color: '#52c41a', fontStyle: 'normal', fontWeight: 'normal' }}
-              prefix="余额"
-              value={balance}
-            />
+            <Space split={<Divider type="vertical" />}>
+              <Money
+                style={{ color: '#666', fontStyle: 'normal', fontWeight: 'normal' }}
+                prefix="总额"
+                value={totalAmount}
+              />
+              <Money
+                style={{ color: '#fa8c16', fontStyle: 'normal', fontWeight: 'normal' }}
+                prefix="已使用"
+                value={usedAmount}
+              />
+              <Money
+                style={{ color: '#52c41a', fontStyle: 'normal', fontWeight: 'normal' }}
+                prefix="余额"
+                value={balance}
+              />
+            </Space>
           </Space>
-        </Space>
+        ) : (
+          <Tooltip
+            overlayClassName={styles['tool-tip']}
+            title={
+              <Space split={<Divider type="vertical" />} style={{ padding: 8, width: 320 }}>
+                <Money
+                  style={{ color: '#f8f8f8', fontStyle: 'normal', fontWeight: 'normal' }}
+                  prefix="总额"
+                  value={totalAmount}
+                />
+                <Money
+                  style={{ color: '#fa8c16', fontStyle: 'normal', fontWeight: 'normal' }}
+                  prefix="已使用"
+                  value={usedAmount}
+                />
+                <Money
+                  style={{ color: '#52c41a', fontStyle: 'normal', fontWeight: 'normal' }}
+                  prefix="余额"
+                  value={balance}
+                />
+              </Space>
+            }
+          >
+            <Progress
+              style={{ width: '100%', marginBottom: 16 }}
+              showInfo={false}
+              status={status}
+              strokeLinecap="square"
+              percent={percent}
+              size="small"
+            />
+          </Tooltip>
+        )}
         <Space direction="vertical" style={{ width: 200 }} align="end">
           <Space>
             {roll ? (
