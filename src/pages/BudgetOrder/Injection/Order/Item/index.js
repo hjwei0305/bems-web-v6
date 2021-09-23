@@ -13,7 +13,7 @@ const DimensionSelection = React.lazy(() => import('../../../components/Dimensio
 const ProgressResult = React.lazy(() => import('../../../components/ProgressResult'));
 const BatchItem = React.lazy(() => import('../../../components/BatchItem'));
 const { TabPane } = Tabs;
-const { REQUEST_ORDER_ACTION, SERVER_PATH, REQUEST_VIEW_STATUS } = constants;
+const { REQUEST_ORDER_ACTION, SERVER_PATH, REQUEST_VIEW_STATUS, ORDER_CATEGORY } = constants;
 const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTION[key]);
 
 class RequestItem extends PureComponent {
@@ -243,6 +243,7 @@ class RequestItem extends PureComponent {
         </Tabs>
         <Suspense fallback={<PageLoader />}>
           <DimensionSelection
+            actionType={ORDER_CATEGORY.INJECTION.key}
             show={showDimensionSelection}
             headData={headData}
             dimensions={dimensionsData}

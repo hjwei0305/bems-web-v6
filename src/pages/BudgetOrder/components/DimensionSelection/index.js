@@ -10,6 +10,7 @@ import Tip from '../Tip';
 import Subject from '../Dimension/Subject';
 import Period from '../Dimension/Period';
 import Organization from '../Dimension/Organization';
+import ProjectList from '../Dimension/ProjectList';
 import styles from './index.less';
 
 const { TabPane } = Tabs;
@@ -18,6 +19,7 @@ class DimensionSelection extends PureComponent {
   static dimensionData;
 
   static propTypes = {
+    actionType: PropTypes.string,
     headData: PropTypes.object,
     dimensions: PropTypes.array,
     save: PropTypes.func,
@@ -99,7 +101,7 @@ class DimensionSelection extends PureComponent {
   };
 
   renderDimension = () => {
-    const { dimensions, headData } = this.props;
+    const { dimensions, headData, actionType } = this.props;
     if (dimensions.length > 0) {
       const subjectId = get(headData, 'subjectId');
       const periodType = get(headData, 'periodType');
@@ -122,6 +124,7 @@ class DimensionSelection extends PureComponent {
                 return (
                   <TabPane tab={`${name}(${dimensionData.length})`} key={code}>
                     <Period
+                      actionType={actionType}
                       subjectId={subjectId}
                       periodType={periodType}
                       onSelectChange={items => this.handlerSelectChange(code, items)}
@@ -132,6 +135,15 @@ class DimensionSelection extends PureComponent {
                 return (
                   <TabPane tab={`${name}(${dimensionData.length})`} key={code}>
                     <Organization
+                      subjectId={subjectId}
+                      onSelectChange={items => this.handlerSelectChange(code, items)}
+                    />
+                  </TabPane>
+                );
+              case 'ProjectList':
+                return (
+                  <TabPane tab={`${name}(${dimensionData.length})`} key={code}>
+                    <ProjectList
                       subjectId={subjectId}
                       onSelectChange={items => this.handlerSelectChange(code, items)}
                     />
