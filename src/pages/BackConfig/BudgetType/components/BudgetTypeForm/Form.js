@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react';
 import cls from 'classnames';
 import { get, isEqual } from 'lodash';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import { Button, Form, Input, Row, Col, Switch, Checkbox, Radio } from 'antd';
-import { BannerTitle, ComboList, Space } from 'suid';
+import { Button, Form, Input, Row, Col, Switch } from 'antd';
+import { BannerTitle, ComboList } from 'suid';
 import { constants } from '@/utils';
 import styles from './Form.less';
 
@@ -132,42 +132,6 @@ class BudgetTypeForm extends PureComponent {
                   },
                 ],
               })(<ComboList {...periodTypeProps} />)}
-            </FormItem>
-            <FormItem
-              required
-              label="管理类型选项"
-              help={this.orderCategoryKeys.length === 0 ? '至少选择一项' : ''}
-              validateStatus={this.orderCategoryKeys.length === 0 ? 'error' : 'success'}
-            >
-              {rowData ? (
-                <Radio.Group
-                  style={{ width: '100%' }}
-                  value={this.orderCategoryKeys[0]}
-                  onChange={this.orderCategoryChange}
-                >
-                  <Space>
-                    {orderCategoryData.map(t => (
-                      <Radio key={t.key} value={t.key}>
-                        {t.title}
-                      </Radio>
-                    ))}
-                  </Space>
-                </Radio.Group>
-              ) : (
-                <Checkbox.Group
-                  style={{ width: '100%' }}
-                  value={this.orderCategoryKeys}
-                  onChange={this.orderCategoryChange}
-                >
-                  <Space>
-                    {orderCategoryData.map(t => (
-                      <Checkbox key={t.key} value={t.key}>
-                        {t.title}
-                      </Checkbox>
-                    ))}
-                  </Space>
-                </Checkbox.Group>
-              )}
             </FormItem>
             <FormItem label="预算池选项">
               <Row>

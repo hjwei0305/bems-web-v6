@@ -12,7 +12,7 @@ import BudgetEdit from '../components/BudgetTypeForm/Edit';
 import AssignedDimension from '../AssignedDimension';
 import styles from './index.less';
 
-const { SERVER_PATH, TYPE_CLASS, ORDER_CATEGORY, PERIOD_TYPE } = constants;
+const { SERVER_PATH, TYPE_CLASS, PERIOD_TYPE } = constants;
 const { Search } = Input;
 const { Sider, Content } = Layout;
 
@@ -319,18 +319,15 @@ class BudgetTypeList extends Component {
   };
 
   renderName = item => {
-    const orderCategory = ORDER_CATEGORY[get(item, 'orderCategory')];
     const frozen = get(item, 'frozen');
-    if (orderCategory) {
-      return (
-        <>
-          {`${get(item, 'name')}(${orderCategory.title})`}
-          {frozen === true ? (
-            <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
-          ) : null}
-        </>
-      );
-    }
+    return (
+      <>
+        {get(item, 'name')}
+        {frozen === true ? (
+          <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
+        ) : null}
+      </>
+    );
   };
 
   renderDescription = item => {
