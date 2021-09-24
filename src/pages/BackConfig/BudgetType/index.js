@@ -71,6 +71,7 @@ class BudgetType extends Component {
       type: 'budgetType/updateState',
       payload: {
         currentMaster,
+        selectedBudgetType: null,
       },
     });
   };

@@ -12,7 +12,7 @@ import BudgetEdit from '../components/BudgetTypeForm/Edit';
 import AssignedDimension from '../AssignedDimension';
 import styles from './index.less';
 
-const { SERVER_PATH, TYPE_CLASS, PERIOD_TYPE } = constants;
+const { SERVER_PATH, TYPE_CLASS, PERIOD_TYPE, ORDER_CATEGORY } = constants;
 const { Search } = Input;
 const { Sider, Content } = Layout;
 
@@ -199,10 +199,21 @@ class BudgetTypeList extends Component {
 
   handlerPressEnter = () => {
     this.listCardRef.handlerPressEnter();
+    this.manualSelect();
   };
 
   handlerSearch = v => {
     this.listCardRef.handlerSearch(v);
+    this.manualSelect();
+  };
+
+  manualSelect = () => {
+    if (this.listCardRef) {
+      const { budgetType } = this.props;
+      const { selectedBudgetType } = budgetType;
+      const selectedKeys = selectedBudgetType ? [selectedBudgetType.id] : [];
+      this.listCardRef.manualUpdateItemChecked(selectedKeys);
+    }
   };
 
   renderCustomTool = () => (
@@ -332,12 +343,22 @@ class BudgetTypeList extends Component {
 
   renderDescription = item => {
     const periodType = PERIOD_TYPE[get(item, 'periodType')];
+    const orderCategories = get(item, 'orderCategories') || [];
     return (
       <>
         <div style={{ marginBottom: 8 }}>{`期间类型为${get(periodType, 'title')}`}</div>
         <div>
           {item.roll ? <Tag color="magenta">可结转</Tag> : null}
           {item.use ? <Tag color="cyan">业务可用</Tag> : null}
+        </div>
+        <div>
+          {orderCategories.map(itKey => {
+            const it = ORDER_CATEGORY[itKey];
+            if (it) {
+              return <Tag>{it.title}</Tag>;
+            }
+            return null;
+          })}
         </div>
       </>
     );
