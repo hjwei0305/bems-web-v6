@@ -184,7 +184,7 @@ class DimensionSelection extends PureComponent {
                   >
                     <ExtIcon type="left" antd className="trigger-back" />
                   </Popconfirm>
-                  <span className="title">选择维度要素</span>
+                  <span className="title">选择维度</span>
                 </div>
                 <div className="tool-box">
                   <Space>

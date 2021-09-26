@@ -59,7 +59,7 @@ export default modelExtend(model, {
       const re = yield call(poolItemEnable, payload);
       message.destroy();
       if (re.success) {
-        message.success('启用成功');
+        message.success('解冻成功');
       } else {
         message.error(re.message);
       }
@@ -71,7 +71,7 @@ export default modelExtend(model, {
       const re = yield call(poolItemDisable, payload);
       message.destroy();
       if (re.success) {
-        message.success('停用成功');
+        message.success('冻结成功');
       } else {
         message.error(re.message);
       }

@@ -182,6 +182,20 @@ const LogDetail = ({ poolItem, handlerClose }) => {
   const getExtTableProps = useCallback(() => {
     const columns = [
       {
+        title: '类型',
+        dataIndex: 'operation',
+        align: 'center',
+        width: 120,
+        ...getColumnSearchProps('operation'),
+        render: t => {
+          const st = POOL_OPERATION[t];
+          if (st) {
+            return <Tag color={st.color}>{st.title}</Tag>;
+          }
+          return t;
+        },
+      },
+      {
         title: '事件',
         dataIndex: 'eventName',
         width: 180,
@@ -198,19 +212,6 @@ const LogDetail = ({ poolItem, handlerClose }) => {
           return (
             <Money style={{ fontWeight: 700 }} className={cls(t < 0 ? 'red' : '')} value={t} />
           );
-        },
-      },
-      {
-        title: '类型',
-        dataIndex: 'operation',
-        width: 80,
-        ...getColumnSearchProps('operation'),
-        render: t => {
-          const st = POOL_OPERATION[t];
-          if (st) {
-            return <Tag color={st.color}>{st.title}</Tag>;
-          }
-          return t;
         },
       },
       {

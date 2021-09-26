@@ -14,7 +14,7 @@ export async function getDimensionAll() {
 }
 
 /**
- * 停用
+ * 冻结
  * @ids arrary
  */
 export async function poolItemDisable(data) {
@@ -27,7 +27,7 @@ export async function poolItemDisable(data) {
 }
 
 /**
- * 启用
+ * 解冻
  * @ids arrary
  */
 export async function poolItemEnable(data) {

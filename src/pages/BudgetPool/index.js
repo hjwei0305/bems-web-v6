@@ -175,8 +175,8 @@ class BudgetPool extends Component {
     const rowId = get(item, 'id');
     const poolCode = get(item, 'code');
     this.confirmModal = Modal.confirm({
-      title: `启用确认`,
-      content: `确定要启用池号为 ${poolCode} 的预算吗？`,
+      title: `解冻确认`,
+      content: `确定要解冻池号为 ${poolCode} 的预算吗？`,
       okButtonProps: { type: 'primary' },
       style: { top: '20%' },
       okText: '确定',
@@ -217,8 +217,8 @@ class BudgetPool extends Component {
     const rowId = get(item, 'id');
     const poolCode = get(item, 'code');
     this.confirmModal = Modal.confirm({
-      title: `停用确认`,
-      content: `确定要停用池号为 ${poolCode} 的预算吗？`,
+      title: `冻结确认`,
+      content: `确定要冻结池号为 ${poolCode} 的预算吗？`,
       okButtonProps: { type: 'primary' },
       style: { top: '20%' },
       okText: '确定',
@@ -468,13 +468,13 @@ class BudgetPool extends Component {
     if (actived) {
       return (
         <Button type="danger" size="small" onClick={e => this.itemDiableConfirm(item, e)}>
-          停用{' '}
+          冻结
         </Button>
       );
     }
     return (
       <Button type="primary" ghost size="small" onClick={e => this.itemEnableConfirm(item, e)}>
-        启用{' '}
+        解冻
       </Button>
     );
   };
@@ -560,12 +560,12 @@ class BudgetPool extends Component {
           <Space>
             {roll ? (
               <Button size="small" onClick={e => this.trundleConfirm(item, e)}>
-                滚动结转{' '}
+                滚动结转
               </Button>
             ) : null}
             {this.renderActivedBtn(item)}
             <Button size="small" onClick={() => this.showLogDetail(item)}>
-              日志{' '}
+              日志
             </Button>
           </Space>
         </Space>
