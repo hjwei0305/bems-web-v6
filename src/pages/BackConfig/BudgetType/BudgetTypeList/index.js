@@ -312,27 +312,14 @@ class BudgetTypeList extends Component {
 
   renderName = item => {
     const frozen = get(item, 'frozen');
+    const orderCategories = get(item, 'orderCategories') || [];
     return (
       <>
         {get(item, 'name')}
         {frozen === true ? (
           <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
         ) : null}
-      </>
-    );
-  };
-
-  renderDescription = item => {
-    const periodType = PERIOD_TYPE[get(item, 'periodType')];
-    const orderCategories = get(item, 'orderCategories') || [];
-    return (
-      <>
-        <div style={{ marginBottom: 8 }}>{`期间类型为${get(periodType, 'title')}`}</div>
-        <div>
-          {item.roll ? <Tag color="magenta">可结转</Tag> : null}
-          {item.use ? <Tag color="cyan">业务可用</Tag> : null}
-        </div>
-        <div>
+        <div style={{ position: 'absolute', right: 16, top: 12 }}>
           {orderCategories.map(itKey => {
             const it = ORDER_CATEGORY[itKey];
             if (it) {
@@ -340,6 +327,19 @@ class BudgetTypeList extends Component {
             }
             return null;
           })}
+        </div>
+      </>
+    );
+  };
+
+  renderDescription = item => {
+    const periodType = PERIOD_TYPE[get(item, 'periodType')];
+    return (
+      <>
+        <div style={{ marginBottom: 8 }}>{`期间类型为${get(periodType, 'title')}`}</div>
+        <div>
+          {item.roll ? <Tag color="magenta">可结转</Tag> : null}
+          {item.use ? <Tag color="cyan">业务可用</Tag> : null}
         </div>
       </>
     );
