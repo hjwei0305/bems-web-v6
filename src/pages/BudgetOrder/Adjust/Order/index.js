@@ -11,7 +11,7 @@ import RequestHead from './Head';
 import RequestItem from './Item';
 import styles from './index.less';
 
-const { REQUEST_ORDER_ACTION } = constants;
+const { REQUEST_ORDER_ACTION, ORDER_CATEGORY } = constants;
 const ACTIONS = Object.keys(REQUEST_ORDER_ACTION).map(key => REQUEST_ORDER_ACTION[key]);
 const { Content } = Layout;
 
@@ -171,6 +171,7 @@ class RequestOrder extends Component {
         type: 'adjustOrder/save',
         payload: {
           ...data,
+          orderCategory: ORDER_CATEGORY.ADJUSTMENT.key,
           docIds: (fileList || []).map(f => f.id),
         },
         callback: res => {
@@ -239,6 +240,7 @@ class RequestOrder extends Component {
         payload: {
           ...headData,
           ...data,
+          orderCategory: ORDER_CATEGORY.ADJUSTMENT.key,
         },
         successCallback: resultData => {
           if (successCallBack && successCallBack instanceof Function) {

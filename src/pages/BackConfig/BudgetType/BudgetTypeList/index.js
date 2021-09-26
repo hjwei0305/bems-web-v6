@@ -359,7 +359,7 @@ class BudgetTypeList extends Component {
         {orderCategories.map(itKey => {
           const it = ORDER_CATEGORY[itKey];
           if (it) {
-            return <Tag>{it.title}</Tag>;
+            return <Tag key={itKey}>{it.title}</Tag>;
           }
           return null;
         })}
