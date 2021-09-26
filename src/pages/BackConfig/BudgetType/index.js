@@ -124,7 +124,7 @@ class BudgetType extends Component {
               />
             </Suspense>
           </Sider>
-          <Content className={cls('main-content', 'auto-height')} style={{ paddingLeft: 4 }}>
+          <Content className={cls('main-content', 'auto-height')} style={{ paddingLeft: 1 }}>
             {currentMaster ? (
               <Suspense fallback={<PageLoader />}>
                 <BudgetTypeList onRef={ref => (this.budgetListRef = ref)} />

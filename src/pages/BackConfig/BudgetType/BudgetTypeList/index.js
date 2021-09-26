@@ -319,7 +319,7 @@ class BudgetTypeList extends Component {
         {frozen === true ? (
           <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
         ) : null}
-        <div style={{ position: 'absolute', right: 16, top: 12 }}>
+        <div style={{ position: 'absolute', right: 24, top: 12 }}>
           {orderCategories.map(itKey => {
             const it = ORDER_CATEGORY[itKey];
             if (it) {
@@ -404,7 +404,7 @@ class BudgetTypeList extends Component {
     return (
       <div className={cls(styles['container-box'])}>
         <Layout className="auto-height">
-          <Sider width={380} className="auto-height" theme="light">
+          <Sider width={420} className="auto-height" theme="light">
             <ListCard key={selectTypeClass.key} {...deployTemplateProps} />
           </Sider>
           <Content className={cls('main-content', 'auto-height')} style={{ paddingLeft: 4 }}>
