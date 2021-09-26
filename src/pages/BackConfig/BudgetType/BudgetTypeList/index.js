@@ -312,22 +312,12 @@ class BudgetTypeList extends Component {
 
   renderName = item => {
     const frozen = get(item, 'frozen');
-    const orderCategories = get(item, 'orderCategories') || [];
     return (
       <>
         {get(item, 'name')}
         {frozen === true ? (
           <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
         ) : null}
-        <div style={{ position: 'absolute', right: 24, top: 12 }}>
-          {orderCategories.map(itKey => {
-            const it = ORDER_CATEGORY[itKey];
-            if (it) {
-              return <Tag>{it.title}</Tag>;
-            }
-            return null;
-          })}
-        </div>
       </>
     );
   };
@@ -362,6 +352,21 @@ class BudgetTypeList extends Component {
     return null;
   };
 
+  renderTypeClass = item => {
+    const orderCategories = get(item, 'orderCategories') || [];
+    return (
+      <div>
+        {orderCategories.map(itKey => {
+          const it = ORDER_CATEGORY[itKey];
+          if (it) {
+            return <Tag>{it.title}</Tag>;
+          }
+          return null;
+        })}
+      </div>
+    );
+  };
+
   render() {
     const { loading, budgetType } = this.props;
     const { selectTypeClass, selectedBudgetType, currentMaster } = budgetType;
@@ -381,6 +386,7 @@ class BudgetTypeList extends Component {
         avatar: ({ item }) => this.renderType(item),
         title: item => this.renderName(item),
         description: item => this.renderDescription(item),
+        extra: this.renderTypeClass,
       },
       itemTool: this.renderItemAction,
     };
