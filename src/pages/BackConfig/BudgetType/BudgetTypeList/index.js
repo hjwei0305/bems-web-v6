@@ -62,34 +62,14 @@ class BudgetTypeList extends Component {
     }
   };
 
-  create = (data, handlerPopoverHide) => {
-    const { dispatch, budgetType } = this.props;
-    const { selectTypeClass, currentMaster } = budgetType;
-    if (selectTypeClass.key === TYPE_CLASS.PRIVATE.key) {
-      Object.assign(data, {
-        subjectId: get(currentMaster, 'id'),
-        subjectName: get(currentMaster, 'name'),
-      });
-    }
-    dispatch({
-      type: 'budgetType/create',
-      payload: {
-        ...data,
-      },
-      callback: res => {
-        if (res.success) {
-          this.reloadData();
-          if (handlerPopoverHide) handlerPopoverHide();
-        }
-      },
-    });
-  };
-
   save = (data, handlerPopoverHide) => {
-    const { dispatch } = this.props;
+    const { dispatch, budgetType } = this.props;
+    const { currentMaster } = budgetType;
     dispatch({
       type: 'budgetType/save',
       payload: {
+        subjectId: get(currentMaster, 'id'),
+        subjectName: get(currentMaster, 'name'),
         ...data,
       },
       callback: res => {
@@ -395,7 +375,7 @@ class BudgetTypeList extends Component {
       onListCardRef: ref => (this.listCardRef = ref),
       searchProperties: ['name'],
       selectedKeys,
-      extra: <BudgetAdd saving={saving} save={this.create} />,
+      extra: <BudgetAdd saving={saving} save={this.save} />,
       itemField: {
         avatar: ({ item }) => this.renderType(item),
         title: item => this.renderName(item),
