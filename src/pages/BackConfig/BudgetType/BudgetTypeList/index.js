@@ -64,12 +64,13 @@ class BudgetTypeList extends Component {
 
   save = (data, handlerPopoverHide) => {
     const { dispatch, budgetType } = this.props;
-    const { currentMaster } = budgetType;
+    const { currentMaster, selectTypeClass } = budgetType;
     dispatch({
       type: 'budgetType/save',
       payload: {
         subjectId: get(currentMaster, 'id'),
         subjectName: get(currentMaster, 'name'),
+        type: selectTypeClass.key,
         ...data,
       },
       callback: res => {
