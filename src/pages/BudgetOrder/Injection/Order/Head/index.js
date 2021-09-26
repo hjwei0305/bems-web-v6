@@ -90,7 +90,7 @@ class RequestHead extends PureComponent {
         return;
       }
       isValid = true;
-      data = {};
+      data = { orderCategory: ORDER_CATEGORY.INJECTION.key };
       Object.assign(data, headData || {});
       Object.assign(data, formData);
     });
