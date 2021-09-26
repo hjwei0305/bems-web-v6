@@ -1,7 +1,7 @@
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
 import { constants } from '@/utils';
-import { del, save, create, frozen, privateReference, assign, unassign } from './service';
+import { del, save, frozen, privateReference, assign, unassign } from './service';
 
 const { TYPE_CLASS } = constants;
 const TYPE_CLASS_DATA = Object.keys(TYPE_CLASS).map(key => TYPE_CLASS[key]);
@@ -22,19 +22,6 @@ export default modelExtend(model, {
     showAssign: false,
   },
   effects: {
-    *create({ payload, callback }, { call, select }) {
-      const { selectTypeClass } = yield select(sel => sel.budgetType);
-      const re = yield call(create, { ...payload, type: selectTypeClass.key });
-      message.destroy();
-      if (re.success) {
-        message.success(formatMessage({ id: 'global.save-success', defaultMessage: '保存成功' }));
-      } else {
-        message.error(re.message);
-      }
-      if (callback && callback instanceof Function) {
-        callback(re);
-      }
-    },
     *save({ payload, callback }, { call }) {
       const re = yield call(save, payload);
       message.destroy();

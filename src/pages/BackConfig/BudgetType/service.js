@@ -5,16 +5,6 @@ const { request } = utils;
 
 const { SERVER_PATH } = constants;
 
-/** 创建 */
-export async function create(data) {
-  const url = `${SERVER_PATH}/bems-v6/category/create`;
-  return request({
-    url,
-    method: 'POST',
-    data,
-  });
-}
-
 /** 保存 */
 export async function save(data) {
   const url = `${SERVER_PATH}/bems-v6/category/save`;
