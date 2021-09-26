@@ -28,6 +28,7 @@ class BudgetType extends Component {
         currentMaster: null,
         selectedBudgetType: null,
         showAssign: false,
+        selectTypeClass: TYPE_CLASS.GENERAL,
       },
     });
   }
