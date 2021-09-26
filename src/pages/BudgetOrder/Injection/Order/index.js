@@ -118,14 +118,30 @@ class RequestOrder extends Component {
     });
   };
 
+  checkAttachment = () => {
+    const { ready, fileList, errorFileCount } = this.requestAttachmentRef.getAttachmentStatus();
+    let docIds = [];
+    let isValidDoc = true;
+    if (ready === true && errorFileCount === 0) {
+      docIds = (fileList || []).map(f => f.id);
+    } else {
+      isValidDoc = false;
+      message.destroy();
+      message.error('附件正在上传中或上传失败！');
+    }
+    return { docIds, isValidDoc };
+  };
+
   handlerConfirm = () => {
     const { dispatch } = this.props;
     const { isValid, data } = this.requestHeadRef.getHeaderData();
-    if (isValid) {
+    const { docIds, isValidDoc } = this.checkAttachment();
+    if (isValid && isValidDoc) {
       dispatch({
         type: 'injectionOrder/confirm',
         payload: {
           ...data,
+          docIds,
         },
         callbackSuccess: () => {
           this.needRefreshList = true;
@@ -166,13 +182,13 @@ class RequestOrder extends Component {
     }
     const { dispatch } = this.props;
     const { isValid, data } = this.requestHeadRef.getHeaderData();
-    const { ready, fileList, errorFileCount } = this.requestAttachmentRef.getAttachmentStatus();
-    if (isValid && ready === true && errorFileCount === 0) {
+    const { docIds, isValidDoc } = this.checkAttachment();
+    if (isValid && isValidDoc) {
       dispatch({
         type: 'injectionOrder/save',
         payload: {
           ...data,
-          docIds: (fileList || []).map(f => f.id),
+          docIds,
         },
         callback: res => {
           if (flowCallBack && flowCallBack instanceof Function) {
@@ -233,13 +249,15 @@ class RequestOrder extends Component {
 
   handlerSaveItem = (data, successCallBack) => {
     const { isValid, data: headData } = this.requestHeadRef.getHeaderData();
-    if (isValid) {
+    const { docIds, isValidDoc } = this.checkAttachment();
+    if (isValid && isValidDoc) {
       const { dispatch } = this.props;
       dispatch({
         type: 'injectionOrder/addOrderDetails',
         payload: {
           ...headData,
           ...data,
+          docIds,
         },
         successCallback: resultData => {
           if (successCallBack && successCallBack instanceof Function) {
@@ -294,8 +312,9 @@ class RequestOrder extends Component {
       const { dispatch, injectionOrder } = this.props;
       const { headData } = injectionOrder;
       const { data, isValid } = this.requestHeadRef.getHeaderData();
-      if (isValid) {
-        const head = { ...headData };
+      const { docIds, isValidDoc } = this.checkAttachment();
+      if (isValid && isValidDoc) {
+        const head = { ...headData, docIds };
         Object.assign(head, data);
         checkedPassed = true;
         dispatch({

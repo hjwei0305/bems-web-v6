@@ -301,6 +301,7 @@ class SplitRequestList extends Component {
       payload: {
         recordItem: item,
         showUpdate: true,
+        showPrefab: false,
       },
     });
   };

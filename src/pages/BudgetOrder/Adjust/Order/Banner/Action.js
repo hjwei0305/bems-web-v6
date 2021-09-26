@@ -91,24 +91,26 @@ class ExtAction extends PureComponent {
           >
             <Button disabled={loadingGlobal}>返回</Button>
           </Popconfirm>
-          <Popconfirm
-            disabled={disabled}
-            icon={<Icon type="question-circle-o" />}
-            placement="bottomRight"
-            trigger="click"
-            title={
-              <Tip topic="预算确认" description="提示:预算确认过程中，将会对预算进行预算占用!" />
-            }
-            onConfirm={confirm}
-          >
-            <Button
+          {orderCode ? (
+            <Popconfirm
               disabled={disabled}
-              type={action === REQUEST_ORDER_ACTION.VIEW ? 'primary' : ''}
-              loading={confirming}
+              icon={<Icon type="question-circle-o" />}
+              placement="bottomRight"
+              trigger="click"
+              title={
+                <Tip topic="预算确认" description="提示:预算确认过程中，将会对预算进行预算占用!" />
+              }
+              onConfirm={confirm}
             >
-              预算确认
-            </Button>
-          </Popconfirm>
+              <Button
+                disabled={disabled}
+                type={action === REQUEST_ORDER_ACTION.VIEW ? 'primary' : ''}
+                loading={confirming}
+              >
+                预算确认
+              </Button>
+            </Popconfirm>
+          ) : null}
           {action === REQUEST_ORDER_ACTION.EDIT || action === REQUEST_ORDER_ACTION.ADD ? (
             <Button type="primary" disabled={disabled} loading={saving} onClick={e => saveOrder(e)}>
               保存
