@@ -34,10 +34,11 @@ const LogDetail = ({ poolItem, handlerClose, showLog }) => {
     const title = `池号 ${get(poolItem, 'code')}`;
     return (
       <>
+        <ExtIcon type="left" className="trigger-back" antd onClick={handlerClose} />
         <BannerTitle title={title} subTitle="执行日志" />
       </>
     );
-  }, [poolItem]);
+  }, [handlerClose, poolItem]);
 
   const handleColumnSearch = useCallback(
     (selectedKeys, dataIndex, confirm) => {
@@ -201,6 +202,17 @@ const LogDetail = ({ poolItem, handlerClose, showLog }) => {
         },
       },
       {
+        title: '业务来源',
+        dataIndex: 'bizFrom',
+        width: 100,
+      },
+      {
+        title: '业务描述',
+        dataIndex: 'bizRemark',
+        width: 300,
+        ...getColumnSearchProps('bizRemark'),
+      },
+      {
         title: '发生时间',
         dataIndex: 'opTime',
         width: 180,
@@ -216,19 +228,6 @@ const LogDetail = ({ poolItem, handlerClose, showLog }) => {
         dataIndex: 'bizCode',
         width: 180,
         ...getColumnSearchProps('bizCode'),
-      },
-      {
-        title: '业务来源',
-        dataIndex: 'bizFrom',
-        width: 100,
-        optional: true,
-      },
-      {
-        title: '业务描述',
-        dataIndex: 'bizRemark',
-        width: 300,
-        optional: true,
-        ...getColumnSearchProps('bizRemark'),
       },
     ];
     const poolCode = get(poolItem, 'code');

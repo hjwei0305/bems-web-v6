@@ -4,8 +4,27 @@
   padding: 0;
   :global {
     .amount-title {
+      text-align: left !important;
       .ant-table-column-title {
         text-align: center;
+      }
+    }
+    .ant-drawer-title {
+      padding-left: 32px;
+    }
+    .trigger-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 56px;
+      height: 56px;
+      font-weight: normal;
+      line-height: 58px;
+      cursor: pointer;
+      transition: all ease-in 0.2s;
+      &:hover {
+        color: @primary-color;
+        background-color: fade(@black, 2%);
       }
     }
     .suid-money {
