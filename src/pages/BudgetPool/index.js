@@ -526,6 +526,7 @@ class BudgetPool extends Component {
         ) : (
           <Tooltip
             overlayClassName={styles['tool-tip']}
+            placement="left"
             title={
               <Space split={<Divider type="vertical" />} style={{ padding: 8, width: 320 }}>
                 <Money

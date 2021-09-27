@@ -37,11 +37,7 @@
       color: fade(@black, 85%);
     }
     .ant-list-item {
-      background-color: @white !important;
       cursor: default !important;
-      &:hover {
-        background-color: @white !important;
-      }
       embed {
         position: absolute;
         top: 8px;
@@ -170,4 +166,12 @@
 
 .tool-tip {
   max-width: none;
+}
+
+.pool-item-box {
+  :global {
+    .ant-card-body .suid-list-card-body .ant-list-item.selected {
+      background-color: fade(@suid-row-select, 45%) !important;
+    }
+  }
 }
