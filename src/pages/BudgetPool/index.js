@@ -499,10 +499,9 @@ class BudgetPool extends Component {
           <Space direction="vertical" size={0}>
             <Progress
               style={{ width: 420 }}
-              showInfo={false}
               status={status}
-              strokeLinecap="square"
               percent={percent}
+              format={p => `${p}%`}
               size="small"
             />
             <Space split={<Divider type="vertical" />}>
@@ -547,12 +546,12 @@ class BudgetPool extends Component {
             }
           >
             <Progress
-              style={{ width: '100%', marginBottom: 16 }}
-              showInfo={false}
+              style={{ float: 'right', marginBottom: 16, cursor: 'pointer' }}
               status={status}
-              strokeLinecap="square"
+              type="circle"
+              width={60}
+              format={p => `${p}%`}
               percent={percent}
-              size="small"
             />
           </Tooltip>
         )}
