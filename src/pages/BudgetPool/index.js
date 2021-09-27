@@ -485,7 +485,9 @@ class BudgetPool extends Component {
               <span className="title">池号</span>
               <span className="no">{poolCode}</span>
               <Tooltip title="有效期">
-                <span style={{ color: '#999', fontSize: 12 }}>{`(${startDate} ~ ${endDate})`}</span>
+                <span
+                  style={{ color: '#999', fontSize: 12, marginLeft: 8 }}
+                >{`(${startDate} ~ ${endDate})`}</span>
               </Tooltip>
             </span>
             {roll ? (
