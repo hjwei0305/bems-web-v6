@@ -22,6 +22,7 @@ const filterFields = {
 
 const LogDetail = ({ poolItem, handlerClose }) => {
   const [filter, setFilter] = useState({});
+  const [fullscreen, setFullscreen] = useState(false);
 
   const reloadData = () => {
     if (tableRef) {
@@ -29,15 +30,23 @@ const LogDetail = ({ poolItem, handlerClose }) => {
     }
   };
 
+  const triggerClose = useCallback(() => {
+    if (fullscreen) {
+      setFullscreen(false);
+    } else {
+      handlerClose();
+    }
+  }, [fullscreen, handlerClose]);
+
   const renderTitle = useCallback(() => {
     const title = `池号 ${get(poolItem, 'code')}`;
     return (
       <>
-        <ExtIcon onClick={handlerClose} type="double-right" className="trigger-back" antd />
+        <ExtIcon onClick={triggerClose} type="double-right" className="trigger-back" antd />
         <BannerTitle title={title} subTitle="执行日志" />
       </>
     );
-  }, [handlerClose, poolItem]);
+  }, [triggerClose, poolItem]);
 
   const handleColumnSearch = useCallback(
     (selectedKeys, dataIndex, confirm) => {
@@ -165,6 +174,10 @@ const LogDetail = ({ poolItem, handlerClose }) => {
     [getColumnSearchComponent],
   );
 
+  const handlerFullscreen = useCallback(() => {
+    setFullscreen(!fullscreen);
+  }, [fullscreen]);
+
   const renderCustomTool = useCallback(() => {
     return (
       <Space>
@@ -175,9 +188,15 @@ const LogDetail = ({ poolItem, handlerClose }) => {
           antd
           onClick={reloadData}
         />
+        <ExtIcon
+          tooltip={{ title: fullscreen ? '还原' : '最大化' }}
+          type={fullscreen ? 'panel-exit-full-screen' : 'panel-full-screen'}
+          className="action-item"
+          onClick={handlerFullscreen}
+        />
       </Space>
     );
-  }, []);
+  }, [fullscreen, handlerFullscreen]);
 
   const getExtTableProps = useCallback(() => {
     const columns = [
@@ -287,7 +306,7 @@ const LogDetail = ({ poolItem, handlerClose }) => {
     <Card
       bordered={false}
       title={renderTitle()}
-      className={cls(styles['log-box'])}
+      className={cls(styles['log-box'], fullscreen ? styles.fullscreen : null)}
       extra={renderCustomTool()}
     >
       <ExtTable onTableRef={ref => (tableRef = ref)} {...getExtTableProps()} />

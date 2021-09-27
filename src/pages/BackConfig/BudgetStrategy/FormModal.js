@@ -82,6 +82,10 @@ class FormModal extends PureComponent {
                   required: true,
                   message: '策略名称不能为空',
                 },
+                {
+                  max: 50,
+                  message: '最大长度为50个字符',
+                },
               ],
             })(<Input autoComplete="off" />)}
           </FormItem>
