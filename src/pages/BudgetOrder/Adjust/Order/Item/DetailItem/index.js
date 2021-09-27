@@ -106,37 +106,31 @@ class DetailItem extends PureComponent {
     if (onSaveItemMoney && onSaveItemMoney instanceof Function) {
       const rowKey = get(rowItem, 'id');
       const originAmount = get(this.pagingData[rowKey], 'amount');
-      if (originAmount !== amount) {
-        onSaveItemMoney(rowItem, amount, res => {
-          callBack();
-          if (res.success) {
-            const rowData = res.data;
-            this.pagingData[rowKey] = { ...rowData };
-            if (rowData.hasErr === false) {
-              if (originAmount > 0) {
-                this.updownAmount.up = new Decimal(this.updownAmount.up).sub(
-                  new Decimal(originAmount),
-                );
-              }
-              if (originAmount < 0) {
-                this.updownAmount.down = new Decimal(this.updownAmount.down).sub(
-                  new Decimal(originAmount),
-                );
-              }
-              if (amount > 0) {
-                this.updownAmount.up = new Decimal(this.updownAmount.up).add(new Decimal(amount));
-              }
-              if (amount < 0) {
-                this.updownAmount.down = new Decimal(this.updownAmount.down).add(
-                  new Decimal(amount),
-                );
-              }
+      onSaveItemMoney(rowItem, amount, res => {
+        callBack();
+        if (res.success) {
+          const rowData = res.data;
+          this.pagingData[rowKey] = { ...rowData };
+          if (rowData.hasErr === false) {
+            if (originAmount > 0) {
+              this.updownAmount.up = new Decimal(this.updownAmount.up).sub(
+                new Decimal(originAmount),
+              );
+            }
+            if (originAmount < 0) {
+              this.updownAmount.down = new Decimal(this.updownAmount.down).sub(
+                new Decimal(originAmount),
+              );
+            }
+            if (amount > 0) {
+              this.updownAmount.up = new Decimal(this.updownAmount.up).add(new Decimal(amount));
+            }
+            if (amount < 0) {
+              this.updownAmount.down = new Decimal(this.updownAmount.down).add(new Decimal(amount));
             }
           }
-        });
-      } else {
-        callBack();
-      }
+        }
+      });
     }
   };
 
