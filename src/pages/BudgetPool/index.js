@@ -501,6 +501,7 @@ class BudgetPool extends Component {
               style={{ width: 420 }}
               status={status}
               percent={percent}
+              strokeWidth={12}
               format={p => `${p}%`}
               size="small"
             />
