@@ -281,7 +281,7 @@ const LogDetail = ({ poolItem, handlerClose, showLog }) => {
 
   return (
     <Drawer
-      width={780}
+      width={document.body.clientWidth}
       getContainer={false}
       placement="right"
       visible={showLog}
