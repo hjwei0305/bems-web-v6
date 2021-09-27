@@ -48,7 +48,6 @@ const MasterView = ({ style, defaultTitle, onChange, readTitle = 'name' }) => {
       className: 'search-content',
       showArrow: false,
       showSearch: false,
-      remotePaging: true,
       onSelectChange: (_, items) => {
         const [selItem] = items;
         const tmpTitle = get(selItem, readTitle);
@@ -59,8 +58,7 @@ const MasterView = ({ style, defaultTitle, onChange, readTitle = 'name' }) => {
         setDropShow(false);
       },
       store: {
-        type: 'POST',
-        url: `${SERVER_PATH}/bems-v6/subject/findByPage`,
+        url: `${SERVER_PATH}/bems-v6/subject/getUserAuthorizedEntities`,
       },
       customTool: renderCustomTool,
       onListCardRef: ref => (listCardRef = ref),
