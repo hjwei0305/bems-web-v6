@@ -5,14 +5,9 @@ import moment from 'moment';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
 import { get, isEqual, omit, pick } from 'lodash';
 import { Drawer, Form, Button } from 'antd';
-import { ScrollBar, ComboList, ScopeDatePicker } from 'suid';
-import { constants } from '@/utils';
+import { ScrollBar, ScopeDatePicker } from 'suid';
 import styles from './index.less';
 
-const { PERIOD_TYPE } = constants;
-const PERIOD_TYPE_DATA = Object.keys(PERIOD_TYPE)
-  .map(key => PERIOD_TYPE[key])
-  .filter(f => f.key !== PERIOD_TYPE.ALL.key);
 const FormItem = Form.Item;
 const formItemLayout = {
   labelCol: {
@@ -95,15 +90,6 @@ class Filter extends PureComponent {
     }
   };
 
-  getPeriodTypeName = () => {
-    const { filterData } = this.state;
-    const periodType = PERIOD_TYPE[get(filterData, 'periodType')];
-    if (periodType) {
-      return periodType.title;
-    }
-    return '';
-  };
-
   getStartEndDate = () => {
     const { filterData } = this.state;
     let startDate = get(filterData, 'startDate') || '';
@@ -118,34 +104,10 @@ class Filter extends PureComponent {
   };
 
   getFields() {
-    const { filterData } = this.state;
     const { form } = this.props;
     const { getFieldDecorator } = form;
-    getFieldDecorator('periodType', {
-      initialValue: get(filterData, 'periodType', null),
-    });
-
-    const periodTypeProps = {
-      placeholder: formatMessage({ id: 'global.all', defaultMessage: '全部' }),
-      allowClear: true,
-      form,
-      name: 'periodTypeName',
-      field: ['periodType'],
-      dataSource: PERIOD_TYPE_DATA,
-      pagination: false,
-      showSearch: false,
-      reader: {
-        name: 'title',
-        field: ['key'],
-      },
-    };
     return (
       <>
-        <FormItem label="期间类型">
-          {getFieldDecorator('periodTypeName', {
-            initialValue: this.getPeriodTypeName(),
-          })(<ComboList {...periodTypeProps} />)}
-        </FormItem>
         <FormItem label="有效期">
           {getFieldDecorator('startEndDate', {
             initialValue: this.getStartEndDate(),
