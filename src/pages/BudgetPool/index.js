@@ -563,9 +563,14 @@ class BudgetPool extends Component {
   };
 
   renderAvatar = ({ item }) => {
+    const periodType = PERIOD_TYPE[item.periodType];
     return (
       <Tooltip title="预算期间类型" placement="bottomRight">
-        <Avatar style={{ verticalAlign: 'middle', backgroundColor: '#aaa' }}>
+        <Avatar
+          shape="square"
+          style={{ verticalAlign: 'middle', backgroundColor: periodType.backColor || '' }}
+          size={42}
+        >
           <PeriodType periodTypeKey={item.periodType} />
         </Avatar>
       </Tooltip>

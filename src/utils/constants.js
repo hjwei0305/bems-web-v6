@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-09-24 09:00:52
+ * @Last Modified time: 2021-09-27 14:25:45
  */
 import { base } from '../../public/app.config.json';
 
@@ -73,12 +73,12 @@ const BUDGET_DIMENSION_UI_COMPONENT = {
 
 /** 期间类型 */
 const PERIOD_TYPE = {
-  ALL: { key: 'ALL', title: '全部' },
-  ANNUAL: { key: 'ANNUAL', title: '年度' },
-  SEMIANNUAL: { key: 'SEMIANNUAL', title: '半年度' },
-  QUARTER: { key: 'QUARTER', title: '季度' },
-  MONTHLY: { key: 'MONTHLY', title: '月度' },
-  CUSTOMIZE: { key: 'CUSTOMIZE', title: '自定义' },
+  ALL: { key: 'ALL', title: '全部', backColor: '' },
+  ANNUAL: { key: 'ANNUAL', title: '年度', backColor: '#c8ce3e' },
+  SEMIANNUAL: { key: 'SEMIANNUAL', title: '半年度', backColor: '#29b3f0' },
+  QUARTER: { key: 'QUARTER', title: '季度', backColor: '#3885ea' },
+  MONTHLY: { key: 'MONTHLY', title: '月度', backColor: '#b111b9' },
+  CUSTOMIZE: { key: 'CUSTOMIZE', title: '自定义', backColor: '#e88214' },
 };
 
 /** 主数据类型分类 */
