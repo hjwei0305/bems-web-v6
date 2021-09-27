@@ -525,7 +525,7 @@ class BudgetPool extends Component {
     const { totalAmount, usedAmount, balance } = item;
     let percent = 0;
     if (totalAmount > 0) {
-      percent = ((usedAmount / totalAmount) * 100).toFixed(2);
+      percent = ((usedAmount / totalAmount) * 100).toFixed(0);
     }
     let status = 'active';
     if (percent >= 80) {
