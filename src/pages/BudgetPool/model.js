@@ -1,9 +1,10 @@
 import { utils, message } from 'suid';
+import { constants } from '@/utils';
 import { getDimensionAll, poolItemDisable, poolItemEnable, trundle } from './service';
 
 const { dvaModel, pathMatchRegexp } = utils;
 const { modelExtend, model } = dvaModel;
-
+const { PERIOD_TYPE } = constants;
 const setSubDimensionFields = dimensionsData => {
   const subDimensionFields = [];
   dimensionsData.forEach(d => {
@@ -18,6 +19,9 @@ const setSubDimensionFields = dimensionsData => {
   return subDimensionFields;
 };
 
+const PERIOD_TYPE_DATA = Object.keys(PERIOD_TYPE).map(key => PERIOD_TYPE[key]);
+const [defaultPeriodType] = PERIOD_TYPE_DATA;
+
 export default modelExtend(model, {
   namespace: 'budgetPool',
 
@@ -27,6 +31,8 @@ export default modelExtend(model, {
     showFilter: false,
     filterData: {},
     showLog: false,
+    selectPeriodType: defaultPeriodType,
+    periodTypeData: PERIOD_TYPE_DATA,
   },
   subscriptions: {
     setup({ dispatch, history }) {

@@ -16,7 +16,7 @@ import {
   Divider,
 } from 'antd';
 import { ListCard, ExtIcon, Money, Space, PageLoader } from 'suid';
-import { PeriodType } from '@/components';
+import { PeriodType, FilterView } from '@/components';
 import { constants } from '@/utils';
 import noUse from '@/assets/no_use.svg';
 import Filter from './components/Filter';
@@ -24,14 +24,13 @@ import MasterView from './components/MasterView';
 import styles from './index.less';
 
 const LogDetail = React.lazy(() => import('./LogDetail'));
-const { SERVER_PATH } = constants;
+const { SERVER_PATH, PERIOD_TYPE } = constants;
 const { Search } = Input;
 const { Sider, Content } = Layout;
 const filterFields = {
-  subjectId: { fieldName: 'subjectId', operation: 'EQ', form: false },
-  periodType: { fieldName: 'periodType', operation: 'EQ', form: true },
-  startDate: { fieldName: 'startDate', operation: 'LE', fieldType: 'date', form: true },
-  endDate: { fieldName: 'endDate', operation: 'GE', fieldType: 'date', form: true },
+  subjectId: { fieldName: 'subjectId', operator: 'EQ', form: false },
+  startDate: { fieldName: 'startDate', operator: 'LE', fieldType: 'date', form: true },
+  endDate: { fieldName: 'endDate', operator: 'GE', fieldType: 'date', form: true },
 };
 
 @connect(({ budgetPool, loading }) => ({ budgetPool, loading }))
@@ -295,11 +294,24 @@ class BudgetPool extends Component {
     });
   };
 
+  handlerPeriodTypeChange = selectPeriodType => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'budgetPool/updateState',
+      payload: {
+        selectPeriodType,
+      },
+    });
+  };
+
   getFilters = () => {
     const { budgetPool } = this.props;
-    const { filterData } = budgetPool;
+    const { filterData, selectPeriodType } = budgetPool;
     let hasFilter = false;
     const filters = [];
+    if (selectPeriodType.key !== PERIOD_TYPE.ALL.key) {
+      filters.push({ fieldName: 'periodType', operator: 'EQ', value: selectPeriodType.key });
+    }
     Object.keys(filterData).forEach(key => {
       const filterField = get(filterFields, key);
       if (filterField) {
@@ -309,7 +321,7 @@ class BudgetPool extends Component {
           if (form) {
             hasFilter = true;
           }
-          const fit = { fieldName: key, operator: get(filterField, 'operation'), value };
+          const fit = { fieldName: key, operator: get(filterField, 'operator'), value };
           const fieldType = get(filterField, 'fieldType');
           if (fieldType) {
             Object.assign(fit, { fieldType });
@@ -335,19 +347,34 @@ class BudgetPool extends Component {
 
   renderCustomTool = (total, hasFilter) => {
     this.total = total;
+    const { budgetPool } = this.props;
+    const { selectPeriodType, periodTypeData } = budgetPool;
     return (
       <>
         <div>
           <MasterView onChange={this.handlerMasterSelect} />
+          <Divider type="vertical" />
+          <FilterView
+            title="期间类型"
+            iconType={false}
+            style={{ marginRight: 16, minWidth: 140 }}
+            currentViewType={selectPeriodType}
+            viewTypeData={periodTypeData}
+            onAction={this.handlerPeriodTypeChange}
+            reader={{
+              title: 'title',
+              value: 'key',
+            }}
+          />
         </div>
         <Space>
           <Search
             allowClear
-            placeholder="输入池号、维度关键字"
+            placeholder="输入池号、期间、科目关键字"
             onChange={e => this.handlerSearchChange(e.target.value)}
             onSearch={this.handlerSearch}
             onPressEnter={this.handlerPressEnter}
-            style={{ width: 220 }}
+            style={{ width: 260 }}
           />
           <span
             className={cls('filter-btn', { 'has-filter': hasFilter })}
