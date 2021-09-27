@@ -202,15 +202,21 @@ const LogDetail = ({ poolItem, handlerClose, showLog }) => {
         },
       },
       {
-        title: '业务来源',
-        dataIndex: 'bizFrom',
-        width: 100,
+        title: '业务编号',
+        dataIndex: 'bizCode',
+        width: 180,
+        ...getColumnSearchProps('bizCode'),
       },
       {
         title: '业务描述',
         dataIndex: 'bizRemark',
         width: 300,
         ...getColumnSearchProps('bizRemark'),
+      },
+      {
+        title: '业务来源',
+        dataIndex: 'bizFrom',
+        width: 100,
       },
       {
         title: '发生时间',
@@ -222,12 +228,6 @@ const LogDetail = ({ poolItem, handlerClose, showLog }) => {
         dataIndex: 'opUserName',
         width: 160,
         render: (t, r) => `${t}(${r.opUserAccount})`,
-      },
-      {
-        title: '业务编号',
-        dataIndex: 'bizCode',
-        width: 180,
-        ...getColumnSearchProps('bizCode'),
       },
     ];
     const poolCode = get(poolItem, 'code');
