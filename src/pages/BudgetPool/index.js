@@ -484,10 +484,10 @@ class BudgetPool extends Component {
             <span>
               <span className="title">池号</span>
               <span className="no">{poolCode}</span>
+              <Tooltip title="有效期">
+                <span style={{ color: '#999', fontSize: 12 }}>{`(${startDate} ~ ${endDate})`}</span>
+              </Tooltip>
             </span>
-            <Tooltip title="有效期">
-              <span style={{ color: '#999', fontSize: 12 }}>{`${startDate} ~ ${endDate}`}</span>
-            </Tooltip>
             {roll ? (
               <Button size="small" onClick={e => this.trundleConfirm(item, e)}>
                 滚动结转
