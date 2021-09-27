@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import cls from 'classnames';
+import { FormattedMessage } from 'umi-plugin-react/locale';
 import { get, isEmpty, isNumber } from 'lodash';
-import { Card, Input, Tag, Button, Menu, Badge } from 'antd';
-import { BannerTitle, ExtIcon, ExtTable, Space, Money } from 'suid';
+import { Input, Tag, Button, Menu, Badge, Drawer } from 'antd';
+import { BannerTitle, ExtIcon, ExtTable, Money } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
@@ -20,9 +21,8 @@ const filterFields = {
   bizRemark: { fieldName: 'bizRemark', operation: 'LK' },
 };
 
-const LogDetail = ({ poolItem, handlerClose }) => {
+const LogDetail = ({ poolItem, handlerClose, showLog }) => {
   const [filter, setFilter] = useState({});
-  const [fullscreen, setFullscreen] = useState(false);
 
   const reloadData = () => {
     if (tableRef) {
@@ -30,23 +30,14 @@ const LogDetail = ({ poolItem, handlerClose }) => {
     }
   };
 
-  const triggerClose = useCallback(() => {
-    if (fullscreen) {
-      setFullscreen(false);
-    } else {
-      handlerClose();
-    }
-  }, [fullscreen, handlerClose]);
-
   const renderTitle = useCallback(() => {
     const title = `池号 ${get(poolItem, 'code')}`;
     return (
       <>
-        <ExtIcon onClick={triggerClose} type="double-right" className="trigger-back" antd />
         <BannerTitle title={title} subTitle="执行日志" />
       </>
     );
-  }, [triggerClose, poolItem]);
+  }, [poolItem]);
 
   const handleColumnSearch = useCallback(
     (selectedKeys, dataIndex, confirm) => {
@@ -94,7 +85,7 @@ const LogDetail = ({ poolItem, handlerClose }) => {
         return (
           <div
             style={{
-              padding: 8,
+              padding: 0,
               maxHeight: 300,
               height: 210,
               width: 160,
@@ -174,30 +165,6 @@ const LogDetail = ({ poolItem, handlerClose }) => {
     [getColumnSearchComponent],
   );
 
-  const handlerFullscreen = useCallback(() => {
-    setFullscreen(!fullscreen);
-  }, [fullscreen]);
-
-  const renderCustomTool = useCallback(() => {
-    return (
-      <Space>
-        <ExtIcon
-          tooltip={{ title: '刷新' }}
-          type="reload"
-          className="action-item"
-          antd
-          onClick={reloadData}
-        />
-        <ExtIcon
-          tooltip={{ title: fullscreen ? '还原' : '最大化' }}
-          type={fullscreen ? 'panel-exit-full-screen' : 'panel-full-screen'}
-          className="action-item"
-          onClick={handlerFullscreen}
-        />
-      </Space>
-    );
-  }, [fullscreen, handlerFullscreen]);
-
   const getExtTableProps = useCallback(() => {
     const columns = [
       {
@@ -275,7 +242,17 @@ const LogDetail = ({ poolItem, handlerClose }) => {
         }
       }
     });
+    const toolBarProps = {
+      left: (
+        <>
+          <Button onClick={reloadData}>
+            <FormattedMessage id="global.refresh" defaultMessage="刷新" />
+          </Button>
+        </>
+      ),
+    };
     const props = {
+      toolBar: toolBarProps,
       columns,
       bordered: false,
       showSearch: false,
@@ -303,14 +280,19 @@ const LogDetail = ({ poolItem, handlerClose }) => {
   }, [filter, getColumnSearchProps, poolItem]);
 
   return (
-    <Card
-      bordered={false}
+    <Drawer
+      width={780}
+      getContainer={false}
+      placement="right"
+      visible={showLog}
+      destroyOnClose
       title={renderTitle()}
-      className={cls(styles['log-box'], fullscreen ? styles.fullscreen : null)}
-      extra={renderCustomTool()}
+      className={cls(styles['log-box'])}
+      onClose={handlerClose}
+      style={{ position: 'absolute' }}
     >
       <ExtTable onTableRef={ref => (tableRef = ref)} {...getExtTableProps()} />
-    </Card>
+    </Drawer>
   );
 };
 

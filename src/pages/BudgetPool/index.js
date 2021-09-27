@@ -26,7 +26,7 @@ import styles from './index.less';
 const LogDetail = React.lazy(() => import('./LogDetail'));
 const { SERVER_PATH, PERIOD_TYPE } = constants;
 const { Search } = Input;
-const { Sider, Content } = Layout;
+const { Content } = Layout;
 const filterFields = {
   subjectId: { fieldName: 'subjectId', operator: 'EQ', form: false },
   startDate: { fieldName: 'startDate', operator: 'LE', fieldType: 'date', form: true },
@@ -427,8 +427,6 @@ class BudgetPool extends Component {
   renderDescription = item => {
     const balance = get(item, 'balance');
     const currency = get(item, 'currencyCode');
-    const startDate = get(item, 'startDate');
-    const endDate = get(item, 'endDate');
     const actived = get(item, 'actived');
     return (
       <>
@@ -453,22 +451,53 @@ class BudgetPool extends Component {
             </span>
           </div>
         </div>
-        <div className={cls('field-item', { disabled: !actived })}>
-          <span className="label">有效期</span>
-          <span>{`${startDate} ~ ${endDate}`}</span>
-        </div>
       </>
+    );
+  };
+
+  renderActivedBtn = item => {
+    const actived = get(item, 'actived');
+    if (actived) {
+      return (
+        <Button type="danger" size="small" onClick={e => this.itemDiableConfirm(item, e)}>
+          冻结
+        </Button>
+      );
+    }
+    return (
+      <Button type="primary" ghost size="small" onClick={e => this.itemEnableConfirm(item, e)}>
+        解冻
+      </Button>
     );
   };
 
   renderMasterTitle = item => {
     const poolCode = get(item, 'code');
     const actived = get(item, 'actived');
+    const startDate = get(item, 'startDate');
+    const endDate = get(item, 'endDate');
+    const roll = get(item, 'roll') || false;
     return (
       <>
         <div className={cls('pool-box', { disabled: !actived })}>
-          <span className="title">池号</span>
-          <span className="no">{poolCode}</span>
+          <Space>
+            <span>
+              <span className="title">池号</span>
+              <span className="no">{poolCode}</span>
+            </span>
+            <Tooltip title="有效期">
+              <span style={{ color: '#999', fontSize: 12 }}>{`${startDate} ~ ${endDate}`}</span>
+            </Tooltip>
+            {roll ? (
+              <Button size="small" onClick={e => this.trundleConfirm(item, e)}>
+                滚动结转
+              </Button>
+            ) : null}
+            {this.renderActivedBtn(item)}
+            <Button size="small" onClick={() => this.showLogDetail(item)}>
+              日志
+            </Button>
+          </Space>
         </div>
         <div
           className={cls('master-title', { disabled: !actived })}
@@ -490,27 +519,7 @@ class BudgetPool extends Component {
     return fields;
   };
 
-  renderActivedBtn = item => {
-    const actived = get(item, 'actived');
-    if (actived) {
-      return (
-        <Button type="danger" size="small" onClick={e => this.itemDiableConfirm(item, e)}>
-          冻结
-        </Button>
-      );
-    }
-    return (
-      <Button type="primary" ghost size="small" onClick={e => this.itemEnableConfirm(item, e)}>
-        解冻
-      </Button>
-    );
-  };
-
   renderAction = item => {
-    const {
-      budgetPool: { showLog },
-    } = this.props;
-    const roll = get(item, 'roll') || false;
     const { totalAmount, usedAmount, balance } = item;
     let percent = 0;
     if (totalAmount > 0) {
@@ -521,81 +530,31 @@ class BudgetPool extends Component {
       status = 'exception';
     }
     return (
-      <Space size={showLog ? 0 : 40} direction={showLog ? 'vertical' : 'horizontal'}>
-        {!showLog ? (
-          <Space direction="vertical" size={0}>
-            <Progress
-              style={{ width: 420 }}
-              status={status}
-              percent={percent}
-              strokeWidth={12}
-              format={p => `${p}%`}
-              size="small"
-            />
-            <Space split={<Divider type="vertical" />}>
-              <Money
-                style={{ color: '#666', fontStyle: 'normal', fontWeight: 'normal' }}
-                prefix="总额"
-                value={totalAmount}
-              />
-              <Money
-                style={{ color: '#fa8c16', fontStyle: 'normal', fontWeight: 'normal' }}
-                prefix="已使用"
-                value={usedAmount}
-              />
-              <Money
-                style={{ color: '#52c41a', fontStyle: 'normal', fontWeight: 'normal' }}
-                prefix="余额"
-                value={balance}
-              />
-            </Space>
-          </Space>
-        ) : (
-          <Tooltip
-            overlayClassName={styles['tool-tip']}
-            placement="left"
-            title={
-              <Space split={<Divider type="vertical" />} style={{ padding: 8, width: 320 }}>
-                <Money
-                  style={{ color: '#f8f8f8', fontStyle: 'normal', fontWeight: 'normal' }}
-                  prefix="总额"
-                  value={totalAmount}
-                />
-                <Money
-                  style={{ color: '#fa8c16', fontStyle: 'normal', fontWeight: 'normal' }}
-                  prefix="已使用"
-                  value={usedAmount}
-                />
-                <Money
-                  style={{ color: '#52c41a', fontStyle: 'normal', fontWeight: 'normal' }}
-                  prefix="余额"
-                  value={balance}
-                />
-              </Space>
-            }
-          >
-            <Progress
-              style={{ float: 'right', marginBottom: 16, cursor: 'pointer' }}
-              status={status}
-              type="circle"
-              width={60}
-              format={p => `${p}%`}
-              percent={percent}
-            />
-          </Tooltip>
-        )}
-        <Space direction="vertical" style={{ width: 200 }} align="end">
-          <Space>
-            {roll ? (
-              <Button size="small" onClick={e => this.trundleConfirm(item, e)}>
-                滚动结转
-              </Button>
-            ) : null}
-            {this.renderActivedBtn(item)}
-            <Button size="small" onClick={() => this.showLogDetail(item)}>
-              日志
-            </Button>
-          </Space>
+      <Space direction="vertical" size={0}>
+        <Progress
+          style={{ width: 420 }}
+          status={status}
+          percent={percent}
+          strokeWidth={12}
+          format={p => `${p}%`}
+          size="small"
+        />
+        <Space split={<Divider type="vertical" />}>
+          <Money
+            style={{ color: '#666', fontStyle: 'normal', fontWeight: 'normal' }}
+            prefix="总额"
+            value={totalAmount}
+          />
+          <Money
+            style={{ color: '#fa8c16', fontStyle: 'normal', fontWeight: 'normal' }}
+            prefix="已使用"
+            value={usedAmount}
+          />
+          <Money
+            style={{ color: '#52c41a', fontStyle: 'normal', fontWeight: 'normal' }}
+            prefix="余额"
+            value={balance}
+          />
         </Space>
       </Space>
     );
@@ -619,7 +578,6 @@ class BudgetPool extends Component {
       filterData,
       onFilterSubmit: this.handlerFilterSubmit,
       onCloseFilter: this.handlerCloseFilter,
-      showLog,
     };
     const { filters, hasFilter } = this.getFilters();
     const listProps = {
@@ -678,24 +636,20 @@ class BudgetPool extends Component {
     const logDetailProps = {
       poolItem: recordItem,
       handlerClose: this.closeLog,
+      showLog,
     };
     return (
       <div className={cls(styles['container-box'])}>
         <Layout className="auto-height">
-          <Content
-            className={cls('main-content', 'auto-height')}
-            style={{ paddingRight: showLog ? 8 : 0 }}
-          >
+          <Content className={cls('main-content', 'auto-height')}>
             <ListCard {...listProps} />
             <Filter {...filterProps} />
             <span className="page-summary">{`共 ${this.total} 项`}</span>
           </Content>
-          <Sider width={showLog ? 480 : 0} className="auto-height" theme="light">
-            <Suspense fallback={<PageLoader />}>
-              <LogDetail {...logDetailProps} />
-            </Suspense>
-          </Sider>
         </Layout>
+        <Suspense fallback={<PageLoader />}>
+          <LogDetail {...logDetailProps} />
+        </Suspense>
       </div>
     );
   }

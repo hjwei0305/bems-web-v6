@@ -27,7 +27,6 @@ class Filter extends PureComponent {
     onFilterSubmit: PropTypes.func,
     onCloseFilter: PropTypes.func,
     onResetFilter: PropTypes.func,
-    showLog: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -118,7 +117,7 @@ class Filter extends PureComponent {
   }
 
   render() {
-    const { showFilter, showLog } = this.props;
+    const { showFilter } = this.props;
     return (
       <Drawer
         width={350}
@@ -129,7 +128,7 @@ class Filter extends PureComponent {
         title={formatMessage({ id: 'global.filter', defaultMessage: '过滤' })}
         className={cls(styles['filter-box'])}
         onClose={this.handlerClose}
-        style={{ position: 'absolute', right: showLog ? 8 : 0 }}
+        style={{ position: 'absolute', right: 0 }}
       >
         <ScrollBar>
           <div className={cls('content')}>
