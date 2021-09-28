@@ -135,17 +135,29 @@ class RequestHead extends PureComponent {
       field: ['subjectId', 'currencyCode', 'currencyName'],
       store: {
         url: `${SERVER_PATH}/bems-v6/subject/getUserAuthorizedEntities`,
+        autoLoad: !orderId,
       },
-      afterSelect: item => {
+      afterSelect: () => {
         form.setFieldsValue({
           categoryId: '',
           categoryName: '',
           orderCategory: '',
           periodType: '',
-          applyOrgId: item.orgId,
-          applyOrgCode: item.orgCode,
-          applyOrgName: item.orgName,
         });
+      },
+      afterLoaded: data => {
+        const [defaultSubject] = data;
+        if (defaultSubject) {
+          form.setFieldsValue({
+            subjectId: defaultSubject.id,
+            currencyCode: defaultSubject.currencyCode,
+            currencyName: defaultSubject.currencyName,
+            subjectName: defaultSubject.name,
+            applyOrgId: defaultSubject.orgId,
+            applyOrgCode: defaultSubject.orgCode,
+            applyOrgName: defaultSubject.orgName,
+          });
+        }
       },
       reader: {
         name: 'name',
