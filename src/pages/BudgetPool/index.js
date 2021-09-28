@@ -1,5 +1,6 @@
 import React, { Component, Suspense } from 'react';
 import { connect } from 'dva';
+import { Decimal } from 'decimal.js';
 import { get, isEmpty, isNumber, isEqual } from 'lodash';
 import cls from 'classnames';
 import { FormattedMessage } from 'umi-plugin-react/locale';
@@ -358,7 +359,7 @@ class BudgetPool extends Component {
           <Divider type="vertical" />
           <FilterView
             title="期间类型"
-            iconType={false}
+            iconType=""
             style={{ marginRight: 16, minWidth: 140 }}
             currentViewType={selectPeriodType}
             viewTypeData={periodTypeData}
@@ -515,7 +516,8 @@ class BudgetPool extends Component {
     const { totalAmount, usedAmount, balance, currencyCode } = item;
     let percent = 0;
     if (totalAmount > 0) {
-      percent = ((usedAmount / totalAmount) * 100).toFixed(0);
+      const rate = new Decimal(usedAmount).div(new Decimal(totalAmount));
+      percent = new Decimal(rate).mul(new Decimal(100)).toNumber();
     }
     let status = 'active';
     if (percent >= 80) {
