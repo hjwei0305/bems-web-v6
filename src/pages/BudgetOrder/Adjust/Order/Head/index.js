@@ -121,7 +121,7 @@ class RequestHead extends PureComponent {
   };
 
   render() {
-    const { form, headData, tempDisabled } = this.props;
+    const { form, headData, tempDisabled, action } = this.props;
     const { globalDisabled } = this.state;
     const { getFieldDecorator } = form;
     const disabled = tempDisabled || globalDisabled;
@@ -135,7 +135,7 @@ class RequestHead extends PureComponent {
       field: ['subjectId', 'currencyCode', 'currencyName'],
       store: {
         url: `${SERVER_PATH}/bems-v6/subject/getUserAuthorizedEntities`,
-        autoLoad: !orderId,
+        autoLoad: action === REQUEST_ORDER_ACTION.ADD,
       },
       afterSelect: () => {
         form.setFieldsValue({
