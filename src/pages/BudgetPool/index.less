@@ -135,9 +135,6 @@
         .ant-statistic-content-value {
           font-family: verdana;
         }
-        &.red {
-          color: @error-color;
-        }
       }
       .field-item {
         &.disabled {
@@ -173,6 +170,12 @@
   :global {
     .ant-card-body .suid-list-card-body .ant-list-item.selected {
       background-color: fade(@suid-row-select, 45%) !important;
+    }
+    .ant-statistic-content {
+      font-size: 14px;
+      .ant-statistic-content-value-decimal {
+        font-size: 10px;
+      }
     }
   }
 }

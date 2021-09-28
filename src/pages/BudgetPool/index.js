@@ -14,8 +14,10 @@ import {
   Tooltip,
   Progress,
   Divider,
+  Statistic,
+  Badge,
 } from 'antd';
-import { ListCard, ExtIcon, Money, Space, PageLoader } from 'suid';
+import { ListCard, ExtIcon, Space, PageLoader } from 'suid';
 import { PeriodType, FilterView } from '@/components';
 import { constants } from '@/utils';
 import noUse from '@/assets/no_use.svg';
@@ -425,8 +427,6 @@ class BudgetPool extends Component {
   };
 
   renderDescription = item => {
-    const balance = get(item, 'balance');
-    const currency = get(item, 'currencyCode');
     const actived = get(item, 'actived');
     return (
       <>
@@ -436,19 +436,9 @@ class BudgetPool extends Component {
         {this.renderSubField(item)}
         <div className="money-box">
           <div className={cls('field-item', { disabled: !actived })}>
-            <span className="label">预算余额</span>
-            <span>
-              <Money
-                prefix={currency}
-                className={balance < 0 ? 'red' : ''}
-                value={get(item, 'balance')}
-              />
-              <span style={{ marginLeft: 8 }}>
-                {item.strategyName ? <Tag color="purple">{item.strategyName}</Tag> : null}
-                {item.roll ? <Tag color="magenta">可结转</Tag> : null}
-                {item.use ? <Tag color="cyan">业务可用</Tag> : null}
-              </span>
-            </span>
+            {item.strategyName ? <Tag color="purple">{item.strategyName}</Tag> : null}
+            {item.roll ? <Tag color="magenta">可结转</Tag> : null}
+            {item.use ? <Tag color="cyan">业务可用</Tag> : null}
           </div>
         </div>
       </>
@@ -522,7 +512,7 @@ class BudgetPool extends Component {
   };
 
   renderAction = item => {
-    const { totalAmount, usedAmount, balance } = item;
+    const { totalAmount, usedAmount, balance, currencyCode } = item;
     let percent = 0;
     if (totalAmount > 0) {
       percent = ((usedAmount / totalAmount) * 100).toFixed(0);
@@ -533,31 +523,50 @@ class BudgetPool extends Component {
     }
     return (
       <Space direction="vertical" size={0}>
+        <Space split={<Divider type="vertical" />}>
+          <Statistic
+            style={{ minWidth: 140 }}
+            title={
+              <span>
+                <Badge status="success" />
+                预算总额
+              </span>
+            }
+            value={totalAmount}
+            precision={2}
+            prefix={currencyCode}
+          />
+          <Statistic
+            style={{ minWidth: 140 }}
+            title={
+              <>
+                <Badge status="processing" />
+                已使用
+              </>
+            }
+            value={usedAmount}
+            precision={2}
+          />
+          <Statistic
+            style={{ minWidth: 140 }}
+            title={
+              <>
+                <Badge status="warning" />
+                可用余额
+              </>
+            }
+            value={balance}
+            precision={2}
+          />
+        </Space>
         <Progress
-          style={{ width: 420 }}
+          style={{ width: 460 }}
           status={status}
           percent={percent}
-          strokeWidth={16}
+          strokeWidth={14}
           format={p => `${p}%`}
           size="small"
         />
-        <Space split={<Divider type="vertical" />}>
-          <Money
-            style={{ color: '#666', fontStyle: 'normal', fontWeight: 'normal' }}
-            prefix="总额"
-            value={totalAmount}
-          />
-          <Money
-            style={{ color: '#fa8c16', fontStyle: 'normal', fontWeight: 'normal' }}
-            prefix="已使用"
-            value={usedAmount}
-          />
-          <Money
-            style={{ color: '#52c41a', fontStyle: 'normal', fontWeight: 'normal' }}
-            prefix="余额"
-            value={balance}
-          />
-        </Space>
       </Space>
     );
   };
