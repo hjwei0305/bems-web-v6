@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { get } from 'lodash';
 import { connect } from 'dva';
 import cls from 'classnames';
-import { Button } from 'antd';
-import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
+import { Divider } from 'antd';
+import { formatMessage } from 'umi-plugin-react/locale';
 import { ExtTable, ExtIcon } from 'suid';
+import { BudgetYearPicker, MasterView } from '@/components';
 import { constants } from '@/utils';
 import TrendView from './TrendView';
 import styles from './index.less';
@@ -42,9 +44,33 @@ class AnnualAnalysis extends Component {
     });
   };
 
+  handlerMasterSelect = currentMaster => {
+    const { dispatch, annualAnalysis } = this.props;
+    const { filterData: originFilterData } = annualAnalysis;
+    const subjectId = get(currentMaster, 'id');
+    const filterData = { ...originFilterData, subjectId };
+    dispatch({
+      type: 'annualAnalysis/updateState',
+      payload: {
+        filterData,
+        currentMaster,
+      },
+    });
+  };
+
+  handlerBudgetYearChange = year => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'annualAnalysis/updateState',
+      payload: {
+        year,
+      },
+    });
+  };
+
   render() {
     const {
-      annualAnalysis: { showTrend, rowData },
+      annualAnalysis: { showTrend, rowData, year },
     } = this.props;
     const columns = [
       {
@@ -57,7 +83,12 @@ class AnnualAnalysis extends Component {
         required: true,
         render: (t, r) => (
           <span className={cls('action-box')}>
-            <ExtIcon type="line-chart" antd onClick={() => this.handlerShowTrend(r)} />
+            <ExtIcon
+              className="btn-icon"
+              type="line-chart"
+              antd
+              onClick={() => this.handlerShowTrend(r)}
+            />
           </span>
         ),
       },
@@ -94,9 +125,17 @@ class AnnualAnalysis extends Component {
     const toolBarProps = {
       left: (
         <>
-          <Button onClick={this.reloadData}>
-            <FormattedMessage id="global.refresh" defaultMessage="刷新" />
-          </Button>
+          <MasterView onChange={this.handlerMasterSelect} />
+          <Divider type="vertical" />
+          <BudgetYearPicker onYearChange={this.handlerBudgetYearChange} value={year} />
+          <Divider type="vertical" />
+          <ExtIcon
+            className="btn-icon"
+            tooltip={{ title: '刷新' }}
+            type="sync"
+            antd
+            onClick={this.reloadData}
+          />
         </>
       ),
     };

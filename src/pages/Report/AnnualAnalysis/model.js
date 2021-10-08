@@ -8,8 +8,11 @@ export default modelExtend(model, {
   namespace: 'annualAnalysis',
 
   state: {
+    year: new Date().getFullYear(),
+    currentMaster: null,
     rowData: null,
     showTrend: false,
+    filterData: {},
   },
   effects: {
     *save({ payload, callback }, { call }) {
