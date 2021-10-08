@@ -5,14 +5,6 @@ const { request } = utils;
 
 const { SERVER_PATH } = constants;
 
-/** 获取所有的维度 */
-export async function getDimensionAll() {
-  const url = `${SERVER_PATH}/bems-v6/dimension/findAll`;
-  return request({
-    url,
-  });
-}
-
 /**
  * 冻结
  * @ids arrary
@@ -50,5 +42,14 @@ export async function trundle(params) {
     url,
     params,
     data: {},
+  });
+}
+
+/** 根据主体获取维度 */
+export async function getMasterDimension(params) {
+  const url = `${SERVER_PATH}/bems-v6/report/getDimensionsBySubjectId`;
+  return request({
+    url,
+    params,
   });
 }

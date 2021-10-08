@@ -19,7 +19,7 @@ import {
   Badge,
 } from 'antd';
 import { ListCard, ExtIcon, Space, PageLoader } from 'suid';
-import { PeriodType, FilterView } from '@/components';
+import { PeriodType, FilterView, BudgetYearPicker, FilterDimension } from '@/components';
 import { constants } from '@/utils';
 import noUse from '@/assets/no_use.svg';
 import Filter from './components/Filter';
@@ -32,6 +32,10 @@ const { Search } = Input;
 const { Content } = Layout;
 const filterFields = {
   subjectId: { fieldName: 'subjectId', operator: 'EQ', form: false },
+  org: { fieldName: 'org', operator: 'IN', form: false },
+  item: { fieldName: 'item', operator: 'IN', form: false },
+  period: { fieldName: 'period', operator: 'IN', form: false },
+  project: { fieldName: 'project', operator: 'IN', form: false },
   startDate: { fieldName: 'startDate', operator: 'LE', fieldType: 'date', form: true },
   endDate: { fieldName: 'endDate', operator: 'GE', fieldType: 'date', form: true },
 };
@@ -100,14 +104,22 @@ class BudgetPool extends Component {
     }
   };
 
-  handlerMasterSelect = master => {
+  handlerMasterSelect = currentMaster => {
     const { dispatch, budgetPool } = this.props;
     const { filterData: originFilterData } = budgetPool;
-    const filterData = { ...originFilterData, subjectId: get(master, 'id') };
+    const subjectId = get(currentMaster, 'id');
+    const filterData = { ...originFilterData, subjectId };
+    dispatch({
+      type: 'budgetPool/getMasterDimension',
+      payload: {
+        subjectId,
+      },
+    });
     dispatch({
       type: 'budgetPool/updateState',
       payload: {
         filterData,
+        currentMaster,
       },
     });
   };
@@ -137,6 +149,22 @@ class BudgetPool extends Component {
       type: 'budgetPool/updateState',
       payload: {
         filterData: { subjectId },
+      },
+    });
+  };
+
+  handlerSubmitDimension = dimension => {
+    const {
+      dispatch,
+      budgetPool: { filterData },
+    } = this.props;
+    dispatch({
+      type: 'budgetPool/updateState',
+      payload: {
+        filterData: {
+          ...filterData,
+          ...dimension,
+        },
       },
     });
   };
@@ -307,11 +335,21 @@ class BudgetPool extends Component {
     });
   };
 
+  handlerBudgetYearChange = year => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'budgetPool/updateState',
+      payload: {
+        year,
+      },
+    });
+  };
+
   getFilters = () => {
     const { budgetPool } = this.props;
-    const { filterData, selectPeriodType } = budgetPool;
+    const { filterData, selectPeriodType, year } = budgetPool;
     let hasFilter = false;
-    const filters = [];
+    const filters = [{ fieldName: 'year', operator: 'EQ', value: year }];
     if (selectPeriodType.key !== PERIOD_TYPE.ALL.key) {
       filters.push({ fieldName: 'periodType', operator: 'EQ', value: selectPeriodType.key });
     }
@@ -351,16 +389,17 @@ class BudgetPool extends Component {
   renderCustomTool = (total, hasFilter) => {
     this.total = total;
     const { budgetPool } = this.props;
-    const { selectPeriodType, periodTypeData } = budgetPool;
+    const { selectPeriodType, periodTypeData, year, currentMaster, masterDimension } = budgetPool;
     return (
       <>
         <div>
           <MasterView onChange={this.handlerMasterSelect} />
           <Divider type="vertical" />
+          <BudgetYearPicker onYearChange={this.handlerBudgetYearChange} value={year} />
+          <Divider type="vertical" />
           <FilterView
             title="期间类型"
             iconType=""
-            style={{ marginRight: 16, minWidth: 140 }}
             currentViewType={selectPeriodType}
             viewTypeData={periodTypeData}
             onAction={this.handlerPeriodTypeChange}
@@ -368,6 +407,14 @@ class BudgetPool extends Component {
               title: 'title',
               value: 'key',
             }}
+          />
+          <Divider type="vertical" />
+          <FilterDimension
+            submitDimension={this.handlerSubmitDimension}
+            dimensions={masterDimension}
+            subjectId={get(currentMaster, 'id')}
+            year={year}
+            periodType={selectPeriodType}
           />
         </div>
         <Space>
@@ -590,8 +637,21 @@ class BudgetPool extends Component {
 
   render() {
     const { budgetPool } = this.props;
-    const { showFilter, filterData, recordItem, showLog } = budgetPool;
+    const {
+      showFilter,
+      filterData,
+      recordItem,
+      showLog,
+      currentMaster,
+      masterDimension,
+      year,
+      selectPeriodType,
+    } = budgetPool;
     const filterProps = {
+      year,
+      selectPeriodType,
+      currentMaster,
+      masterDimension,
       showFilter,
       filterData,
       onFilterSubmit: this.handlerFilterSubmit,

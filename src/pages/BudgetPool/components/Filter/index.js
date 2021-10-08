@@ -120,7 +120,7 @@ class Filter extends PureComponent {
     const { showFilter } = this.props;
     return (
       <Drawer
-        width={350}
+        width={380}
         getContainer={false}
         placement="right"
         visible={showFilter}

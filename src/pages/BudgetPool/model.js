@@ -1,8 +1,8 @@
 import { utils, message } from 'suid';
 import { constants } from '@/utils';
-import { getDimensionAll, poolItemDisable, poolItemEnable, trundle } from './service';
+import { poolItemDisable, poolItemEnable, trundle, getMasterDimension } from './service';
 
-const { dvaModel, pathMatchRegexp } = utils;
+const { dvaModel } = utils;
 const { modelExtend, model } = dvaModel;
 const { PERIOD_TYPE } = constants;
 const setSubDimensionFields = dimensionsData => {
@@ -26,6 +26,8 @@ export default modelExtend(model, {
   namespace: 'budgetPool',
 
   state: {
+    year: new Date().getFullYear(),
+    currentMaster: null,
     recordItem: null,
     subDimensionFields: [],
     showFilter: false,
@@ -33,27 +35,19 @@ export default modelExtend(model, {
     showLog: false,
     selectPeriodType: defaultPeriodType,
     periodTypeData: PERIOD_TYPE_DATA,
-  },
-  subscriptions: {
-    setup({ dispatch, history }) {
-      history.listen(location => {
-        if (pathMatchRegexp('/budgetPool/poollist', location.pathname)) {
-          dispatch({
-            type: 'getDimensionAll',
-          });
-        }
-      });
-    },
+    masterDimension: [],
   },
   effects: {
-    *getDimensionAll(_, { call, put }) {
-      const re = yield call(getDimensionAll);
+    *getMasterDimension({ payload }, { call, put }) {
+      const re = yield call(getMasterDimension, payload);
       message.destroy();
       if (re.success) {
-        const subDimensionFields = setSubDimensionFields(re.data);
+        const masterDimension = re.data;
+        const subDimensionFields = setSubDimensionFields(masterDimension);
         yield put({
           type: 'updateState',
           payload: {
+            masterDimension,
             subDimensionFields,
           },
         });

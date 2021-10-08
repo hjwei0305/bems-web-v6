@@ -1,0 +1,52 @@
+@import '../../themes/vars.less';
+.budget-dimension-box {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  :global {
+    .dimension-box {
+      width: 800px;
+      min-height: 400px;
+      background-color: @white;
+      .dimension-body {
+        height: calc(100% - 60px);
+        .ant-tabs-tab {
+          min-width: 140px;
+        }
+      }
+      .footer-box {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        height: 60px;
+        padding: 0 24px;
+        line-height: 60px;
+        border-top: 1px solid #eee;
+      }
+      .ant-tabs-left,
+      .ant-tabs-tabpane-active,
+      .ant-tabs-left-content {
+        height: 100%;
+      }
+      .ant-tabs-tabpane-inactive {
+        height: 0;
+      }
+      .ant-tabs-left-content {
+        padding-left: 0;
+      }
+    }
+  }
+}
+
+.dimension-trigger {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  :global {
+    .view-label {
+      margin-right: 4px;
+    }
+    .view-content {
+      color: fade(@black, 85%);
+      font-weight: 700;
+    }
+  }
+}

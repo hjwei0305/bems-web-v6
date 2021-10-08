@@ -21,6 +21,7 @@ class Organization extends PureComponent {
   static propTypes = {
     subjectId: PropTypes.string,
     onSelectChange: PropTypes.func,
+    orgRef: PropTypes.object,
   };
 
   constructor(props) {
@@ -35,6 +36,8 @@ class Organization extends PureComponent {
   }
 
   componentDidMount() {
+    const { orgRef } = this.props;
+    orgRef.current = this;
     this.getTreeData();
   }
 
@@ -44,6 +47,14 @@ class Organization extends PureComponent {
       this.getTreeData();
     }
   }
+
+  clearData = () => {
+    const { onSelectChange } = this.props;
+    if (onSelectChange && onSelectChange instanceof Function) {
+      onSelectChange([]);
+    }
+    this.setState({ checkedKeys: [] });
+  };
 
   getTreeData = () => {
     const { subjectId } = this.props;
