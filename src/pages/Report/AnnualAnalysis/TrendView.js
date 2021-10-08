@@ -42,7 +42,7 @@ const TrendView = props => {
             data: [820, 932, 901, 934, 1290, 1330, 1320],
             type: 'line',
             lineStyle: {
-              width: 0,
+              width: 1,
             },
             areaStyle: {
               opacity: 0.8,
