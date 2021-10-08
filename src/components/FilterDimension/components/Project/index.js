@@ -40,6 +40,7 @@ const Project = props => {
 
   const handlerSearchChange = useCallback(v => {
     searchValue = trim(v);
+    listRef.props.cascadeParams.searchValue = trim(v);
   }, []);
 
   const handlerPressEnter = () => {
@@ -48,10 +49,8 @@ const Project = props => {
 
   const handlerSearch = useCallback(v => {
     searchValue = trim(v);
-    setTimeout(() => {
-      console.log(searchValue);
-      listRef.remoteDataRefresh();
-    }, 200);
+    listRef.props.cascadeParams.searchValue = trim(v);
+    listRef.remoteDataRefresh();
   }, []);
 
   const renderCustomTool = useCallback(
@@ -75,7 +74,7 @@ const Project = props => {
       title: '项目',
       showSearch: false,
       showArrow: false,
-      checkbox: true,
+      checkbox: false,
       remotePaging: false,
       rowKey: 'code',
       onListCardRef: ref => (listRef = ref),

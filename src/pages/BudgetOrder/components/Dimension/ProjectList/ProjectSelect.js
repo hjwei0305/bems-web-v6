@@ -45,7 +45,7 @@ class ProjectSelect extends Component {
   };
 
   handlerSearchChange = v => {
-    this.searchValue = trim(v);
+    this.listCardRef.props.cascadeParams.searchValue = trim(v);
   };
 
   handlerPressEnter = () => {
@@ -53,7 +53,7 @@ class ProjectSelect extends Component {
   };
 
   handlerSearch = v => {
-    this.searchValue = trim(v);
+    this.listCardRef.props.cascadeParams.searchValue = trim(v);
     this.reloadData();
   };
 
@@ -61,6 +61,7 @@ class ProjectSelect extends Component {
     return (
       <>
         <Search
+          allowClear
           placeholder="输入代码、名称关键字查询"
           onChange={e => this.handlerSearchChange(e.target.value)}
           onSearch={this.handlerSearch}
