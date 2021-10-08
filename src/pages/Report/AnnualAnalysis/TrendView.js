@@ -19,7 +19,6 @@ const TrendView = props => {
   const chartProps = useMemo(() => {
     const extChartProps = {
       option: {
-        color: ['#80FFA5', '#00DDFF', '#37A2FF', '#FF0087', '#FFBF00'],
         tooltip: {
           trigger: 'axis',
           axisPointer: {
