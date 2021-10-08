@@ -92,6 +92,11 @@ export default [
         name: '预算池',
         routes: [{ path: '/budgetPool/poollist', component: './BudgetPool' }],
       },
+      {
+        path: '/report',
+        name: '预算执行报表',
+        routes: [{ path: '/report/annualAnalysis', component: './Report/AnnualAnalysis' }],
+      },
     ],
   },
 ];

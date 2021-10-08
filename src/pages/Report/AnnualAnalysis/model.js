@@ -9,6 +9,7 @@ export default modelExtend(model, {
 
   state: {
     rowData: null,
+    showTrend: false,
   },
   effects: {
     *save({ payload, callback }, { call }) {

@@ -5,6 +5,7 @@ import { Button } from 'antd';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
 import { ExtTable, ExtIcon } from 'suid';
 import { constants } from '@/utils';
+import TrendView from './TrendView';
 import styles from './index.less';
 
 const { SERVER_PATH } = constants;
@@ -19,7 +20,32 @@ class AnnualAnalysis extends Component {
     }
   };
 
+  handlerShowTrend = rowData => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'annualAnalysis/updateState',
+      payload: {
+        rowData,
+        showTrend: true,
+      },
+    });
+  };
+
+  handlerCloseTrendView = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'annualAnalysis/updateState',
+      payload: {
+        rowData: false,
+        showTrend: false,
+      },
+    });
+  };
+
   render() {
+    const {
+      annualAnalysis: { showTrend, rowData },
+    } = this.props;
     const columns = [
       {
         title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
@@ -29,37 +55,37 @@ class AnnualAnalysis extends Component {
         dataIndex: 'id',
         className: 'action',
         required: true,
-        render: () => (
+        render: (t, r) => (
           <span className={cls('action-box')}>
-            <ExtIcon className="edit" type="edit" antd />
+            <ExtIcon type="fund" antd onClick={() => this.handlerShowTrend(r)} />
           </span>
         ),
       },
       {
-        title: '事件代码',
-        dataIndex: 'code',
+        title: '费用科目',
+        dataIndex: 'item',
         width: 220,
         required: true,
       },
       {
-        title: '事件名称',
+        title: '预算总额',
         dataIndex: 'name',
         width: 280,
         required: true,
       },
       {
-        title: '业务来源',
+        title: '已使用',
         dataIndex: 'bizFrom',
         width: 180,
         required: true,
       },
       {
-        title: '标签名',
+        title: '余额',
         dataIndex: 'label',
         width: 320,
       },
       {
-        title: '序号',
+        title: '比例',
         dataIndex: 'rank',
         width: 80,
         required: true,
@@ -77,22 +103,24 @@ class AnnualAnalysis extends Component {
     const tableProps = {
       toolBar: toolBarProps,
       columns,
-      searchWidth: 320,
       lineNumber: false,
       allowCustomColumns: false,
-      searchPlaceHolder: '事件代码、名称、业务来源和标签名关键字',
-      searchProperties: ['code', 'name', 'bizFrom', 'label'],
+      showSearch: false,
       onTableRef: ref => (this.tablRef = ref),
       store: {
         url: `${SERVER_PATH}/bems-v6/event/findAll`,
       },
-      sort: {
-        field: { rank: 'asc', code: null, name: null },
-      },
+    };
+    const trendViewProps = {
+      onClose: this.handlerCloseTrendView,
+      showTrend,
+      rowData,
+      year: '2021',
     };
     return (
       <div className={cls(styles['container-box'])}>
         <ExtTable {...tableProps} />
+        <TrendView {...trendViewProps} />
       </div>
     );
   }

@@ -1,0 +1,31 @@
+@import '../../../themes/vars.less';
+.trend-box {
+  padding: 0;
+  overflow: hidden;
+  :global {
+    .ant-drawer-header {
+      display: flex;
+      align-items: center;
+      height: 56px;
+      padding: 0;
+      border-color: transparent;
+      .trigger-back {
+        position: relative;
+        width: 56px;
+        height: 56px;
+        font-weight: normal;
+        line-height: 58px;
+        cursor: pointer;
+        transition: all ease-in 0.2s;
+        &:hover {
+          color: @primary-color;
+          background-color: fade(@black, 2%);
+        }
+      }
+    }
+    .ant-drawer-body {
+      height: calc(100% - 55px);
+      padding: 0;
+    }
+  }
+}
