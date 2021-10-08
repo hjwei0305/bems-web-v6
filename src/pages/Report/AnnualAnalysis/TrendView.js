@@ -55,11 +55,11 @@ const TrendView = props => {
                 colorStops: [
                   {
                     offset: 0,
-                    color: 'rgba(128, 255, 165)', // 0% 处的颜色
+                    color: 'rgba(255, 191, 0)', // 0% 处的颜色
                   },
                   {
                     offset: 1,
-                    color: 'rgba(1, 191, 236)', // 100% 处的颜色
+                    color: 'rgba(224, 62, 76)', // 100% 处的颜色
                   },
                 ],
                 globalCoord: false, // 缺省为 false
