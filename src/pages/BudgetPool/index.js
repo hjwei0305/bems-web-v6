@@ -19,11 +19,16 @@ import {
   Badge,
 } from 'antd';
 import { ListCard, ExtIcon, Space, PageLoader } from 'suid';
-import { PeriodType, FilterView, BudgetYearPicker, FilterDimension } from '@/components';
+import {
+  PeriodType,
+  FilterView,
+  BudgetYearPicker,
+  FilterDimension,
+  MasterView,
+} from '@/components';
 import { constants } from '@/utils';
 import noUse from '@/assets/no_use.svg';
 import Filter from './components/Filter';
-import MasterView from './components/MasterView';
 import styles from './index.less';
 
 const LogDetail = React.lazy(() => import('./LogDetail'));

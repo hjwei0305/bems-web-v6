@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useImperativeHandle } from 'react';
 import { trim } from 'lodash';
-import { Card, Input } from 'antd';
-import { ListCard } from 'suid';
+import { Card, Input, Avatar } from 'antd';
+import { ListCard, ExtIcon } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
@@ -69,6 +69,27 @@ const Project = props => {
     [handlerSearch, handlerSearchChange],
   );
 
+  const renderAvatar = useCallback(({ keyValue, checkedList }) => {
+    if (checkedList[keyValue]) {
+      return (
+        <Avatar
+          shape="square"
+          style={{ backgroundColor: 'transparent' }}
+          size={24}
+          icon={<ExtIcon type="check-square" antd className="check-item checked" />}
+        />
+      );
+    }
+    return (
+      <Avatar
+        shape="square"
+        style={{ backgroundColor: 'transparent' }}
+        size={24}
+        icon={<ExtIcon type="check-square" antd className="check-item" />}
+      />
+    );
+  }, []);
+
   const renderList = useMemo(() => {
     const listProps = {
       title: '项目',
@@ -76,10 +97,12 @@ const Project = props => {
       showArrow: false,
       checkbox: false,
       remotePaging: false,
+      allowCancelSelect: true,
       rowKey: 'code',
       onListCardRef: ref => (listRef = ref),
       customTool: renderCustomTool,
       itemField: {
+        avatar: renderAvatar,
         title: renderItemTitle,
         description: item => item.code,
       },
@@ -94,7 +117,7 @@ const Project = props => {
       onSelectChange: handlerSelectChange,
     };
     return <ListCard {...listProps} />;
-  }, [handlerSelectChange, renderCustomTool, renderItemTitle, subjectId]);
+  }, [handlerSelectChange, renderAvatar, renderCustomTool, renderItemTitle, subjectId]);
 
   return (
     <Card

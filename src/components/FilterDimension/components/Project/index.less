@@ -4,14 +4,11 @@
   position: relative;
   height: 100%;
   :global {
-    .item-box {
-      &.btn-box {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-color: #eee;
-        border-style: solid;
-        border-width: 0 1px;
+    .check-item {
+      color: fade(@black, 20%);
+      font-size: 24px;
+      &.checked {
+        color: @primary-color;
       }
     }
     .ant-card-body {
