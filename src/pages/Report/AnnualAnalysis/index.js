@@ -57,7 +57,7 @@ class AnnualAnalysis extends Component {
         required: true,
         render: (t, r) => (
           <span className={cls('action-box')}>
-            <ExtIcon type="fund" antd onClick={() => this.handlerShowTrend(r)} />
+            <ExtIcon type="line-chart" antd onClick={() => this.handlerShowTrend(r)} />
           </span>
         ),
       },
