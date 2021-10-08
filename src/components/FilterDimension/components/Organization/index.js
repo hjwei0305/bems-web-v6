@@ -149,7 +149,7 @@ class Organization extends PureComponent {
       };
     });
     if (onSelectChange && onSelectChange instanceof Function) {
-      onSelectChange(checkedData);
+      onSelectChange(checkedData.map(it => it.value));
     }
   };
 
