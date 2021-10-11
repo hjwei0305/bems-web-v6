@@ -11,7 +11,7 @@ const TrendView = props => {
     return (
       <>
         <ExtIcon className="trigger-back" type="left" antd onClick={onClose} />
-        <BannerTitle title={`${year}-${get(rowData, 'name')}`} subTitle="使用趋势图" />
+        <BannerTitle title={`${year}年度-${get(rowData, 'itemName')}`} subTitle="使用趋势图" />
       </>
     );
   }, [onClose, rowData, year]);

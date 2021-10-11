@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { get } from 'lodash';
 import { connect } from 'dva';
+import { Decimal } from 'decimal.js';
 import cls from 'classnames';
-import { Divider } from 'antd';
+import { Divider, Progress } from 'antd';
 import { formatMessage } from 'umi-plugin-react/locale';
-import { ExtTable, ExtIcon } from 'suid';
+import { ExtTable, ExtIcon, Money } from 'suid';
 import { BudgetYearPicker, MasterView } from '@/components';
 import { constants } from '@/utils';
 import TrendView from './TrendView';
@@ -70,8 +71,9 @@ class AnnualAnalysis extends Component {
 
   render() {
     const {
-      annualAnalysis: { showTrend, rowData, year },
+      annualAnalysis: { showTrend, rowData, year, currentMaster },
     } = this.props;
+    const subjectId = get(currentMaster, 'id');
     const columns = [
       {
         title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
@@ -94,32 +96,53 @@ class AnnualAnalysis extends Component {
       },
       {
         title: '费用科目',
-        dataIndex: 'item',
-        width: 220,
+        dataIndex: 'itemName',
+        width: 260,
         required: true,
       },
       {
         title: '预算总额',
-        dataIndex: 'name',
-        width: 280,
+        dataIndex: 'injectAmount',
+        width: 180,
         required: true,
+        align: 'right',
+        render: t => <Money value={t} />,
       },
       {
         title: '已使用',
-        dataIndex: 'bizFrom',
+        dataIndex: 'usedAmount',
         width: 180,
         required: true,
+        align: 'right',
+        render: t => <Money value={t} />,
       },
       {
-        title: '余额',
-        dataIndex: 'label',
-        width: 320,
-      },
-      {
-        title: '比例',
-        dataIndex: 'rank',
-        width: 80,
+        title: '使用比例',
+        dataIndex: 'rate',
+        width: 180,
         required: true,
+        align: 'center',
+        render: (t, r) => {
+          let percent = 0;
+          if (r.injectAmount > 0) {
+            const rate = new Decimal(r.usedAmount).div(new Decimal(r.injectAmount));
+            percent = new Decimal(rate).mul(new Decimal(100)).toNumber();
+          }
+          let status = 'active';
+          if (percent >= 80) {
+            status = 'exception';
+          }
+          return (
+            <Progress
+              style={{ width: 160 }}
+              status={status}
+              percent={percent}
+              strokeWidth={14}
+              format={p => `${p}%`}
+              size="small"
+            />
+          );
+        },
       },
     ];
     const toolBarProps = {
@@ -145,11 +168,21 @@ class AnnualAnalysis extends Component {
       lineNumber: false,
       allowCustomColumns: false,
       showSearch: false,
+      rowKey: 'item',
       onTableRef: ref => (this.tablRef = ref),
       store: {
-        url: `${SERVER_PATH}/bems-v6/event/findAll`,
+        type: 'POST',
+        url: `${SERVER_PATH}/bems-v6/report/annualBudgetAnalysis`,
       },
     };
+    if (subjectId && year) {
+      Object.assign(tableProps, {
+        cascadeParams: {
+          subjectId,
+          year,
+        },
+      });
+    }
     const trendViewProps = {
       onClose: this.handlerCloseTrendView,
       showTrend,
