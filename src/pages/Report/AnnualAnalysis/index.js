@@ -137,12 +137,13 @@ class AnnualAnalysis extends Component {
       {
         title: '使用比例',
         dataIndex: 'rate',
-        width: 180,
+        width: 220,
         required: true,
         align: 'center',
         render: (t, r) => {
           let percent = 0;
           if (r.injectAmount > 0) {
+            Decimal.set({ precision: 2 });
             const rate = new Decimal(r.usedAmount).div(new Decimal(r.injectAmount));
             percent = new Decimal(rate).mul(new Decimal(100)).toNumber();
           }

@@ -105,9 +105,7 @@ const TrendView = props => {
             },
           },
         },
-        legend: {
-          data: Object.keys(trendYear).map(y => `${y}年`),
-        },
+        legend: {},
         xAxis: {
           type: 'category',
           boundaryGap: false,
@@ -115,6 +113,7 @@ const TrendView = props => {
         },
         yAxis: {
           type: 'value',
+          axisLabel: '元',
         },
         series: seriesData,
       },
