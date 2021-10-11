@@ -64,25 +64,7 @@ const TrendView = props => {
           width: 1,
         },
         areaStyle: {
-          opacity: 0.8,
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [
-              {
-                offset: 0,
-                color: 'rgba(255, 191, 0)', // 0% 处的颜色
-              },
-              {
-                offset: 1,
-                color: 'rgba(224, 62, 76)', // 100% 处的颜色
-              },
-            ],
-            globalCoord: false, // 缺省为 false
-          },
+          opacity: 0.6,
         },
         emphasis: {
           focus: 'series',
@@ -95,7 +77,7 @@ const TrendView = props => {
   const chartProps = useMemo(() => {
     const extChartProps = {
       option: {
-        color: ['#cf720d', '#00DDFF', '#37A2FF', '#FF0087', '#FFBF00'],
+        // color: ['#cf720d', '#00DDFF', '#37A2FF', '#FF0087', '#FFBF00'],
         tooltip: {
           trigger: 'axis',
           axisPointer: {
