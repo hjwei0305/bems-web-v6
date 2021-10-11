@@ -1,9 +1,8 @@
 import React, { Component, Suspense } from 'react';
 import { connect } from 'dva';
 import { Decimal } from 'decimal.js';
-import { get, isEmpty, isNumber, isEqual } from 'lodash';
+import { get, isEmpty, isNumber } from 'lodash';
 import cls from 'classnames';
-import { FormattedMessage } from 'umi-plugin-react/locale';
 import {
   Input,
   Descriptions,
@@ -18,7 +17,7 @@ import {
   Statistic,
   Badge,
 } from 'antd';
-import { ListCard, ExtIcon, Space, PageLoader } from 'suid';
+import { ListCard, Space, PageLoader } from 'suid';
 import {
   PeriodType,
   FilterView,
@@ -28,7 +27,6 @@ import {
 } from '@/components';
 import { constants } from '@/utils';
 import noUse from '@/assets/no_use.svg';
-import Filter from './components/Filter';
 import styles from './index.less';
 
 const LogDetail = React.lazy(() => import('./LogDetail'));
@@ -125,35 +123,6 @@ class BudgetPool extends Component {
       payload: {
         filterData,
         currentMaster,
-      },
-    });
-  };
-
-  handlerFilterSubmit = filterData => {
-    const { dispatch, budgetPool } = this.props;
-    const { filterData: originFilterData } = budgetPool;
-    if (isEqual(filterData, originFilterData)) {
-      this.reloadData();
-    }
-    dispatch({
-      type: 'budgetPool/updateState',
-      payload: {
-        showFilter: false,
-        filterData,
-      },
-    });
-  };
-
-  clearFilter = e => {
-    e.stopPropagation();
-    const { dispatch, budgetPool } = this.props;
-    const {
-      filterData: { subjectId },
-    } = budgetPool;
-    dispatch({
-      type: 'budgetPool/updateState',
-      payload: {
-        filterData: { subjectId },
       },
     });
   };
@@ -391,7 +360,7 @@ class BudgetPool extends Component {
     this.listCardRef.handlerSearch(v);
   };
 
-  renderCustomTool = (total, hasFilter) => {
+  renderCustomTool = total => {
     this.total = total;
     const { budgetPool } = this.props;
     const { selectPeriodType, periodTypeData, year, currentMaster, masterDimension } = budgetPool;
@@ -431,25 +400,6 @@ class BudgetPool extends Component {
             onPressEnter={this.handlerPressEnter}
             style={{ width: 260 }}
           />
-          <span
-            className={cls('filter-btn', { 'has-filter': hasFilter })}
-            onClick={this.handlerShowFilter}
-          >
-            <ExtIcon type="filter" style={{ fontSize: 16 }} />
-            <span className="lable">
-              <FormattedMessage id="global.filter" defaultMessage="过滤" />
-            </span>
-            {hasFilter ? (
-              <ExtIcon
-                type="close"
-                className="btn-clear"
-                antd
-                onClick={e => this.clearFilter(e)}
-                tooltip={{ title: '清除过滤条件', placement: 'bottomRight' }}
-                style={{ fontSize: 14 }}
-              />
-            ) : null}
-          </span>
         </Space>
       </>
     );
@@ -642,27 +592,8 @@ class BudgetPool extends Component {
 
   render() {
     const { budgetPool } = this.props;
-    const {
-      showFilter,
-      filterData,
-      recordItem,
-      showLog,
-      currentMaster,
-      masterDimension,
-      year,
-      selectPeriodType,
-    } = budgetPool;
-    const filterProps = {
-      year,
-      selectPeriodType,
-      currentMaster,
-      masterDimension,
-      showFilter,
-      filterData,
-      onFilterSubmit: this.handlerFilterSubmit,
-      onCloseFilter: this.handlerCloseFilter,
-    };
-    const { filters, hasFilter } = this.getFilters();
+    const { filterData, recordItem, showLog } = budgetPool;
+    const { filters } = this.getFilters();
     const listProps = {
       simplePagination: false,
       showArrow: false,
@@ -674,7 +605,7 @@ class BudgetPool extends Component {
       },
       className: styles['pool-item-box'],
       onListCardRef: ref => (this.listCardRef = ref),
-      customTool: ({ total }) => this.renderCustomTool(total, hasFilter),
+      customTool: ({ total }) => this.renderCustomTool(total),
       onSelectChange: this.handlerSelectPool,
       searchProperties: [
         'code',
@@ -726,7 +657,6 @@ class BudgetPool extends Component {
         <Layout className="auto-height">
           <Content className={cls('main-content', 'auto-height')}>
             <ListCard {...listProps} />
-            <Filter {...filterProps} />
             <span className="page-summary">{`共 ${this.total} 项`}</span>
           </Content>
         </Layout>
