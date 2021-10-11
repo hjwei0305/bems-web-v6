@@ -9,6 +9,7 @@ import { ExtTable, ExtIcon, Money } from 'suid';
 import { BudgetYearPicker, MasterView } from '@/components';
 import { constants } from '@/utils';
 import TrendView from './TrendView';
+import ItemView from './ItemView';
 import styles from './index.less';
 
 const { SERVER_PATH } = constants;
@@ -46,14 +47,10 @@ class AnnualAnalysis extends Component {
   };
 
   handlerMasterSelect = currentMaster => {
-    const { dispatch, annualAnalysis } = this.props;
-    const { filterData: originFilterData } = annualAnalysis;
-    const subjectId = get(currentMaster, 'id');
-    const filterData = { ...originFilterData, subjectId };
+    const { dispatch } = this.props;
     dispatch({
       type: 'annualAnalysis/updateState',
       payload: {
-        filterData,
         currentMaster,
       },
     });
@@ -69,9 +66,30 @@ class AnnualAnalysis extends Component {
     });
   };
 
+  handlerItemChange = keys => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'annualAnalysis/updateState',
+      payload: {
+        itemCodes: keys,
+      },
+    });
+  };
+
+  itemViewProps = () => {
+    const {
+      annualAnalysis: { currentMaster },
+    } = this.props;
+    const itProps = {
+      onChange: this.handlerItemChange,
+      subjectId: get(currentMaster, 'id'),
+    };
+    return itProps;
+  };
+
   render() {
     const {
-      annualAnalysis: { showTrend, rowData, year, currentMaster },
+      annualAnalysis: { showTrend, rowData, year, currentMaster, itemCodes },
     } = this.props;
     const subjectId = get(currentMaster, 'id');
     const columns = [
@@ -152,6 +170,8 @@ class AnnualAnalysis extends Component {
           <Divider type="vertical" />
           <BudgetYearPicker onYearChange={this.handlerBudgetYearChange} value={year} />
           <Divider type="vertical" />
+          <ItemView {...this.itemViewProps()} />
+          <Divider type="vertical" />
           <ExtIcon
             className="btn-icon"
             tooltip={{ title: '刷新' }}
@@ -180,6 +200,7 @@ class AnnualAnalysis extends Component {
         cascadeParams: {
           subjectId,
           year,
+          itemCodes,
         },
       });
     }

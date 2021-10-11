@@ -1,0 +1,21 @@
+@import '../../../../../themes/vars.less';
+
+.dimension-item {
+  position: relative;
+  height: 100%;
+  :global {
+    .item-box {
+      &.btn-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-color: #eee;
+        border-style: solid;
+        border-width: 0 1px;
+      }
+    }
+    .ant-card-body {
+      padding: 0;
+    }
+  }
+}

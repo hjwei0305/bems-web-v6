@@ -12,7 +12,7 @@ export default modelExtend(model, {
     currentMaster: null,
     rowData: null,
     showTrend: false,
-    filterData: {},
+    itemCodes: [],
   },
   effects: {
     *save({ payload, callback }, { call }) {

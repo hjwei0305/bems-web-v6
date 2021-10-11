@@ -1,11 +1,49 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { get } from 'lodash';
 import { Drawer } from 'antd';
-import { ExtEcharts, BannerTitle, ExtIcon } from 'suid';
+import { ExtEcharts, BannerTitle, ExtIcon, utils, ListLoader } from 'suid';
+import { constants } from '@/utils';
 import styles from './TrendView.less';
 
+const { request } = utils;
+const { SERVER_PATH } = constants;
+const getMonthData = () => {
+  const y = [];
+  for (let i = 1; i < 13; i += 1) {
+    y.push(`${i}月`);
+  }
+  return y;
+};
 const TrendView = props => {
   const { onClose, showTrend, year, rowData } = props;
+  const [loading, setLoading] = useState(false);
+  const [trendYear, setTrendYear] = useState([]);
+
+  const getTrendData = useCallback(() => {
+    const subjectId = get(rowData, 'subjectId');
+    const item = get(rowData, 'item');
+    const url = `${SERVER_PATH}/bems-v6/report/annualUsageTrend/${subjectId}/${item}`;
+    setLoading(true);
+    request({
+      method: 'POST',
+      url,
+      data: [year],
+    })
+      .then(res => {
+        if (res.success) {
+          setTrendYear(res.data);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [rowData, year]);
+
+  useEffect(() => {
+    if (showTrend) {
+      getTrendData();
+    }
+  }, [getTrendData, showTrend]);
 
   const title = useMemo(() => {
     return (
@@ -15,6 +53,44 @@ const TrendView = props => {
       </>
     );
   }, [onClose, rowData, year]);
+
+  const seriesData = useMemo(() => {
+    return Object.keys(trendYear).map(y => {
+      return {
+        name: `${y}年`,
+        data: trendYear[y],
+        type: 'line',
+        lineStyle: {
+          width: 1,
+        },
+        areaStyle: {
+          opacity: 0.8,
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              {
+                offset: 0,
+                color: 'rgba(255, 191, 0)', // 0% 处的颜色
+              },
+              {
+                offset: 1,
+                color: 'rgba(224, 62, 76)', // 100% 处的颜色
+              },
+            ],
+            globalCoord: false, // 缺省为 false
+          },
+        },
+        emphasis: {
+          focus: 'series',
+        },
+        smooth: true,
+      };
+    });
+  }, [trendYear]);
 
   const chartProps = useMemo(() => {
     const extChartProps = {
@@ -29,52 +105,22 @@ const TrendView = props => {
             },
           },
         },
+        legend: {
+          data: Object.keys(trendYear).map(y => `${y}年`),
+        },
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: getMonthData(),
         },
         yAxis: {
           type: 'value',
         },
-        series: [
-          {
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
-            type: 'line',
-            lineStyle: {
-              width: 1,
-            },
-            areaStyle: {
-              opacity: 0.8,
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [
-                  {
-                    offset: 0,
-                    color: 'rgba(255, 191, 0)', // 0% 处的颜色
-                  },
-                  {
-                    offset: 1,
-                    color: 'rgba(224, 62, 76)', // 100% 处的颜色
-                  },
-                ],
-                globalCoord: false, // 缺省为 false
-              },
-            },
-            emphasis: {
-              focus: 'series',
-            },
-            smooth: true,
-          },
-        ],
+        series: seriesData,
       },
     };
     return extChartProps;
-  }, []);
+  }, [seriesData, trendYear]);
 
   return (
     <Drawer
@@ -88,7 +134,7 @@ const TrendView = props => {
       onClose={onClose}
       style={{ position: 'absolute' }}
     >
-      <ExtEcharts {...chartProps} />
+      {loading ? <ListLoader /> : <ExtEcharts {...chartProps} />}
     </Drawer>
   );
 };
