@@ -119,7 +119,7 @@ const TrendView = props => {
       },
     };
     return extChartProps;
-  }, [seriesData, trendYear]);
+  }, [seriesData]);
 
   return (
     <Drawer
