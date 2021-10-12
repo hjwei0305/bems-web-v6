@@ -75,10 +75,10 @@ const TrendView = props => {
 
   const seriesData = useMemo(() => {
     return Object.keys(trendYear).map(y => {
-      return {
+      const series = {
         name: `${y}年`,
+        type: 'bar',
         data: trendYear[y],
-        type: 'line',
         lineStyle: {
           width: 1,
         },
@@ -90,8 +90,15 @@ const TrendView = props => {
         },
         smooth: true,
       };
+      if (y === year) {
+        Object.assign(series, {
+          type: 'line',
+          yAxisIndex: 1,
+        });
+      }
+      return series;
     });
-  }, [trendYear]);
+  }, [trendYear, year]);
 
   const chartProps = useMemo(() => {
     const imgName = get(rowData, 'itemName');
@@ -110,6 +117,12 @@ const TrendView = props => {
         toolbox: {
           right: '10%',
           feature: {
+            magicType: {
+              show: true,
+              title: { line: '切换为折线图', bar: '切换为柱状图' },
+              type: ['line', 'bar'],
+            },
+            restore: { show: true, title: '还原' },
             saveAsImage: {
               name: `${subjectName}-${titles}-${imgName}`,
               title: '下载图表',
