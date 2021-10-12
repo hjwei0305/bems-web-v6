@@ -5,7 +5,7 @@ import { Decimal } from 'decimal.js';
 import cls from 'classnames';
 import { Divider, Progress } from 'antd';
 import { formatMessage } from 'umi-plugin-react/locale';
-import { ExtTable, ExtIcon, Money } from 'suid';
+import { ExtTable, ExtIcon, Money, message } from 'suid';
 import { BudgetYearPicker, MasterView } from '@/components';
 import { constants, exportXls } from '@/utils';
 import TrendView from './TrendView';
@@ -99,8 +99,17 @@ class AnnualAnalysis extends Component {
     const {
       annualAnalysis: { currentMaster, year },
     } = this.props;
-    const cols = ['费用科目代码', '费用科目名称', '预算总额', '已使用', '使用比例'];
-    exportXls(`${get(currentMaster, 'name')}-${year}年-预算费用科目执行明细`, cols, this.localData);
+    if (currentMaster) {
+      const cols = ['费用科目代码', '费用科目名称', '预算总额', '已使用', '使用比例'];
+      exportXls(
+        `${get(currentMaster, 'name')}-${year}年-预算费用科目执行明细`,
+        cols,
+        this.localData,
+      );
+    } else {
+      message.destroy();
+      message.warning('请选择预算主体');
+    }
   };
 
   render() {
