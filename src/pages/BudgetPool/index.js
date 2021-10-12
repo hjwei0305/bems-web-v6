@@ -520,7 +520,7 @@ class BudgetPool extends Component {
     if (totalAmount > 0) {
       Decimal.set({ precision: 2 });
       const rate = new Decimal(usedAmount).div(new Decimal(totalAmount));
-      percent = new Decimal(rate).mul(new Decimal(100)).toNumber();
+      percent = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
     }
     let status = 'active';
     if (percent >= 80) {
@@ -567,7 +567,7 @@ class BudgetPool extends Component {
         <Progress
           style={{ width: 460 }}
           status={status}
-          percent={percent}
+          percent={Number(percent)}
           strokeWidth={14}
           format={p => `${p}%`}
           size="small"

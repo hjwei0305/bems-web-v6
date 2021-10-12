@@ -168,9 +168,8 @@ class AnnualAnalysis extends Component {
         render: (t, r) => {
           let percent = 0;
           if (r.injectAmount > 0) {
-            Decimal.set({ precision: 2 });
             const rate = new Decimal(r.usedAmount).div(new Decimal(r.injectAmount));
-            percent = new Decimal(rate).mul(new Decimal(100)).toNumber();
+            percent = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
           }
           let status = 'active';
           if (percent >= 80) {
@@ -180,7 +179,7 @@ class AnnualAnalysis extends Component {
             <Progress
               style={{ width: 160 }}
               status={status}
-              percent={percent}
+              percent={Number(percent)}
               strokeWidth={14}
               format={p => `${p}%`}
               size="small"
@@ -233,7 +232,7 @@ class AnnualAnalysis extends Component {
             if (r.injectAmount > 0) {
               Decimal.set({ precision: 2 });
               const rate = new Decimal(r.usedAmount).div(new Decimal(r.injectAmount));
-              percent = new Decimal(rate).mul(new Decimal(100)).toNumber();
+              percent = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
             }
             this.localData.push({
               item: r.item,
