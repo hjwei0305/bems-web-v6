@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import cls from 'classnames';
 import { Dropdown, Button } from 'antd';
 import { ExtIcon, Space, ListCard } from 'suid';
@@ -7,7 +7,7 @@ import styles from './index.less';
 const YearList = ({ style, onChange, year, years = [] }) => {
   const [dropShow, setDropShow] = useState(false);
   const [selectKeys, setSelectKeys] = useState([year]);
-  const [title, setTitle] = useState('未选择');
+  const [title, setTitle] = useState(`${year}年`);
 
   const titles = useMemo(() => {
     const ys = selectKeys.map(y => {
@@ -15,10 +15,6 @@ const YearList = ({ style, onChange, year, years = [] }) => {
     });
     return ys.join('、');
   }, [selectKeys]);
-
-  useEffect(() => {
-    setTitle(titles);
-  }, [titles]);
 
   const onVisibleChange = v => {
     setDropShow(v);
