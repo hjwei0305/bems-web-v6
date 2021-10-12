@@ -139,12 +139,7 @@ const Subject = props => {
   }, [assignedItems, handlerAssignedSelectChange, renderCustomTool, renderItemTitle, subjectId]);
 
   return (
-    <Card
-      bordered={false}
-      size="small"
-      className={styles['dimension-item']}
-      bodyStyle={{ height: '100%' }}
-    >
+    <Card size="small" className={styles['dimension-item']} bodyStyle={{ height: '100%' }}>
       <Row className="auto-height">
         <Col span={11} className="item-box auto-height">
           {renderAssignedList}

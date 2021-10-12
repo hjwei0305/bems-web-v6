@@ -3,6 +3,7 @@ import { get } from 'lodash';
 import { Drawer } from 'antd';
 import { ExtEcharts, BannerTitle, ExtIcon, utils, ListLoader } from 'suid';
 import { constants } from '@/utils';
+import YearList from './YearList';
 import styles from './TrendView.less';
 
 const { request } = utils;
@@ -15,29 +16,39 @@ const getMonthData = () => {
   return y;
 };
 const TrendView = props => {
-  const { onClose, showTrend, year, rowData } = props;
+  const { onClose, showTrend, year, years, rowData } = props;
   const [loading, setLoading] = useState(false);
   const [trendYear, setTrendYear] = useState([]);
 
-  const getTrendData = useCallback(() => {
-    const subjectId = get(rowData, 'subjectId');
-    const item = get(rowData, 'item');
-    const url = `${SERVER_PATH}/bems-v6/report/annualUsageTrend/${subjectId}/${item}`;
-    setLoading(true);
-    request({
-      method: 'POST',
-      url,
-      data: [year],
-    })
-      .then(res => {
-        if (res.success) {
-          setTrendYear(res.data);
-        }
+  const titles = useMemo(() => {
+    const ys = Object.keys(trendYear).map(y => {
+      return `${y}年`;
+    });
+    return ys.join('、');
+  }, [trendYear]);
+
+  const getTrendData = useCallback(
+    (selectYears = [year]) => {
+      const subjectId = get(rowData, 'subjectId');
+      const item = get(rowData, 'item');
+      const url = `${SERVER_PATH}/bems-v6/report/annualUsageTrend/${subjectId}/${item}`;
+      setLoading(true);
+      request({
+        method: 'POST',
+        url,
+        data: selectYears,
       })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [rowData, year]);
+        .then(res => {
+          if (res.success) {
+            setTrendYear(res.data);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [rowData, year],
+  );
 
   useEffect(() => {
     if (showTrend) {
@@ -45,14 +56,22 @@ const TrendView = props => {
     }
   }, [getTrendData, showTrend]);
 
+  const handlerYearSelectChange = useCallback(
+    selectedYears => {
+      getTrendData(selectedYears);
+    },
+    [getTrendData],
+  );
+
   const title = useMemo(() => {
     return (
       <>
         <ExtIcon className="trigger-back" type="left" antd onClick={onClose} />
-        <BannerTitle title={`${year}年度-${get(rowData, 'itemName')}`} subTitle="使用趋势图" />
+        <BannerTitle title={`${get(rowData, 'itemName')}`} subTitle="使用趋势图" />
+        <YearList onChange={handlerYearSelectChange} year={year} years={years} />
       </>
     );
-  }, [onClose, rowData, year]);
+  }, [handlerYearSelectChange, onClose, rowData, year, years]);
 
   const seriesData = useMemo(() => {
     return Object.keys(trendYear).map(y => {
@@ -75,6 +94,8 @@ const TrendView = props => {
   }, [trendYear]);
 
   const chartProps = useMemo(() => {
+    const imgName = get(rowData, 'itemName');
+    const subjectName = get(rowData, 'subjectName');
     const extChartProps = {
       option: {
         tooltip: {
@@ -83,6 +104,14 @@ const TrendView = props => {
             type: 'cross',
             label: {
               backgroundColor: '#6a7985',
+            },
+          },
+        },
+        toolbox: {
+          right: '10%',
+          feature: {
+            saveAsImage: {
+              name: `${subjectName}-${titles}-${imgName}`,
             },
           },
         },
@@ -100,7 +129,7 @@ const TrendView = props => {
       },
     };
     return extChartProps;
-  }, [seriesData]);
+  }, [rowData, seriesData]);
 
   return (
     <Drawer

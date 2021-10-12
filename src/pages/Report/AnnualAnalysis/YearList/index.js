@@ -1,65 +1,89 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import cls from 'classnames';
 import { Dropdown, Button } from 'antd';
-import { ExtIcon, Space } from 'suid';
-import Subject from './Subject';
+import { ExtIcon, Space, ListCard } from 'suid';
 import styles from './index.less';
 
-const ItemView = ({ style, onChange, subjectId }) => {
+const YearList = ({ style, onChange, year, years = [] }) => {
   const [dropShow, setDropShow] = useState(false);
-  const [selectKeys, setSelectKeys] = useState([]);
+  const [selectKeys, setSelectKeys] = useState([year]);
   const [title, setTitle] = useState('未选择');
-  const subjectRef = useRef();
+
+  const titles = useMemo(() => {
+    const ys = selectKeys.map(y => {
+      return `${y}年`;
+    });
+    return ys.join('、');
+  }, [selectKeys]);
+
+  useEffect(() => {
+    setTitle(titles);
+  }, [titles]);
 
   const onVisibleChange = v => {
     setDropShow(v);
   };
-
-  const clearSelect = useCallback(() => {
-    subjectRef.current.clearData();
-    setSelectKeys([]);
-  }, []);
 
   const handlerSelectChange = useCallback(keys => {
     setSelectKeys(keys);
   }, []);
 
   const handlerSelect = useCallback(() => {
-    const tmpTitle = selectKeys.length > 0 ? `已选择(${selectKeys.length})` : '未选择';
-    setTitle(tmpTitle);
+    setTitle(titles);
     setDropShow(false);
     onChange(selectKeys);
-  }, [onChange, selectKeys]);
+  }, [onChange, selectKeys, titles]);
+
+  const yeasData = useMemo(() => {
+    return years.map(y => {
+      return { id: y, name: `${y}年` };
+    });
+  }, [years]);
 
   const renderContent = useMemo(() => {
+    const listCardProps = {
+      dataSource: yeasData,
+      showSearch: false,
+      showArrow: false,
+      pagination: false,
+      checkbox: true,
+      checkboxProps: item => {
+        if (item.id === year) {
+          return { disabled: true };
+        }
+        return { disabled: false };
+      },
+      selectedKeys: selectKeys,
+      customTool: () => null,
+      onSelectChange: handlerSelectChange,
+      itemField: {
+        title: item => item.name,
+      },
+    };
     return (
       <div
         style={{
           padding: 0,
-          height: 520,
-          width: 620,
+          height: 280,
+          width: 220,
           backgroundColor: '#ffffff',
         }}
       >
-        <div className="list-body" style={{ height: 462 }}>
-          <Subject
-            subjectRef={subjectRef}
-            subjectId={subjectId}
-            onSelectChange={handlerSelectChange}
-          />
+        <div className="list-body" style={{ height: 232 }}>
+          <ListCard {...listCardProps} />
         </div>
         <div
           style={{
             display: 'flex',
-            height: 58,
-            padding: '0 24px',
+            height: 48,
             alignItems: 'center',
             justifyContent: 'space-between',
+            padding: '0 8px',
+            borderTop: '1px solid #eee',
           }}
         >
           <div />
           <Space>
-            <Button onClick={clearSelect}>重置</Button>
             <Button type="primary" onClick={handlerSelect}>
               查询
             </Button>
@@ -67,7 +91,7 @@ const ItemView = ({ style, onChange, subjectId }) => {
         </div>
       </div>
     );
-  }, [clearSelect, handlerSelect, handlerSelectChange, subjectId]);
+  }, [handlerSelect, handlerSelectChange, selectKeys, year, yeasData]);
 
   return (
     <Dropdown
@@ -81,7 +105,7 @@ const ItemView = ({ style, onChange, subjectId }) => {
     >
       <span className={cls('cmp-filter-view', styles['view-box'])} style={style}>
         <span className="view-label">
-          <em>科目</em>
+          <ExtIcon type="filter" />
         </span>
         <span className="view-content">{title}</span>
         <ExtIcon type="down" antd />
@@ -90,4 +114,4 @@ const ItemView = ({ style, onChange, subjectId }) => {
   );
 };
 
-export default ItemView;
+export default YearList;

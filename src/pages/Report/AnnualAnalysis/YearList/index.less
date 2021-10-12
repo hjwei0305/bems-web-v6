@@ -1,0 +1,41 @@
+@import '../../../../themes/vars.less';
+
+.view-box {
+  position: relative;
+  display: inline-block;
+  margin-left: 24px;
+  cursor: pointer;
+  :global {
+    .view-label {
+      color: fade(@black, 45%);
+      font-size: 14px;
+      i {
+        position: relative;
+        top: 1px;
+        font-size: 16px;
+      }
+      em {
+        font-style: normal;
+      }
+    }
+    .view-content {
+      margin-right: 8px;
+      color: fade(@black, 85%);
+      font-weight: 700;
+      font-size: 14px;
+    }
+  }
+}
+
+.filter-box {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  :global {
+    .suid-list-card .ant-card-body .suid-list-card-body .ant-list-item {
+      padding: 8px;
+    }
+  }
+}
+
+.pop-confirm-box {
+  z-index: 1050;
+}

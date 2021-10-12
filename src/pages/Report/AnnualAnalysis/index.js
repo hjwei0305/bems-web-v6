@@ -54,6 +54,12 @@ class AnnualAnalysis extends Component {
         currentMaster,
       },
     });
+    dispatch({
+      type: 'annualAnalysis/getSubjectYears',
+      payload: {
+        subjectId: get(currentMaster, 'id'),
+      },
+    });
   };
 
   handlerBudgetYearChange = year => {
@@ -89,7 +95,7 @@ class AnnualAnalysis extends Component {
 
   render() {
     const {
-      annualAnalysis: { showTrend, rowData, year, currentMaster, itemCodes },
+      annualAnalysis: { showTrend, rowData, year, years, currentMaster, itemCodes },
     } = this.props;
     const subjectId = get(currentMaster, 'id');
     const columns = [
@@ -209,7 +215,8 @@ class AnnualAnalysis extends Component {
       onClose: this.handlerCloseTrendView,
       showTrend,
       rowData,
-      year: '2021',
+      year,
+      years,
     };
     return (
       <div className={cls(styles['container-box'])}>
