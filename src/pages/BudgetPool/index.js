@@ -518,7 +518,6 @@ class BudgetPool extends Component {
     const { totalAmount, usedAmount, balance, currencyCode } = item;
     let percent = 0;
     if (totalAmount > 0) {
-      Decimal.set({ precision: 2 });
       const rate = new Decimal(usedAmount).div(new Decimal(totalAmount));
       percent = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
     }
