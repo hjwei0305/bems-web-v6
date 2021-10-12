@@ -7,7 +7,7 @@ import { Divider, Progress } from 'antd';
 import { formatMessage } from 'umi-plugin-react/locale';
 import { ExtTable, ExtIcon, Money } from 'suid';
 import { BudgetYearPicker, MasterView } from '@/components';
-import { constants } from '@/utils';
+import { constants, exportXls } from '@/utils';
 import TrendView from './TrendView';
 import ItemView from './ItemView';
 import styles from './index.less';
@@ -17,6 +17,8 @@ const { SERVER_PATH } = constants;
 @connect(({ annualAnalysis, loading }) => ({ annualAnalysis, loading }))
 class AnnualAnalysis extends Component {
   static tablRef;
+
+  static localData;
 
   reloadData = () => {
     if (this.tablRef) {
@@ -91,6 +93,14 @@ class AnnualAnalysis extends Component {
       subjectId: get(currentMaster, 'id'),
     };
     return itProps;
+  };
+
+  exportData = () => {
+    const {
+      annualAnalysis: { currentMaster, year },
+    } = this.props;
+    const cols = ['费用科目代码', '费用科目名称', '预算总额', '已使用', '使用比例'];
+    exportXls(`${get(currentMaster, 'name')}-${year}年-预算费用科目执行明细`, cols, this.localData);
   };
 
   render() {
@@ -181,6 +191,14 @@ class AnnualAnalysis extends Component {
           <Divider type="vertical" />
           <ExtIcon
             className="btn-icon"
+            tooltip={{ title: '导出xlsx' }}
+            type="download"
+            antd
+            onClick={this.exportData}
+          />
+          <Divider type="vertical" />
+          <ExtIcon
+            className="btn-icon"
             tooltip={{ title: '刷新' }}
             type="sync"
             antd
@@ -200,6 +218,24 @@ class AnnualAnalysis extends Component {
       store: {
         type: 'POST',
         url: `${SERVER_PATH}/bems-v6/report/annualBudgetAnalysis`,
+        loaded: res => {
+          this.localData = [];
+          (res.data || []).forEach(r => {
+            let percent = 0;
+            if (r.injectAmount > 0) {
+              Decimal.set({ precision: 2 });
+              const rate = new Decimal(r.usedAmount).div(new Decimal(r.injectAmount));
+              percent = new Decimal(rate).mul(new Decimal(100)).toNumber();
+            }
+            this.localData.push({
+              item: r.item,
+              itemName: r.itemName,
+              injectAmount: r.injectAmount,
+              usedAmount: r.usedAmount,
+              rate: `${percent}%`,
+            });
+          });
+        },
       },
     };
     if (subjectId && year) {
