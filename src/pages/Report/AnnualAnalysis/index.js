@@ -196,7 +196,6 @@ class AnnualAnalysis extends Component {
             antd
             onClick={this.exportData}
           />
-          <Divider type="vertical" />
           <ExtIcon
             className="btn-icon"
             tooltip={{ title: '刷新' }}
