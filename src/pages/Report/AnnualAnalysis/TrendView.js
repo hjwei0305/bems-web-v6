@@ -112,6 +112,7 @@ const TrendView = props => {
           feature: {
             saveAsImage: {
               name: `${subjectName}-${titles}-${imgName}`,
+              title: '下载图表',
             },
           },
         },
