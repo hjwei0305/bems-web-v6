@@ -93,7 +93,6 @@ const TrendView = props => {
       if (y === year) {
         Object.assign(series, {
           type: 'line',
-          yAxisIndex: 1,
         });
       }
       return series;
