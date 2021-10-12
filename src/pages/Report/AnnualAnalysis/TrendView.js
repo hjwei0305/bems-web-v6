@@ -11,7 +11,7 @@ const { SERVER_PATH } = constants;
 const getMonthData = () => {
   const y = [];
   for (let i = 1; i < 13; i += 1) {
-    y.push(`${i}月`);
+    y.push(i);
   }
   return y;
 };
@@ -77,22 +77,29 @@ const TrendView = props => {
     return Object.keys(trendYear).map(y => {
       const series = {
         name: `${y}年`,
-        type: 'bar',
+        type: 'line',
         data: trendYear[y],
         lineStyle: {
           width: 1,
         },
         areaStyle: {
-          opacity: 0.6,
+          opacity: 0.3,
         },
         emphasis: {
           focus: 'series',
         },
         smooth: true,
       };
-      if (y === year) {
+      if (Number(y) === year) {
         Object.assign(series, {
           type: 'line',
+          symbolSize: 10,
+          lineStyle: {
+            width: 3,
+            shadowColor: 'rgba(0,0,0,0.3)',
+            shadowBlur: 10,
+            shadowOffsetY: 8,
+          },
         });
       }
       return series;
@@ -114,7 +121,7 @@ const TrendView = props => {
           },
         },
         toolbox: {
-          right: '10%',
+          right: '5%',
           feature: {
             magicType: {
               show: true,
@@ -129,20 +136,36 @@ const TrendView = props => {
           },
         },
         legend: {},
+        grid: {
+          left: '2%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true,
+        },
         xAxis: {
           type: 'category',
           boundaryGap: false,
+          axisLabel: {
+            formatter: '{value} 月',
+          },
           data: getMonthData(),
         },
         yAxis: {
           type: 'value',
-          axisLabel: '元',
+          boundaryGap: false,
+          axisLine: { onZero: false },
+          axisLabel: {
+            formatter: '{value} 元',
+          },
+          splitLine: {
+            show: false,
+          },
         },
         series: seriesData,
       },
     };
     return extChartProps;
-  }, [rowData, seriesData]);
+  }, [rowData, seriesData, titles]);
 
   return (
     <Drawer
