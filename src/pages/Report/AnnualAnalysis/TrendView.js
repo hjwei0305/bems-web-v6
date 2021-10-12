@@ -137,7 +137,7 @@ const TrendView = props => {
         },
         legend: {},
         grid: {
-          left: '2%',
+          left: '4%',
           right: '4%',
           bottom: '3%',
           containLabel: true,
