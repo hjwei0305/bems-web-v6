@@ -18,7 +18,7 @@ const getMonthData = () => {
 const TrendView = props => {
   const { onClose, showTrend, year, years, rowData } = props;
   const [loading, setLoading] = useState(false);
-  const [trendYear, setTrendYear] = useState([]);
+  const [trendYear, setTrendYear] = useState({});
 
   const titles = useMemo(() => {
     const ys = Object.keys(trendYear).map(y => {
