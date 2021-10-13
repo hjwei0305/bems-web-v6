@@ -77,7 +77,7 @@ const TrendView = props => {
     return Object.keys(trendYear).map(y => {
       const series = {
         name: `${y}年`,
-        type: 'line',
+        type: 'bar',
         data: trendYear[y],
         lineStyle: {
           width: 1,
