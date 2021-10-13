@@ -82,9 +82,6 @@ const TrendView = props => {
         lineStyle: {
           width: 1,
         },
-        areaStyle: {
-          opacity: 0.3,
-        },
         emphasis: {
           focus: 'series',
         },
