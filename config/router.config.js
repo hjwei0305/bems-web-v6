@@ -94,8 +94,13 @@ export default [
       },
       {
         path: '/report',
-        name: '预算执行报表',
-        routes: [{ path: '/report/annualAnalysis', component: './Report/AnnualAnalysis' }],
+        routes: [
+          {
+            name: '预算执行报表',
+            path: '/report/annualAnalysis',
+            component: './Report/AnnualAnalysis',
+          },
+        ],
       },
     ],
   },

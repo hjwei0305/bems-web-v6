@@ -13,7 +13,15 @@ const Organization = React.lazy(() => import('./components/Organization'));
 const { BUDGET_DIMENSION_UI_COMPONENT } = constants;
 
 const FilterDimension = props => {
-  const { dimensions, subjectId, year, periodType, submitDimension = () => {} } = props;
+  const {
+    width = 800,
+    labelTitle = '维度',
+    dimensions,
+    subjectId,
+    year,
+    periodType,
+    submitDimension = () => {},
+  } = props;
   const [show, setShow] = useState(false);
   const [periodData, setPeriodData] = useState([]);
   const [projectData, setProjectData] = useState([]);
@@ -85,7 +93,10 @@ const FilterDimension = props => {
   const renderDimension = useMemo(() => {
     if (subjectId) {
       return (
-        <div className="dimension-box" style={{ height: window.document.body.clientHeight - 320 }}>
+        <div
+          className="dimension-box"
+          style={{ width, height: window.document.body.clientHeight - 320 }}
+        >
           <div className="dimension-body">
             <Tabs tabPosition="left">
               {dimensions.map(it => {
@@ -166,6 +177,7 @@ const FilterDimension = props => {
     );
   }, [
     subjectId,
+    width,
     dimensions,
     clearData,
     handlerSubmit,
@@ -192,7 +204,7 @@ const FilterDimension = props => {
       onVisibleChange={onVisibleChange}
     >
       <span className={styles['dimension-trigger']}>
-        <span className="view-label">维度</span>
+        <span className="view-label">{labelTitle}</span>
         <span className="view-content">{renderLabel}</span>
         <ExtIcon type="down" antd />
       </span>

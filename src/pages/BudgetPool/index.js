@@ -39,8 +39,6 @@ const filterFields = {
   item: { fieldName: 'item', operator: 'IN', form: false },
   period: { fieldName: 'period', operator: 'IN', form: false },
   project: { fieldName: 'project', operator: 'IN', form: false },
-  startDate: { fieldName: 'startDate', operator: 'LE', fieldType: 'date', form: true },
-  endDate: { fieldName: 'endDate', operator: 'GE', fieldType: 'date', form: true },
 };
 
 @connect(({ budgetPool, loading }) => ({ budgetPool, loading }))
@@ -139,36 +137,6 @@ class BudgetPool extends Component {
           ...filterData,
           ...dimension,
         },
-      },
-    });
-  };
-
-  handlerShowFilter = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'budgetPool/updateState',
-      payload: {
-        showFilter: true,
-      },
-    });
-  };
-
-  handlerCloseFilter = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'budgetPool/updateState',
-      payload: {
-        showFilter: false,
-      },
-    });
-  };
-
-  handlerFitlerDate = currentViewDate => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'budgetPool/updateState',
-      payload: {
-        currentViewDate,
       },
     });
   };

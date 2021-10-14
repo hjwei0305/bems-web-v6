@@ -1,5 +1,5 @@
-import { utils, message } from 'suid';
-import { getSubjectYears } from './service';
+import { utils } from 'suid';
+import { getSubjectYears, getMasterDimension } from './service';
 
 const { dvaModel } = utils;
 const { modelExtend, model } = dvaModel;
@@ -14,22 +14,22 @@ export default modelExtend(model, {
     currentMaster: null,
     rowData: null,
     showTrend: false,
-    itemCodes: [],
+    filterData: {},
+    subDimensions: [],
   },
   effects: {
-    *getSubjectYears({ payload }, { call, put }) {
+    *getSubjectDependenceData({ payload }, { call, put }) {
       const re = yield call(getSubjectYears, payload);
-      message.destroy();
-      if (re.success) {
-        yield put({
-          type: 'updateState',
-          payload: {
-            years: re.data,
-          },
-        });
-      } else {
-        message.error(re.message);
-      }
+      const result = yield call(getMasterDimension, payload);
+      const years = re.data || [];
+      const subDimensions = (result.data || []).filter(d => d.required === false);
+      yield put({
+        type: 'updateState',
+        payload: {
+          years,
+          subDimensions,
+        },
+      });
     },
   },
 });
