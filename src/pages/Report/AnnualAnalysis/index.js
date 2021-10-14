@@ -311,6 +311,7 @@ class AnnualAnalysis extends Component {
       },
     ];
     const toolBarProps = {
+      layout: { leftSpan: 24 },
       left: (
         <>
           <MasterView onChange={this.handlerMasterSelect} />
