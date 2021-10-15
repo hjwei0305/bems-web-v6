@@ -147,26 +147,26 @@ const Subject = props => {
     >
       <Row className="auto-height">
         <Col span={11} className="item-box auto-height">
-          {renderAssignedList}
+          {renderUnassignedList}
         </Col>
         <Col span={2} className="item-box btn-box auto-height">
           <Space direction="vertical" size={32}>
             <Button
               icon="right"
               size="small"
-              onClick={handlerRemove}
-              disabled={waitUnassignedSelect.length === 0}
+              onClick={handlerAssign}
+              disabled={waitAssignedSelect.length === 0}
             />
             <Button
               icon="left"
               size="small"
-              onClick={handlerAssign}
-              disabled={waitAssignedSelect.length === 0}
+              onClick={handlerRemove}
+              disabled={waitUnassignedSelect.length === 0}
             />
           </Space>
         </Col>
         <Col span={11} className="item-box auto-height">
-          {renderUnassignedList}
+          {renderAssignedList}
         </Col>
       </Row>
     </Card>
