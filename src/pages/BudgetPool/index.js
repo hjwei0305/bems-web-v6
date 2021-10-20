@@ -34,11 +34,11 @@ const { SERVER_PATH, PERIOD_TYPE } = constants;
 const { Search } = Input;
 const { Content } = Layout;
 const filterFields = {
-  subjectId: { fieldName: 'subjectId', operator: 'EQ', form: false },
-  org: { fieldName: 'org', operator: 'IN', form: false },
-  item: { fieldName: 'item', operator: 'IN', form: false },
-  period: { fieldName: 'period', operator: 'IN', form: false },
-  project: { fieldName: 'project', operator: 'IN', form: false },
+  subjectId: { fieldName: 'subjectId' },
+  org: { fieldName: 'orgIds' },
+  item: { fieldName: 'itemCodes' },
+  period: { fieldName: 'periodIds' },
+  project: { fieldName: 'projectCodes' },
 };
 
 @connect(({ budgetPool, loading }) => ({ budgetPool, loading }))
@@ -290,30 +290,20 @@ class BudgetPool extends Component {
   getFilters = () => {
     const { budgetPool } = this.props;
     const { filterData, selectPeriodType, year } = budgetPool;
-    let hasFilter = false;
-    const filters = [{ fieldName: 'year', operator: 'EQ', value: year }];
+    const filters = { year };
     if (selectPeriodType.key !== PERIOD_TYPE.ALL.key) {
-      filters.push({ fieldName: 'periodType', operator: 'EQ', value: selectPeriodType.key });
+      Object.assign(filters, { periodType: selectPeriodType.key });
     }
     Object.keys(filterData).forEach(key => {
       const filterField = get(filterFields, key);
       if (filterField) {
         const value = get(filterData, key, null);
-        const form = get(filterField, 'form');
         if (!isEmpty(value) || isNumber(value)) {
-          if (form) {
-            hasFilter = true;
-          }
-          const fit = { fieldName: key, operator: get(filterField, 'operator'), value };
-          const fieldType = get(filterField, 'fieldType');
-          if (fieldType) {
-            Object.assign(fit, { fieldType });
-          }
-          filters.push(fit);
+          filters[filterField.fieldName] = value;
         }
       }
     });
-    return { filters, hasFilter };
+    return { filters };
   };
 
   handlerSearchChange = v => {
@@ -604,7 +594,7 @@ class BudgetPool extends Component {
             { property: 'itemName', direction: 'ASC' },
             { property: 'startDate', direction: 'ASC' },
           ],
-          filters,
+          ...filters,
         },
         store: {
           type: 'POST',
