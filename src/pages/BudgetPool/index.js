@@ -565,19 +565,6 @@ class BudgetPool extends Component {
       onListCardRef: ref => (this.listCardRef = ref),
       customTool: ({ total }) => this.renderCustomTool(total),
       onSelectChange: this.handlerSelectPool,
-      searchProperties: [
-        'code',
-        'item',
-        'itemName',
-        'periodName',
-        'projectName',
-        'orgName',
-        'udf1Name',
-        'udf2Name',
-        'udf3Name',
-        'udf4Name',
-        'udf5Name',
-      ],
       itemField: {
         avatar: this.renderAvatar,
         title: this.renderMasterTitle,
@@ -590,10 +577,6 @@ class BudgetPool extends Component {
       Object.assign(listProps, {
         remotePaging: true,
         cascadeParams: {
-          sortOrders: [
-            { property: 'itemName', direction: 'ASC' },
-            { property: 'startDate', direction: 'ASC' },
-          ],
           ...filters,
         },
         store: {
