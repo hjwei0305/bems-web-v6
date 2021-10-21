@@ -128,18 +128,15 @@ class DetailItem extends PureComponent {
   };
 
   renderMasterTitle = item => {
-    const originPoolCode = get(item, 'originPoolCode') || '-';
-    if (originPoolCode) {
-      return (
-        <>
-          <div className="pool-box origin">
-            <span className="title">池号</span>
-            <span className="no">{originPoolCode}</span>
-          </div>
-        </>
-      );
-    }
-    return null;
+    const originPoolCode = get(item, 'originPoolCode') || '无预算池';
+    return (
+      <>
+        <div className="pool-box origin">
+          <span className="title">池号</span>
+          <span className="no">{originPoolCode}</span>
+        </div>
+      </>
+    );
   };
 
   getFilters = () => {
