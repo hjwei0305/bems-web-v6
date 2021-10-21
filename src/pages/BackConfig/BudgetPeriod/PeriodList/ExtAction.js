@@ -65,10 +65,7 @@ class ExtAction extends PureComponent {
     const menus = menuData();
     if (recordItem.type === PERIOD_TYPE.CUSTOMIZE.key) {
       menus.forEach(m => {
-        if (
-          m.key === BUDGET_PERIOD_USER_ACTION.EDIT ||
-          m.key === BUDGET_PERIOD_USER_ACTION.DELETE
-        ) {
+        if (m.key === BUDGET_PERIOD_USER_ACTION.DELETE) {
           Object.assign(m, { disabled: false });
         }
       });

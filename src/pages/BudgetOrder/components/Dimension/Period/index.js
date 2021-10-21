@@ -77,11 +77,6 @@ const Period = ({ subjectId, periodType, onSelectChange, actionType }) => {
     setShowForm(true);
   }, []);
 
-  const edit = useCallback(row => {
-    setRowData(row);
-    setShowForm(true);
-  }, []);
-
   const saveSubmit = useCallback(
     data => {
       setSaving(true);
@@ -197,7 +192,6 @@ const Period = ({ subjectId, periodType, onSelectChange, actionType }) => {
         required: true,
         render: (_text, record) => (
           <span className={cls('action-box')} onClick={e => e.stopPropagation()}>
-            <ExtIcon className="edit" onClick={() => edit(record)} type="edit" antd />
             {renderDelBtn(record)}
           </span>
         ),
@@ -248,7 +242,6 @@ const Period = ({ subjectId, periodType, onSelectChange, actionType }) => {
     subjectId,
     periodType,
     renderDelBtn,
-    edit,
     triggerSelect,
   ]);
 
