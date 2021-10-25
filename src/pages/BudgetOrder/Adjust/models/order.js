@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-06-15 13:35:03
+ * @Last Modified time: 2021-10-25 14:12:21
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -152,21 +152,33 @@ export default modelExtend(model, {
         message.error(re.message);
       }
     },
-    *saveItemMoney({ payload, callback }, { call }) {
+    *saveItemMoney({ payload, callback }, { call, select, put }) {
       const { rowItem } = payload;
       const re = yield call(saveItemMoney, {
         detailId: get(rowItem, 'id'),
         amount: get(rowItem, 'amount'),
       });
       message.destroy();
-      if (!re.success) {
+      if (re.success) {
+        const { headData } = yield select(sel => sel.adjustOrder);
+        const summary = yield call(getAdjustData, { orderId: get(headData, 'id') });
+        yield put({
+          type: 'updateState',
+          payload: {
+            headData: {
+              ...headData,
+              updownAmount: { up: get(summary, 'data.ADD', 0), down: get(summary, 'data.SUB', 0) },
+            },
+          },
+        });
+      } else {
         message.error(re.message);
       }
       if (callback && callback instanceof Function) {
         callback(re);
       }
     },
-    *removeOrderItems({ payload, successCallback }, { call }) {
+    *removeOrderItems({ payload, successCallback }, { call, select, put }) {
       const ids = [...payload];
       const re = yield call(removeOrderItems, ids);
       message.destroy();
@@ -174,12 +186,23 @@ export default modelExtend(model, {
         if (successCallback && successCallback instanceof Function) {
           successCallback(re);
         }
+        const { headData } = yield select(sel => sel.adjustOrder);
+        const summary = yield call(getAdjustData, { orderId: get(headData, 'id') });
+        yield put({
+          type: 'updateState',
+          payload: {
+            headData: {
+              ...headData,
+              updownAmount: { up: get(summary, 'data.ADD', 0), down: get(summary, 'data.SUB', 0) },
+            },
+          },
+        });
         message.success(formatMessage({ id: 'global.delete-success', defaultMessage: '删除成功' }));
       } else {
         message.error(re.message);
       }
     },
-    *clearOrderItems({ successCallback }, { call, select }) {
+    *clearOrderItems({ successCallback }, { call, select, put }) {
       const { headData } = yield select(sel => sel.adjustOrder);
       const orderId = get(headData, 'id');
       message.destroy();
@@ -189,6 +212,15 @@ export default modelExtend(model, {
           if (successCallback && successCallback instanceof Function) {
             successCallback(re);
           }
+          yield put({
+            type: 'updateState',
+            payload: {
+              headData: {
+                ...headData,
+                updownAmount: { up: 0, down: 0 },
+              },
+            },
+          });
         } else {
           message.error(re.message);
         }
@@ -305,6 +337,19 @@ export default modelExtend(model, {
       } else {
         message.error(res.message);
       }
+    },
+    *updateUpdownAmount(_, { call, select, put }) {
+      const { headData } = yield select(sel => sel.adjustOrder);
+      const summary = yield call(getAdjustData, { orderId: get(headData, 'id') });
+      yield put({
+        type: 'updateState',
+        payload: {
+          headData: {
+            ...headData,
+            updownAmount: { up: get(summary, 'data.ADD', 0), down: get(summary, 'data.SUB', 0) },
+          },
+        },
+      });
     },
   },
 });

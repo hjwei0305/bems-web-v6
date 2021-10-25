@@ -642,7 +642,7 @@ class SplitRequestList extends Component {
   };
 
   render() {
-    const { splitRequestList } = this.props;
+    const { splitRequestList, loading } = this.props;
     const {
       showFilter,
       filterData,
@@ -688,6 +688,7 @@ class SplitRequestList extends Component {
             prefabData={prefabData}
             onAdd={this.handlerAdd}
             onTrash={this.handlerTrash}
+            trashing={loading.effects['splitRequestList/trash']}
             onRecovery={this.handlerRecovery}
           />
         </Suspense>

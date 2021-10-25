@@ -657,7 +657,7 @@ class InjectionRequestList extends Component {
   };
 
   render() {
-    const { injectionRequestList } = this.props;
+    const { injectionRequestList, loading } = this.props;
     const {
       showFilter,
       filterData,
@@ -703,6 +703,7 @@ class InjectionRequestList extends Component {
             prefabData={prefabData}
             onAdd={this.handlerAdd}
             onTrash={this.handlerTrash}
+            trashing={loading.effects['injectionRequestList/trash']}
             onRecovery={this.handlerRecovery}
           />
         </Suspense>

@@ -642,7 +642,7 @@ class AdjustRequestList extends Component {
   };
 
   render() {
-    const { adjustRequestList } = this.props;
+    const { adjustRequestList, loading } = this.props;
     const {
       showFilter,
       filterData,
@@ -688,6 +688,7 @@ class AdjustRequestList extends Component {
             prefabData={prefabData}
             onAdd={this.handlerAdd}
             onTrash={this.handlerTrash}
+            trashing={loading.effects['adjustRequestList/trash']}
             onRecovery={this.handlerRecovery}
           />
         </Suspense>

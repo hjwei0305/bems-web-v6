@@ -11,14 +11,19 @@ const Prefab = ({
   prefabData,
   onAdd = () => {},
   onTrash = () => {},
+  trashing = false,
   onRecovery = () => {},
 }) => {
   const renderItemAction = useCallback(
     item => {
       return (
         <Space>
-          <Popconfirm title="确定要删除吗？提示:删除后不能恢复" onConfirm={() => onTrash(item)}>
-            <Button size="small" type="danger">
+          <Popconfirm
+            disabled={trashing}
+            title="确定要删除吗？提示:删除后不能恢复"
+            onConfirm={() => onTrash(item)}
+          >
+            <Button size="small" loading={trashing} type="danger">
               删除
             </Button>
           </Popconfirm>
@@ -28,7 +33,7 @@ const Prefab = ({
         </Space>
       );
     },
-    [onRecovery, onTrash],
+    [onRecovery, onTrash, trashing],
   );
 
   const renderTitle = useCallback(item => {

@@ -38,17 +38,8 @@ class DetailItem extends PureComponent {
   constructor(props) {
     super(props);
     const [itemStatus] = REQUEST_ITEM_STATUS_DATA;
-    const { headData } = props;
     this.pagingData = {};
-    if (headData) {
-      const { updownAmount } = headData;
-      this.updownAmount = {
-        up: get(updownAmount, 'up') || 0,
-        down: get(updownAmount, 'down') || 0,
-      };
-    } else {
-      this.updownAmount = { up: 0, down: 0 };
-    }
+    this.initUpdownAmount();
     this.state = {
       selectedKeys: [],
       globalDisabled: false,
@@ -62,16 +53,18 @@ class DetailItem extends PureComponent {
       onDetailItemRef(this);
     }
     this.initGlobalAction();
+    this.initUpdownAmount();
   }
 
   componentDidUpdate(preProps) {
     const { headData } = this.props;
     const status = get(headData, 'status');
-    if (status && !isEqual(preProps.headData, headData)) {
+    if (!isEqual(preProps.headData, headData)) {
       let globalDisabled = true;
       if (status === REQUEST_VIEW_STATUS.PREFAB.key || status === REQUEST_VIEW_STATUS.DRAFT.key) {
         globalDisabled = false;
       }
+      this.initUpdownAmount();
       this.setState({ globalDisabled });
     }
   }
@@ -80,6 +73,19 @@ class DetailItem extends PureComponent {
     this.pagingData = {};
     this.updownAmount = { up: 0, down: 0 };
   }
+
+  initUpdownAmount = () => {
+    const { headData } = this.props;
+    if (headData) {
+      const { updownAmount } = headData;
+      this.updownAmount = {
+        up: get(updownAmount, 'up') || 0,
+        down: get(updownAmount, 'down') || 0,
+      };
+    } else {
+      this.updownAmount = { up: 0, down: 0 };
+    }
+  };
 
   initGlobalAction = () => {
     const { action, tempDisabled } = this.props;
@@ -104,31 +110,11 @@ class DetailItem extends PureComponent {
   handlerSaveMoney = (rowItem, amount, callBack) => {
     const { onSaveItemMoney } = this.props;
     if (onSaveItemMoney && onSaveItemMoney instanceof Function) {
-      const rowKey = get(rowItem, 'id');
-      const originAmount = get(this.pagingData[rowKey], 'amount');
       onSaveItemMoney(rowItem, amount, res => {
         callBack();
         if (res.success) {
-          const rowData = res.data;
-          this.pagingData[rowKey] = { ...rowData };
-          if (rowData.hasErr === false) {
-            if (originAmount > 0) {
-              this.updownAmount.up = new Decimal(this.updownAmount.up).sub(
-                new Decimal(originAmount),
-              );
-            }
-            if (originAmount < 0) {
-              this.updownAmount.down = new Decimal(this.updownAmount.down).sub(
-                new Decimal(originAmount),
-              );
-            }
-            if (amount > 0) {
-              this.updownAmount.up = new Decimal(this.updownAmount.up).add(new Decimal(amount));
-            }
-            if (amount < 0) {
-              this.updownAmount.down = new Decimal(this.updownAmount.down).add(new Decimal(amount));
-            }
-          }
+          const rowKey = get(rowItem, 'id');
+          this.pagingData[rowKey] = res.data;
         }
       });
     }
@@ -157,6 +143,9 @@ class DetailItem extends PureComponent {
     const { onRemoveItem } = this.props;
     if (onRemoveItem && onRemoveItem instanceof Function) {
       onRemoveItem(selectedKeys, () => {
+        selectedKeys.forEach(rowKey => {
+          delete this.pagingData[rowKey];
+        });
         this.setState({ selectedKeys: [] }, this.reloadData);
       });
     }
