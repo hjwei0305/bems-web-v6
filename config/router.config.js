@@ -96,6 +96,11 @@ export default [
         path: '/report',
         routes: [
           {
+            name: '执行日志',
+            path: '/report/logRecord',
+            component: './LogRecord',
+          },
+          {
             name: '预算执行报表',
             path: '/report/annualAnalysis',
             component: './Report/AnnualAnalysis',

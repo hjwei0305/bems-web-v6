@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import cls from 'classnames';
+import { connect, useSelector, useDispatch } from 'dva';
 import { FormattedMessage } from 'umi-plugin-react/locale';
 import { get, isEmpty, isNumber } from 'lodash';
-import { Input, Tag, Button, Menu, Badge, Drawer } from 'antd';
-import { BannerTitle, ExtIcon, ExtTable, Money } from 'suid';
+import { Input, Tag, Button, Menu, Badge } from 'antd';
+import { ExtIcon, ExtTable, Money, Space } from 'suid';
+import { MasterView } from '@/components';
 import { constants } from '@/utils';
 import styles from './index.less';
 
@@ -14,31 +16,23 @@ let searchInput;
 let tmpFilterData;
 
 const filterFields = {
-  operation: { fieldName: 'operation', operation: 'EQ' },
   eventName: { fieldName: 'eventName', operation: 'LK' },
+  operation: { fieldName: 'operation', operation: 'EQ' },
+  poolCode: { fieldName: 'poolCode', operation: 'RLK' },
   amount: { fieldName: 'eventName', operation: 'EQ' },
   bizCode: { fieldName: 'bizCode', operation: 'LK' },
   bizRemark: { fieldName: 'bizRemark', operation: 'LK' },
 };
 
-const LogDetail = ({ poolItem, handlerClose, showLog }) => {
+const LogRecord = () => {
   const [filter, setFilter] = useState({});
-
+  const dispatch = useDispatch();
+  const { currentMaster } = useSelector(sel => sel.logRecord);
   const reloadData = () => {
     if (tableRef) {
       tableRef.remoteDataRefresh();
     }
   };
-
-  const renderTitle = useCallback(() => {
-    const title = `池号 ${get(poolItem, 'code')}`;
-    return (
-      <>
-        <ExtIcon type="left" className="trigger-back" antd onClick={handlerClose} />
-        <BannerTitle title={title} subTitle="执行日志" />
-      </>
-    );
-  }, [handlerClose, poolItem]);
 
   const handleColumnSearch = useCallback(
     (selectedKeys, dataIndex, confirm) => {
@@ -166,6 +160,18 @@ const LogDetail = ({ poolItem, handlerClose, showLog }) => {
     [getColumnSearchComponent],
   );
 
+  const handlerMasterSelect = useCallback(
+    master => {
+      dispatch({
+        type: 'logRecord/updateState',
+        payload: {
+          currentMaster: master,
+        },
+      });
+    },
+    [dispatch],
+  );
+
   const getExtTableProps = useCallback(() => {
     const columns = [
       {
@@ -202,6 +208,12 @@ const LogDetail = ({ poolItem, handlerClose, showLog }) => {
         },
       },
       {
+        title: '预算池号',
+        dataIndex: 'poolCode',
+        width: 180,
+        ...getColumnSearchProps('poolCode'),
+      },
+      {
         title: '业务编号',
         dataIndex: 'bizCode',
         width: 180,
@@ -230,8 +242,7 @@ const LogDetail = ({ poolItem, handlerClose, showLog }) => {
         render: (t, r) => `${t}(${r.opUserAccount})`,
       },
     ];
-    const poolCode = get(poolItem, 'code');
-    const filters = [{ fieldName: 'poolCode', operator: 'EQ', value: poolCode }];
+    const filters = [{ fieldName: 'subjectId', operator: 'EQ', value: get(currentMaster, 'id') }];
     Object.keys(filter).forEach(key => {
       const filterField = get(filterFields, key);
       if (filterField) {
@@ -243,11 +254,12 @@ const LogDetail = ({ poolItem, handlerClose, showLog }) => {
     });
     const toolBarProps = {
       left: (
-        <>
+        <Space>
+          <MasterView onChange={handlerMasterSelect} />
           <Button onClick={reloadData}>
             <FormattedMessage id="global.refresh" defaultMessage="刷新" />
           </Button>
-        </>
+        </Space>
       ),
     };
     const props = {
@@ -255,43 +267,29 @@ const LogDetail = ({ poolItem, handlerClose, showLog }) => {
       columns,
       bordered: false,
       showSearch: false,
-      remotePaging: true,
       lineNumber: false,
+      remotePaging: true,
       searchWidth: 260,
-      storageId: '36e28135-9faa-4094-ae62-f994d3ab4fdf',
+      storageId: 'a8634c7e-b67d-4d8e-848f-b078afd96bd3',
       sort: {
-        field: { opTime: 'desc' },
+        field: { opTime: null },
       },
       cascadeParams: {
         filters,
       },
     };
-    if (poolCode) {
+    if (currentMaster) {
       Object.assign(props, {
         store: {
           type: 'POST',
-          url: `${SERVER_PATH}/bems-v6/pool/findRecordByPage`,
+          url: `${SERVER_PATH}/bems-v6/report/getLogRecords`,
         },
       });
     }
     return props;
-  }, [filter, getColumnSearchProps, poolItem]);
+  }, [currentMaster, filter, getColumnSearchProps, handlerMasterSelect]);
 
-  return (
-    <Drawer
-      width={document.body.clientWidth}
-      getContainer={false}
-      placement="right"
-      visible={showLog}
-      destroyOnClose
-      title={renderTitle()}
-      className={cls(styles['log-box'])}
-      onClose={handlerClose}
-      style={{ position: 'absolute' }}
-    >
-      <ExtTable onTableRef={ref => (tableRef = ref)} {...getExtTableProps()} />
-    </Drawer>
-  );
+  return <ExtTable onTableRef={ref => (tableRef = ref)} {...getExtTableProps()} />;
 };
 
-export default LogDetail;
+export default connect(({ logRecord }) => ({ logRecord }))(LogRecord);
