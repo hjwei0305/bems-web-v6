@@ -12,9 +12,8 @@ export async function getSubjectYears(params) {
   const { subjectId } = params;
   const url = `${SERVER_PATH}/bems-v6/report/getYears/${subjectId}`;
   return request({
-    method: 'POST',
+    method: 'GET',
     url,
-    data: {},
   });
 }
 
