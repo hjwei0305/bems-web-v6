@@ -3,7 +3,7 @@ import cls from 'classnames';
 import { get } from 'lodash';
 import { connect } from 'dva';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { Button, Card, Modal } from 'antd';
+import { Button, Card, Modal, Tag } from 'antd';
 import { ExtTable, BannerTitle } from 'suid';
 import { FilterView } from '@/components';
 import { constants } from '@/utils';
@@ -243,11 +243,25 @@ class PeriodList extends Component {
       return (
         <>
           <span style={{ color: 'rgba(0,0,0,0.35)' }}>{t}</span>
+          {r.type === PERIOD_TYPE.CUSTOMIZE.key ? (
+            <Tag color="orange" style={{ borderColor: 'transparent', marginLeft: 4 }}>
+              自定义
+            </Tag>
+          ) : null}
           <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
         </>
       );
     }
-    return t;
+    return (
+      <>
+        {t}
+        {r.type === PERIOD_TYPE.CUSTOMIZE.key ? (
+          <Tag color="orange" style={{ borderColor: 'transparent', marginLeft: 4 }}>
+            自定义
+          </Tag>
+        ) : null}
+      </>
+    );
   };
 
   renderDisabled = (t, r) => {
@@ -278,7 +292,7 @@ class PeriodList extends Component {
       {
         title: '期间名称',
         dataIndex: 'name',
-        width: 320,
+        width: 380,
         render: (t, r) => this.renderPeriodName(t, r),
       },
       {
