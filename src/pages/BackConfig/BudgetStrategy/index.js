@@ -36,6 +36,12 @@ class BudgetStrategy extends Component {
         render: t => <StrategyType state={t} />,
       },
       {
+        title: '策略描述',
+        dataIndex: 'remark',
+        width: 360,
+        render: t => t || '-',
+      },
+      {
         title: '策略类路径',
         dataIndex: 'classPath',
         width: 520,

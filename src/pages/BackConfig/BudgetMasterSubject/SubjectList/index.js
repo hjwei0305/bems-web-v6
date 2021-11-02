@@ -15,7 +15,7 @@ const AssignSubject = React.lazy(() => import('./AssignSubject'));
 const CopySubject = React.lazy(() => import('./CopySubject'));
 
 @connect(({ budgetMasterSubject, loading }) => ({ budgetMasterSubject, loading }))
-class BudgetSubject extends Component {
+class SubjectList extends Component {
   static tablRef;
 
   static confirmModal;
@@ -360,4 +360,4 @@ class BudgetSubject extends Component {
   }
 }
 
-export default BudgetSubject;
+export default SubjectList;
