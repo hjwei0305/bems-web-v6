@@ -145,6 +145,12 @@ class BudgetMaster extends Component {
         ),
       },
       {
+        title: '优先级',
+        dataIndex: 'rank',
+        width: 80,
+        required: true,
+      },
+      {
         title: '主体代码',
         dataIndex: 'code',
         width: 100,

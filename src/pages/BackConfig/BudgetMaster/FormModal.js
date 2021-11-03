@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { get } from 'lodash';
 import { Form, Input } from 'antd';
-import { ExtModal, ComboList, ComboTree } from 'suid';
+import { ExtModal, ComboList, ComboTree, MoneyInput } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
@@ -187,6 +187,20 @@ class FormModal extends PureComponent {
                 },
               ],
             })(<ComboList {...strategyProps} />)}
+          </FormItem>
+          <FormItem
+            label="优先级"
+            extra="值越小优先级越高。当一个公司下有多个预算主体时，条件相同时预算占用将按此优先级处理"
+          >
+            {getFieldDecorator('rank', {
+              initialValue: get(rowData, 'rank') || 0,
+              rules: [
+                {
+                  required: true,
+                  message: '优先级不能为空',
+                },
+              ],
+            })(<MoneyInput textAlign="left" min={0} thousand={false} precision={0} />)}
           </FormItem>
         </Form>
       </ExtModal>
