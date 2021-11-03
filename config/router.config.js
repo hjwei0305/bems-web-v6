@@ -102,9 +102,9 @@ export default [
             component: './LogRecord',
           },
           {
-            name: '预算执行报表',
-            path: '/report/annualAnalysis',
-            component: './Report/AnnualAnalysis',
+            name: '科目执行报表',
+            path: '/report/subjectAnalysis',
+            component: './Report/SubjectAnalysis',
           },
         ],
       },

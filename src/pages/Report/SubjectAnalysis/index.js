@@ -45,8 +45,8 @@ const subDimensionsCols = {
   ],
 };
 
-@connect(({ annualAnalysis, loading }) => ({ annualAnalysis, loading }))
-class AnnualAnalysis extends Component {
+@connect(({ subjectAnalysis, loading }) => ({ subjectAnalysis, loading }))
+class SubjectAnalysis extends Component {
   static tablRef;
 
   static localData;
@@ -60,7 +60,7 @@ class AnnualAnalysis extends Component {
   handlerShowTrend = rowData => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'annualAnalysis/updateState',
+      type: 'subjectAnalysis/updateState',
       payload: {
         rowData,
         showTrend: true,
@@ -71,7 +71,7 @@ class AnnualAnalysis extends Component {
   handlerCloseTrendView = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'annualAnalysis/updateState',
+      type: 'subjectAnalysis/updateState',
       payload: {
         rowData: false,
         showTrend: false,
@@ -80,19 +80,19 @@ class AnnualAnalysis extends Component {
   };
 
   handlerMasterSelect = currentMaster => {
-    const { dispatch, annualAnalysis } = this.props;
-    const { filterData: originFilterData } = annualAnalysis;
+    const { dispatch, subjectAnalysis } = this.props;
+    const { filterData: originFilterData } = subjectAnalysis;
     const subjectId = get(currentMaster, 'id');
     const filterData = { ...originFilterData, subjectId };
     dispatch({
-      type: 'annualAnalysis/updateState',
+      type: 'subjectAnalysis/updateState',
       payload: {
         currentMaster,
         filterData,
       },
     });
     dispatch({
-      type: 'annualAnalysis/getSubjectDependenceData',
+      type: 'subjectAnalysis/getSubjectDependenceData',
       payload: {
         subjectId: get(currentMaster, 'id'),
       },
@@ -102,7 +102,7 @@ class AnnualAnalysis extends Component {
   handlerBudgetYearChange = year => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'annualAnalysis/updateState',
+      type: 'subjectAnalysis/updateState',
       payload: {
         year,
       },
@@ -112,11 +112,11 @@ class AnnualAnalysis extends Component {
   handlerItemChange = keys => {
     const {
       dispatch,
-      annualAnalysis: { filterData: originFilterData },
+      subjectAnalysis: { filterData: originFilterData },
     } = this.props;
     const filterData = { ...originFilterData, item: keys };
     dispatch({
-      type: 'annualAnalysis/updateState',
+      type: 'subjectAnalysis/updateState',
       payload: {
         filterData,
       },
@@ -126,11 +126,11 @@ class AnnualAnalysis extends Component {
   handlerSubmitDimension = dimension => {
     const {
       dispatch,
-      annualAnalysis: { filterData: originFilterData },
+      subjectAnalysis: { filterData: originFilterData },
     } = this.props;
     const filterData = { ...originFilterData, ...dimension };
     dispatch({
-      type: 'annualAnalysis/updateState',
+      type: 'subjectAnalysis/updateState',
       payload: {
         filterData,
       },
@@ -139,7 +139,7 @@ class AnnualAnalysis extends Component {
 
   itemViewProps = () => {
     const {
-      annualAnalysis: { currentMaster },
+      subjectAnalysis: { currentMaster },
     } = this.props;
     const itProps = {
       onChange: this.handlerItemChange,
@@ -149,8 +149,8 @@ class AnnualAnalysis extends Component {
   };
 
   getFilters = () => {
-    const { annualAnalysis } = this.props;
-    const { filterData, year } = annualAnalysis;
+    const { subjectAnalysis } = this.props;
+    const { filterData, year } = subjectAnalysis;
     const filters = [{ fieldName: 'year', operator: 'EQ', value: year }];
     Object.keys(filterData).forEach(key => {
       const filterField = get(filterFields, key);
@@ -172,7 +172,7 @@ class AnnualAnalysis extends Component {
   getSubCols = () => {
     const subCols = { cols: [], exportSubCols: [] };
     const {
-      annualAnalysis: { subDimensions, filterData },
+      subjectAnalysis: { subDimensions, filterData },
     } = this.props;
     subDimensions.forEach(d => {
       if (filterData[d.code] && filterData[d.code].length > 0) {
@@ -190,7 +190,7 @@ class AnnualAnalysis extends Component {
 
   exportData = () => {
     const {
-      annualAnalysis: { currentMaster, year },
+      subjectAnalysis: { currentMaster, year },
     } = this.props;
     if (currentMaster) {
       const { exportSubCols, cols } = this.getSubCols();
@@ -233,7 +233,7 @@ class AnnualAnalysis extends Component {
 
   render() {
     const {
-      annualAnalysis: { showTrend, rowData, year, years, currentMaster, subDimensions },
+      subjectAnalysis: { showTrend, rowData, year, years, currentMaster, subDimensions },
     } = this.props;
     const { cols } = this.getSubCols();
     const subjectId = get(currentMaster, 'id');
@@ -389,4 +389,4 @@ class AnnualAnalysis extends Component {
   }
 }
 
-export default AnnualAnalysis;
+export default SubjectAnalysis;
