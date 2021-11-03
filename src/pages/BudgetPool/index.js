@@ -10,7 +10,6 @@ import {
   Modal,
   Layout,
   Button,
-  Avatar,
   Tooltip,
   Progress,
   Divider,
@@ -389,6 +388,7 @@ class BudgetPool extends Component {
 
   renderDescription = item => {
     const actived = get(item, 'actived');
+    const periodType = PERIOD_TYPE[item.periodType];
     return (
       <>
         {!actived ? (
@@ -397,6 +397,11 @@ class BudgetPool extends Component {
         {this.renderSubField(item)}
         <div className="money-box">
           <div className={cls('field-item', { disabled: !actived })}>
+            {periodType ? (
+              <Tag color="#eee" style={{ color: '#666' }}>
+                <PeriodType periodTypeKey={item.periodType} />
+              </Tag>
+            ) : null}
             {item.strategyName ? <Tag color="purple">{item.strategyName}</Tag> : null}
             {item.roll ? <Tag color="magenta">可结转</Tag> : null}
             {item.use ? <Tag color="cyan">业务可用</Tag> : null}
@@ -533,21 +538,6 @@ class BudgetPool extends Component {
     );
   };
 
-  renderAvatar = ({ item }) => {
-    const periodType = PERIOD_TYPE[item.periodType];
-    return (
-      <Tooltip title="预算期间类型" placement="bottomRight">
-        <Avatar
-          shape="square"
-          style={{ verticalAlign: 'middle', backgroundColor: periodType.backColor || '' }}
-          size={42}
-        >
-          <PeriodType periodTypeKey={item.periodType} />
-        </Avatar>
-      </Tooltip>
-    );
-  };
-
   render() {
     const { budgetPool } = this.props;
     const { filterData, recordItem, showLog } = budgetPool;
@@ -566,7 +556,6 @@ class BudgetPool extends Component {
       customTool: ({ total }) => this.renderCustomTool(total),
       onSelectChange: this.handlerSelectPool,
       itemField: {
-        avatar: this.renderAvatar,
         title: this.renderMasterTitle,
         description: this.renderDescription,
         extra: this.renderAction,
