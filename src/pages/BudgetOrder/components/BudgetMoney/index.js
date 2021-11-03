@@ -67,7 +67,7 @@ const BudgetMoney = ({
         onSave(rowItem, money, () => {
           setRowKey('');
         });
-        setEdit(false);
+        // setEdit(false);
       }
     },
     [maxAmount, minAmount, onSave, rowItem],
@@ -93,7 +93,7 @@ const BudgetMoney = ({
       onSave(rowItem, money, () => {
         setRowKey('');
       });
-      setEdit(false);
+      // setEdit(false);
     }
   }, [maxAmount, minAmount, onSave, rowItem]);
 
