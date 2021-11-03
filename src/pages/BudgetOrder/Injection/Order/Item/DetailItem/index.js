@@ -277,11 +277,24 @@ class DetailItem extends PureComponent {
     const { globalDisabled } = this.state;
     const { itemMoneySaving } = this.props;
     const rowKey = get(item, 'id');
+    const poolCode = get(item, 'poolCode');
     const amount =
       get(this.pagingData[rowKey], 'amount') !== undefined
         ? get(this.pagingData[rowKey], 'amount')
         : get(item, 'amount');
     const errMsg = get(this.pagingData[rowKey], 'errMsg') || '';
+    const budgetMoneyProps = {
+      className: 'inject-money',
+      amount,
+      title: '注入金额',
+      rowItem: item,
+      loading: itemMoneySaving,
+      allowEdit: !globalDisabled,
+      onSave: this.handlerSaveMoney,
+    };
+    if (!poolCode) {
+      Object.assign(budgetMoneyProps, { minAmount: 0, extra: '没有池号，注入金额不能小于0' });
+    }
     return (
       <>
         {this.renderSubField(item)}
@@ -292,15 +305,7 @@ class DetailItem extends PureComponent {
               <Money value={get(item, 'poolAmount')} />
             </span>
           </div>
-          <BudgetMoney
-            className="inject-money"
-            amount={amount}
-            title="注入金额"
-            rowItem={item}
-            loading={itemMoneySaving}
-            allowEdit={!globalDisabled}
-            onSave={this.handlerSaveMoney}
-          />
+          <BudgetMoney {...budgetMoneyProps} />
           {errMsg ? <Alert type="error" message={errMsg} banner closable /> : null}
         </div>
       </>
