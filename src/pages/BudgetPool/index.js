@@ -391,9 +391,6 @@ class BudgetPool extends Component {
     const periodType = PERIOD_TYPE[item.periodType];
     return (
       <>
-        {!actived ? (
-          <embed src={noUse} style={{ position: 'absolute' }} type="image/svg+xml" />
-        ) : null}
         {this.renderSubField(item)}
         <div className="money-box">
           <div className={cls('field-item', { disabled: !actived })}>
@@ -407,6 +404,14 @@ class BudgetPool extends Component {
             {item.use ? <Tag color="cyan">业务可用</Tag> : null}
           </div>
         </div>
+        {!actived ? (
+          <embed
+            src={noUse}
+            wmode="transparent"
+            style={{ position: 'absolute' }}
+            type="image/svg+xml"
+          />
+        ) : null}
       </>
     );
   };
