@@ -45,6 +45,45 @@ const subDimensionsCols = {
   ],
 };
 
+const tip = '误差率=(|总注入-首次注入|/首次注入)*100%';
+
+const formatMoney = rate => {
+  const percent = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
+  if (rate < 0.1) {
+    return `${percent}%`;
+  }
+  if (rate > 0.1 && rate <= 0.3) {
+    return <span style={{ color: '#fa8c16' }}>{`${percent}%`}</span>;
+  }
+  if (rate > 0.3) {
+    return <span style={{ color: '#f5222d' }}>{`${percent}%`}</span>;
+  }
+};
+
+const getDeviationRate = (initInjectAmount, injectAmount, format = false) => {
+  if (initInjectAmount > 0) {
+    const amount = new Decimal(injectAmount)
+      .sub(new Decimal(initInjectAmount))
+      .abs()
+      .toNumber();
+    const rate = new Decimal(amount).div(new Decimal(initInjectAmount));
+    if (format) {
+      return formatMoney(rate);
+    }
+    const reate = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
+    return `${reate}%`;
+  }
+  return 'N/A';
+};
+
+const getDeviation = (initInjectAmount, injectAmount) => {
+  const amount = new Decimal(injectAmount)
+    .sub(new Decimal(initInjectAmount))
+    .abs()
+    .toNumber();
+  return amount;
+};
+
 @connect(({ subjectAnalysis, loading }) => ({ subjectAnalysis, loading }))
 class SubjectAnalysis extends Component {
   static tablRef;
@@ -205,24 +244,20 @@ class SubjectAnalysis extends Component {
         '费用科目代码',
         '费用科目名称',
         ...exportSubCols,
-        '首次注入',
         '总注入',
         '总使用',
         '使用占比(总使用/总注入)',
-        '偏差率(总使用/首次注入)',
+        '误差额',
+        `误差率【${tip}】`,
       ];
       const data = [];
       (this.localData || []).forEach(r => {
         let useRate = 0;
-        let deviationRate = 'N/A';
         if (r.injectAmount > 0) {
           const rate = new Decimal(r.usedAmount).div(new Decimal(r.injectAmount));
           useRate = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
         }
-        if (r.initInjectAmount > 0) {
-          const rate = new Decimal(r.usedAmount).div(new Decimal(r.initInjectAmount));
-          deviationRate = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
-        }
+        const deviationRate = getDeviationRate(r.initInjectAmount, r.injectAmount);
         const expFields = {};
         cols.forEach(c => {
           expFields[c.dataIndex] = get(r, c.dataIndex) || '';
@@ -231,10 +266,10 @@ class SubjectAnalysis extends Component {
           item: r.item,
           itemName: r.itemName,
           ...expFields,
-          initInjectAmount: r.initInjectAmount,
           injectAmount: r.injectAmount,
           usedAmount: r.usedAmount,
           useRate: `${useRate}%`,
+          deviation: getDeviation(r.initInjectAmount, r.injectAmount),
           deviationRate: `${deviationRate}%`,
         };
         data.push(row);
@@ -281,14 +316,6 @@ class SubjectAnalysis extends Component {
         required: true,
       },
       ...cols,
-      {
-        title: '首次注入',
-        dataIndex: 'initInjectAmount',
-        width: 180,
-        required: true,
-        align: 'right',
-        render: t => <Money value={t} />,
-      },
       {
         title: '总注入',
         dataIndex: 'injectAmount',
@@ -343,28 +370,27 @@ class SubjectAnalysis extends Component {
         },
       },
       {
+        title: '误差额',
+        dataIndex: 'initInjectAmount',
+        width: 180,
+        required: true,
+        align: 'right',
+        render: (t, r) => {
+          return getDeviation(r.initInjectAmount, r.injectAmount);
+        },
+      },
+      {
         title: (
           <Space>
-            偏差率
-            <ExtIcon
-              type="question-circle"
-              antd
-              tooltip={{ title: '使用占比=(总使用/首次注入)*100%' }}
-            />
+            误差率
+            <ExtIcon type="question-circle" antd tooltip={{ title: tip }} />
           </Space>
         ),
         dataIndex: 'deviationRate',
         width: 80,
         required: true,
         align: 'center',
-        render: (t, r) => {
-          if (r.initInjectAmount) {
-            const rate = new Decimal(r.usedAmount).div(new Decimal(r.initInjectAmount));
-            const percent = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
-            return `${percent}%`;
-          }
-          return 'N/A';
-        },
+        render: (t, r) => getDeviationRate(r.initInjectAmount, r.injectAmount, true),
       },
     ];
     const toolBarProps = {
@@ -431,6 +457,7 @@ class SubjectAnalysis extends Component {
       });
     }
     const trendViewProps = {
+      subjectId,
       onClose: this.handlerCloseTrendView,
       showTrend,
       rowData,

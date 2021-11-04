@@ -16,7 +16,7 @@ const getMonthData = () => {
   return y;
 };
 const TrendView = props => {
-  const { onClose, showTrend, year, years, rowData } = props;
+  const { onClose, showTrend, year, years, rowData, subjectId } = props;
   const [loading, setLoading] = useState(false);
   const [trendYear, setTrendYear] = useState({});
 
@@ -37,6 +37,7 @@ const TrendView = props => {
         data: {
           ...rowData,
           year: selectYears,
+          subjectId,
         },
       })
         .then(res => {
@@ -48,7 +49,7 @@ const TrendView = props => {
           setLoading(false);
         });
     },
-    [rowData, year],
+    [rowData, subjectId, year],
   );
 
   useEffect(() => {
