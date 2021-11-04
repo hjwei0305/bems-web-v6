@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { get, isEmpty, isNumber } from 'lodash';
+import { get, isEmpty, isNumber, omit } from 'lodash';
 import { connect } from 'dva';
 import { Decimal } from 'decimal.js';
 import cls from 'classnames';
@@ -14,11 +14,11 @@ import styles from './index.less';
 
 const { SERVER_PATH } = constants;
 const filterFields = {
-  subjectId: { fieldName: 'subjectId', operator: 'EQ' },
-  org: { fieldName: 'org', operator: 'IN' },
-  item: { fieldName: 'item', operator: 'IN' },
-  period: { fieldName: 'period', operator: 'IN' },
-  project: { fieldName: 'project', operator: 'IN' },
+  subjectId: { fieldName: 'subjectId' },
+  item: { fieldName: 'itemCodes' },
+  org: { fieldName: 'orgIds' },
+  project: { fieldName: 'projectCodes' },
+  udf1: { fieldName: 'udf1s' },
 };
 
 const subDimensionsCols = {
@@ -128,7 +128,7 @@ class SubjectAnalysis extends Component {
       dispatch,
       subjectAnalysis: { filterData: originFilterData },
     } = this.props;
-    const filterData = { ...originFilterData, ...dimension };
+    const filterData = { ...originFilterData, ...omit(dimension, ['item', 'period']) };
     dispatch({
       type: 'subjectAnalysis/updateState',
       payload: {
@@ -151,18 +151,13 @@ class SubjectAnalysis extends Component {
   getFilters = () => {
     const { subjectAnalysis } = this.props;
     const { filterData, year } = subjectAnalysis;
-    const filters = [{ fieldName: 'year', operator: 'EQ', value: year }];
+    const filters = { year };
     Object.keys(filterData).forEach(key => {
       const filterField = get(filterFields, key);
       if (filterField) {
         const value = get(filterData, key, null);
         if (!isEmpty(value) || isNumber(value)) {
-          const fit = { fieldName: key, operator: get(filterField, 'operator'), value };
-          const fieldType = get(filterField, 'fieldType');
-          if (fieldType) {
-            Object.assign(fit, { fieldType });
-          }
-          filters.push(fit);
+          filters[filterField.fieldName] = value;
         }
       }
     });
@@ -369,7 +364,7 @@ class SubjectAnalysis extends Component {
     if (subjectId && year) {
       Object.assign(tableProps, {
         cascadeParams: {
-          filters,
+          ...filters,
         },
       });
     }
