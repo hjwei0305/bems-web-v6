@@ -29,14 +29,15 @@ const TrendView = props => {
 
   const getTrendData = useCallback(
     (selectYears = [year]) => {
-      const subjectId = get(rowData, 'subjectId');
-      const item = get(rowData, 'item');
-      const url = `${SERVER_PATH}/bems-v6/report/annualUsageTrend/${subjectId}/${item}`;
+      const url = `${SERVER_PATH}/bems-v6/report/usageTrend`;
       setLoading(true);
       request({
         method: 'POST',
         url,
-        data: selectYears,
+        data: {
+          ...rowData,
+          year: selectYears,
+        },
       })
         .then(res => {
           if (res.success) {

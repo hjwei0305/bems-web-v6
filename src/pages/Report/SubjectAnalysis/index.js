@@ -5,7 +5,7 @@ import { Decimal } from 'decimal.js';
 import cls from 'classnames';
 import { Divider, Progress } from 'antd';
 import { formatMessage } from 'umi-plugin-react/locale';
-import { ExtTable, ExtIcon, Money, message } from 'suid';
+import { ExtTable, ExtIcon, Money, message, Space } from 'suid';
 import { BudgetYearPicker, MasterView, FilterDimension } from '@/components';
 import { constants, exportXls } from '@/utils';
 import TrendView from './TrendView';
@@ -50,6 +50,18 @@ class SubjectAnalysis extends Component {
   static tablRef;
 
   static localData;
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'subjectAnalysis/updateState',
+      payload: {
+        rowData: null,
+        showTrend: false,
+        filterData: {},
+      },
+    });
+  }
 
   reloadData = () => {
     if (this.tablRef) {
@@ -193,16 +205,23 @@ class SubjectAnalysis extends Component {
         '费用科目代码',
         '费用科目名称',
         ...exportSubCols,
-        '预算总额',
-        '已使用',
-        '使用比例',
+        '首次注入',
+        '总注入',
+        '总使用',
+        '使用占比(总使用/总注入)',
+        '偏差率(总使用/首次注入)',
       ];
       const data = [];
       (this.localData || []).forEach(r => {
-        let percent = 0;
+        let useRate = 0;
+        let deviationRate = 'N/A';
         if (r.injectAmount > 0) {
           const rate = new Decimal(r.usedAmount).div(new Decimal(r.injectAmount));
-          percent = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
+          useRate = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
+        }
+        if (r.initInjectAmount > 0) {
+          const rate = new Decimal(r.usedAmount).div(new Decimal(r.initInjectAmount));
+          deviationRate = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
         }
         const expFields = {};
         cols.forEach(c => {
@@ -212,13 +231,15 @@ class SubjectAnalysis extends Component {
           item: r.item,
           itemName: r.itemName,
           ...expFields,
+          initInjectAmount: r.initInjectAmount,
           injectAmount: r.injectAmount,
           usedAmount: r.usedAmount,
-          rate: `${percent}%`,
+          useRate: `${useRate}%`,
+          deviationRate: `${deviationRate}%`,
         };
         data.push(row);
       });
-      const fileName = `${get(currentMaster, 'name')}-${year}年-预算费用科目执行明细`;
+      const fileName = `${get(currentMaster, 'name')}-${year}年-执行明细`;
       exportXls(fileName, expCols, data);
     } else {
       message.destroy();
@@ -261,7 +282,15 @@ class SubjectAnalysis extends Component {
       },
       ...cols,
       {
-        title: '预算总额',
+        title: '首次注入',
+        dataIndex: 'initInjectAmount',
+        width: 180,
+        required: true,
+        align: 'right',
+        render: t => <Money value={t} />,
+      },
+      {
+        title: '总注入',
         dataIndex: 'injectAmount',
         width: 180,
         required: true,
@@ -269,7 +298,7 @@ class SubjectAnalysis extends Component {
         render: t => <Money value={t} />,
       },
       {
-        title: '已使用',
+        title: '总使用',
         dataIndex: 'usedAmount',
         width: 180,
         required: true,
@@ -277,8 +306,17 @@ class SubjectAnalysis extends Component {
         render: t => <Money value={t} />,
       },
       {
-        title: '使用比例',
-        dataIndex: 'rate',
+        title: (
+          <Space>
+            使用占比
+            <ExtIcon
+              type="question-circle"
+              antd
+              tooltip={{ title: '使用占比=(总使用/总注入)*100%' }}
+            />
+          </Space>
+        ),
+        dataIndex: 'useRate',
         width: 220,
         required: true,
         align: 'center',
@@ -302,6 +340,30 @@ class SubjectAnalysis extends Component {
               size="small"
             />
           );
+        },
+      },
+      {
+        title: (
+          <Space>
+            偏差率
+            <ExtIcon
+              type="question-circle"
+              antd
+              tooltip={{ title: '使用占比=(总使用/首次注入)*100%' }}
+            />
+          </Space>
+        ),
+        dataIndex: 'deviationRate',
+        width: 80,
+        required: true,
+        align: 'center',
+        render: (t, r) => {
+          if (r.initInjectAmount) {
+            const rate = new Decimal(r.usedAmount).div(new Decimal(r.initInjectAmount));
+            const percent = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
+            return `${percent}%`;
+          }
+          return 'N/A';
         },
       },
     ];
@@ -355,7 +417,7 @@ class SubjectAnalysis extends Component {
       onTableRef: ref => (this.tablRef = ref),
       store: {
         type: 'POST',
-        url: `${SERVER_PATH}/bems-v6/report/annualBudgetAnalysis`,
+        url: `${SERVER_PATH}/bems-v6/report/executionAnalysis`,
         loaded: res => {
           this.localData = res.data || [];
         },
