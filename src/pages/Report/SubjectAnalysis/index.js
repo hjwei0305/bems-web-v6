@@ -45,7 +45,8 @@ const subDimensionsCols = {
   ],
 };
 
-const tip = '误差率=(|总注入-首次注入|/首次注入)*100%';
+const deviationRateTip = '误差率=(|总注入-首次注入|/首次注入)*100%';
+const deviationTip = '误差额=|总注入-首次注入|';
 
 const formatMoney = rate => {
   const percent = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
@@ -247,8 +248,8 @@ class SubjectAnalysis extends Component {
         '总注入',
         '总使用',
         '使用占比(总使用/总注入)',
-        '误差额',
-        `误差率【${tip}】`,
+        `误差额【${deviationTip}】`,
+        `误差率【${deviationRateTip}】`,
       ];
       const data = [];
       (this.localData || []).forEach(r => {
@@ -370,7 +371,12 @@ class SubjectAnalysis extends Component {
         },
       },
       {
-        title: '误差额',
+        title: (
+          <Space>
+            误差额
+            <ExtIcon type="question-circle" antd tooltip={{ title: deviationTip }} />
+          </Space>
+        ),
         dataIndex: 'initInjectAmount',
         width: 180,
         required: true,
@@ -383,7 +389,7 @@ class SubjectAnalysis extends Component {
         title: (
           <Space>
             误差率
-            <ExtIcon type="question-circle" antd tooltip={{ title: tip }} />
+            <ExtIcon type="question-circle" antd tooltip={{ title: deviationRateTip }} />
           </Space>
         ),
         dataIndex: 'deviationRate',
