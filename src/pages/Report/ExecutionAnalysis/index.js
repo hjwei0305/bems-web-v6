@@ -447,16 +447,16 @@ class ExecutionAnalysis extends Component {
       showSearch: false,
       rowKey: 'item',
       onTableRef: ref => (this.tablRef = ref),
-      store: {
-        type: 'POST',
-        url: `${SERVER_PATH}/bems-v6/report/executionAnalysis`,
-        loaded: res => {
-          this.localData = res.data || [];
-        },
-      },
     };
     if (subjectId && year) {
       Object.assign(tableProps, {
+        store: {
+          type: 'POST',
+          url: `${SERVER_PATH}/bems-v6/report/executionAnalysis`,
+          loaded: res => {
+            this.localData = res.data || [];
+          },
+        },
         cascadeParams: {
           ...filters,
         },
