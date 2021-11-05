@@ -85,8 +85,8 @@ const getDeviation = (initInjectAmount, injectAmount) => {
   return amount;
 };
 
-@connect(({ subjectAnalysis, loading }) => ({ subjectAnalysis, loading }))
-class SubjectAnalysis extends Component {
+@connect(({ executionAnalysis, loading }) => ({ executionAnalysis, loading }))
+class ExecutionAnalysis extends Component {
   static tablRef;
 
   static localData;
@@ -94,7 +94,7 @@ class SubjectAnalysis extends Component {
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'subjectAnalysis/updateState',
+      type: 'executionAnalysis/updateState',
       payload: {
         rowData: null,
         showTrend: false,
@@ -112,7 +112,7 @@ class SubjectAnalysis extends Component {
   handlerShowTrend = rowData => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'subjectAnalysis/updateState',
+      type: 'executionAnalysis/updateState',
       payload: {
         rowData,
         showTrend: true,
@@ -123,7 +123,7 @@ class SubjectAnalysis extends Component {
   handlerCloseTrendView = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'subjectAnalysis/updateState',
+      type: 'executionAnalysis/updateState',
       payload: {
         rowData: false,
         showTrend: false,
@@ -132,19 +132,19 @@ class SubjectAnalysis extends Component {
   };
 
   handlerMasterSelect = currentMaster => {
-    const { dispatch, subjectAnalysis } = this.props;
-    const { filterData: originFilterData } = subjectAnalysis;
+    const { dispatch, executionAnalysis } = this.props;
+    const { filterData: originFilterData } = executionAnalysis;
     const subjectId = get(currentMaster, 'id');
     const filterData = { ...originFilterData, subjectId };
     dispatch({
-      type: 'subjectAnalysis/updateState',
+      type: 'executionAnalysis/updateState',
       payload: {
         currentMaster,
         filterData,
       },
     });
     dispatch({
-      type: 'subjectAnalysis/getSubjectDependenceData',
+      type: 'executionAnalysis/getSubjectDependenceData',
       payload: {
         subjectId: get(currentMaster, 'id'),
       },
@@ -154,7 +154,7 @@ class SubjectAnalysis extends Component {
   handlerBudgetYearChange = year => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'subjectAnalysis/updateState',
+      type: 'executionAnalysis/updateState',
       payload: {
         year,
       },
@@ -164,11 +164,11 @@ class SubjectAnalysis extends Component {
   handlerItemChange = keys => {
     const {
       dispatch,
-      subjectAnalysis: { filterData: originFilterData },
+      executionAnalysis: { filterData: originFilterData },
     } = this.props;
     const filterData = { ...originFilterData, item: keys };
     dispatch({
-      type: 'subjectAnalysis/updateState',
+      type: 'executionAnalysis/updateState',
       payload: {
         filterData,
       },
@@ -178,11 +178,11 @@ class SubjectAnalysis extends Component {
   handlerSubmitDimension = dimension => {
     const {
       dispatch,
-      subjectAnalysis: { filterData: originFilterData },
+      executionAnalysis: { filterData: originFilterData },
     } = this.props;
     const filterData = { ...originFilterData, ...omit(dimension, ['item', 'period']) };
     dispatch({
-      type: 'subjectAnalysis/updateState',
+      type: 'executionAnalysis/updateState',
       payload: {
         filterData,
       },
@@ -191,7 +191,7 @@ class SubjectAnalysis extends Component {
 
   itemViewProps = () => {
     const {
-      subjectAnalysis: { currentMaster },
+      executionAnalysis: { currentMaster },
     } = this.props;
     const itProps = {
       onChange: this.handlerItemChange,
@@ -201,8 +201,8 @@ class SubjectAnalysis extends Component {
   };
 
   getFilters = () => {
-    const { subjectAnalysis } = this.props;
-    const { filterData, year } = subjectAnalysis;
+    const { executionAnalysis } = this.props;
+    const { filterData, year } = executionAnalysis;
     const filters = { year };
     Object.keys(filterData).forEach(key => {
       const filterField = get(filterFields, key);
@@ -219,7 +219,7 @@ class SubjectAnalysis extends Component {
   getSubCols = () => {
     const subCols = { cols: [], exportSubCols: [] };
     const {
-      subjectAnalysis: { subDimensions, filterData },
+      executionAnalysis: { subDimensions, filterData },
     } = this.props;
     subDimensions.forEach(d => {
       if (filterData[d.code] && filterData[d.code].length > 0) {
@@ -237,7 +237,7 @@ class SubjectAnalysis extends Component {
 
   exportData = () => {
     const {
-      subjectAnalysis: { currentMaster, year },
+      executionAnalysis: { currentMaster, year },
     } = this.props;
     if (currentMaster) {
       const { exportSubCols, cols } = this.getSubCols();
@@ -285,7 +285,7 @@ class SubjectAnalysis extends Component {
 
   render() {
     const {
-      subjectAnalysis: { showTrend, rowData, year, years, currentMaster, subDimensions },
+      executionAnalysis: { showTrend, rowData, year, years, currentMaster, subDimensions },
     } = this.props;
     const { cols } = this.getSubCols();
     const subjectId = get(currentMaster, 'id');
@@ -479,4 +479,4 @@ class SubjectAnalysis extends Component {
   }
 }
 
-export default SubjectAnalysis;
+export default ExecutionAnalysis;

@@ -6,7 +6,7 @@ const { modelExtend, model } = dvaModel;
 const defaultYear = new Date().getFullYear();
 
 export default modelExtend(model, {
-  namespace: 'subjectAnalysis',
+  namespace: 'executionAnalysis',
 
   state: {
     year: defaultYear,

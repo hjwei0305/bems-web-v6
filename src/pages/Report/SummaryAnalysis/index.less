@@ -1,0 +1,19 @@
+@import '../../../themes/vars.less';
+.container-box {
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  background-color: @page-background-color;
+  :global {
+    .tool-box {
+      height: 46px;
+      padding: 0 24px;
+      line-height: 46px;
+      background-color: @white;
+    }
+    .chart-body {
+      height: calc(100% - 46px) !important;
+      padding: 16px;
+    }
+  }
+}

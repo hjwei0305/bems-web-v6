@@ -97,14 +97,19 @@ export default [
         path: '/report',
         routes: [
           {
+            name: '概要分析',
+            path: '/report/summaryAnalysis',
+            component: './Report/SummaryAnalysis',
+          },
+          {
+            name: '执行分析',
+            path: '/report/executionAnalysis',
+            component: './Report/ExecutionAnalysis',
+          },
+          {
             name: '执行日志',
             path: '/report/logRecord',
             component: './LogRecord',
-          },
-          {
-            name: '科目执行报表',
-            path: '/report/subjectAnalysis',
-            component: './Report/SubjectAnalysis',
           },
         ],
       },

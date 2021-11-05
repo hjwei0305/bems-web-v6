@@ -82,7 +82,7 @@ const TrendView = props => {
         type: 'bar',
         data: trendYear[y],
         lineStyle: {
-          width: 1,
+          width: 3,
         },
         emphasis: {
           focus: 'series',
