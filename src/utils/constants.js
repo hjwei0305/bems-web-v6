@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-11-05 08:49:12
+ * @Last Modified time: 2021-11-05 11:24:18
  */
 import { base } from '../../public/app.config.json';
 
@@ -222,6 +222,34 @@ const SEARCH_DATE_PERIOD = {
   },
 };
 
+/** 日期枚举 */
+const SEARCH_DATE_TIME_PERIOD = {
+  ALL: {
+    name: 'ALL',
+    remark: '全部',
+  },
+  THIS_5M: {
+    name: 'THIS_5M',
+    remark: '近5分钟',
+  },
+  THIS_30M: {
+    name: 'THIS_30M',
+    remark: '近30分钟',
+  },
+  THIS_60M: {
+    name: 'THIS_60M',
+    remark: '近1小时',
+  },
+  TODAY: {
+    name: 'TODAY',
+    remark: '今日',
+  },
+  PERIOD: {
+    name: 'PERIOD',
+    remark: '自定义',
+  },
+};
+
 /** 预算池操作类型 */
 const POOL_OPERATION = {
   ALL: { key: 'ALL', title: '全部', color: '' },
@@ -254,4 +282,5 @@ export default {
   SEARCH_DATE_PERIOD,
   BUDGET_POOL_ACTION,
   POOL_OPERATION,
+  SEARCH_DATE_TIME_PERIOD,
 };
