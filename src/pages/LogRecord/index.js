@@ -313,7 +313,7 @@ const LogRecord = () => {
     [dispatch],
   );
 
-  const renderColumnServiceName = useMemo(() => {
+  const renderColumnEventName = useMemo(() => {
     const serviceName = get(filter, 'eventName') || '全部';
     return `事件(${serviceName})`;
   }, [filter]);
@@ -370,7 +370,7 @@ const LogRecord = () => {
         },
       },
       {
-        title: renderColumnServiceName,
+        title: renderColumnEventName,
         dataIndex: 'eventName',
         width: 180,
         ...getColumnSearchProps('eventName'),
@@ -464,7 +464,7 @@ const LogRecord = () => {
     getColumnSearchProps,
     getFilters,
     handlerMasterSelect,
-    renderColumnServiceName,
+    renderColumnEventName,
     renderColumnTimestamp,
   ]);
 
