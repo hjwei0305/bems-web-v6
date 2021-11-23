@@ -168,6 +168,9 @@ class SummaryAnalysis extends Component {
         yAxis: [
           {
             type: 'value',
+            axisLabel: {
+              formatter: '{value} 元',
+            },
           },
         ],
         series: seriesData,
