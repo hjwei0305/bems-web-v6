@@ -149,7 +149,7 @@ class SummaryAnalysis extends Component {
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            type: 'shadow',
+            type: 'cross',
           },
         },
         legend: {},
