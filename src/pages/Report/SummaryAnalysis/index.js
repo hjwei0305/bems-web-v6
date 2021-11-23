@@ -128,6 +128,7 @@ class SummaryAnalysis extends Component {
           name: `${year}年-余额`,
           type: 'bar',
           stack: `${year}`,
+          barWidth: 80,
           emphasis: {
             focus: 'series',
           },
