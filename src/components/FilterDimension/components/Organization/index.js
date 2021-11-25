@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { trim, isEqual } from 'lodash';
+import { trim, isEqual, intersectionWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Input, Tree } from 'antd';
 import { ScrollBar, ListLoader, utils, ExtIcon } from 'suid';
@@ -10,13 +10,15 @@ const { Search } = Input;
 const { TreeNode } = Tree;
 const childFieldKey = 'children';
 const hightLightColor = '#f50';
-const { request } = utils;
+const { request, getFlatTree } = utils;
 const { SERVER_PATH } = constants;
 
 class Organization extends PureComponent {
   static allValue = '';
 
   static data = [];
+
+  static flatData = [];
 
   static propTypes = {
     subjectId: PropTypes.string,
@@ -73,6 +75,7 @@ class Organization extends PureComponent {
           treeData = [res.data];
           expandedKeys = treeData.map(p => p.id);
           this.data = [...treeData];
+          this.flatData = getFlatTree(this.data, childFieldKey, []);
         }
         this.setState({ treeData, expandedKeys, loading: false });
       });
@@ -137,17 +140,19 @@ class Organization extends PureComponent {
     });
   };
 
-  handlerCheck = (checkedKeys, e) => {
+  handlerCheck = checkedKeys => {
     const { onSelectChange } = this.props;
-    const { checkedNodes } = e;
     this.setState({ checkedKeys });
-    const checkedData = checkedNodes.map(it => {
-      const { orgId, orgName } = it.props;
-      return {
-        text: orgName,
-        value: orgId,
-      };
-    });
+    const { checked } = checkedKeys;
+    const checkedData = intersectionWith(this.flatData, checked, (o, orgId) => o.id === orgId).map(
+      it => {
+        const { id, name } = it;
+        return {
+          text: name,
+          value: id,
+        };
+      },
+    );
     if (onSelectChange && onSelectChange instanceof Function) {
       onSelectChange(checkedData.map(it => it.value));
     }

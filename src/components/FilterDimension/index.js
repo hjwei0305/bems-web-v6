@@ -27,6 +27,7 @@ const FilterDimension = props => {
   const [projectData, setProjectData] = useState([]);
   const [organizationData, setOrganizationData] = useState([]);
   const [subjectData, setSubjectData] = useState([]);
+  const [label, setLabel] = useState('未选择');
 
   const periodRef = useRef();
   const projectRef = useRef();
@@ -68,16 +69,6 @@ const FilterDimension = props => {
     }
   }, []);
 
-  const handlerSubmit = useCallback(() => {
-    submitDimension({
-      period: periodData,
-      project: projectData,
-      item: subjectData,
-      org: organizationData,
-    });
-    setShow(false);
-  }, [organizationData, periodData, projectData, subjectData, submitDimension]);
-
   const renderLabel = useMemo(() => {
     let dm = 0;
     dm += periodData.length;
@@ -89,6 +80,17 @@ const FilterDimension = props => {
     }
     return `已选择(${dm})`;
   }, [organizationData.length, periodData.length, projectData.length, subjectData.length]);
+
+  const handlerSubmit = useCallback(() => {
+    submitDimension({
+      period: periodData,
+      project: projectData,
+      item: subjectData,
+      org: organizationData,
+    });
+    setLabel(renderLabel);
+    setShow(false);
+  }, [organizationData, periodData, projectData, renderLabel, subjectData, submitDimension]);
 
   const renderDimension = useMemo(() => {
     if (subjectId) {
@@ -205,7 +207,7 @@ const FilterDimension = props => {
     >
       <span className={styles['dimension-trigger']}>
         <span className="view-label">{labelTitle}</span>
-        <span className="view-content">{renderLabel}</span>
+        <span className="view-content">{label}</span>
         <ExtIcon type="down" antd />
       </span>
     </Dropdown>
