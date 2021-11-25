@@ -381,7 +381,7 @@ class ExecutionAnalysis extends Component {
           </Space>
         ),
         dataIndex: 'deviationRate',
-        width: 80,
+        width: 180,
         required: true,
         align: 'center',
         render: (t, r) => getDeviationRate(r.initInjectAmount, r.injectAmount, true),
