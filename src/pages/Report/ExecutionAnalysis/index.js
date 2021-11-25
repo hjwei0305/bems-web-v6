@@ -9,7 +9,6 @@ import { ExtTable, ExtIcon, Money, message, Space } from 'suid';
 import { BudgetYearPicker, MasterView, FilterDimension } from '@/components';
 import { constants, exportXls } from '@/utils';
 import TrendView from './TrendView';
-import ItemView from './ItemView';
 import styles from './index.less';
 
 const { SERVER_PATH } = constants;
@@ -180,24 +179,13 @@ class ExecutionAnalysis extends Component {
       dispatch,
       executionAnalysis: { filterData: originFilterData },
     } = this.props;
-    const filterData = { ...originFilterData, ...omit(dimension, ['item', 'period']) };
+    const filterData = { ...originFilterData, ...omit(dimension, ['period']) };
     dispatch({
       type: 'executionAnalysis/updateState',
       payload: {
         filterData,
       },
     });
-  };
-
-  itemViewProps = () => {
-    const {
-      executionAnalysis: { currentMaster },
-    } = this.props;
-    const itProps = {
-      onChange: this.handlerItemChange,
-      subjectId: get(currentMaster, 'id'),
-    };
-    return itProps;
   };
 
   getFilters = () => {
@@ -407,21 +395,14 @@ class ExecutionAnalysis extends Component {
           <Divider type="vertical" />
           <BudgetYearPicker onYearChange={this.handlerBudgetYearChange} value={year} />
           <Divider type="vertical" />
-          <ItemView {...this.itemViewProps()} />
+          <FilterDimension
+            labelTitle="维度"
+            submitDimension={this.handlerSubmitDimension}
+            dimensions={subDimensions}
+            subjectId={get(currentMaster, 'id')}
+            year={year}
+          />
           <Divider type="vertical" />
-          {subDimensions.length > 0 ? (
-            <>
-              <FilterDimension
-                width={520}
-                labelTitle="其它维度"
-                submitDimension={this.handlerSubmitDimension}
-                dimensions={subDimensions}
-                subjectId={get(currentMaster, 'id')}
-                year={year}
-              />
-              <Divider type="vertical" />
-            </>
-          ) : null}
           <ExtIcon
             className="btn-icon"
             tooltip={{ title: '导出xlsx' }}

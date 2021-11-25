@@ -22,7 +22,7 @@ export default modelExtend(model, {
       const re = yield call(getSubjectYears, payload);
       const result = yield call(getMasterDimension, payload);
       const years = re.data || [];
-      const subDimensions = (result.data || []).filter(d => d.required === false);
+      const subDimensions = (result.data || []).filter(d => d.code !== 'period');
       yield put({
         type: 'updateState',
         payload: {
