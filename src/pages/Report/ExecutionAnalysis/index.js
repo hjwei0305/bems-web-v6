@@ -81,7 +81,7 @@ const getDeviation = (initInjectAmount, injectAmount) => {
     .sub(new Decimal(initInjectAmount))
     .abs()
     .toNumber();
-  return amount;
+  return <Money value={amount} />;
 };
 
 @connect(({ executionAnalysis, loading }) => ({ executionAnalysis, loading }))
