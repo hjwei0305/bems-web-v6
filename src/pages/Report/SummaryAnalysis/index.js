@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
 import { Divider, Layout } from 'antd';
-import { ExtIcon, ExtEcharts } from 'suid';
+import { ExtIcon, ExtEcharts, ListLoader } from 'suid';
 import { MasterView, FilterView } from '@/components';
 import { constants } from '@/utils';
 import YearList from './YearList';
@@ -181,7 +181,7 @@ class SummaryAnalysis extends Component {
   };
 
   render() {
-    const { summaryAnalysis } = this.props;
+    const { summaryAnalysis, loading } = this.props;
     const { selectPeriodType, periodTypeData, selectCompareYear, compareYears } = summaryAnalysis;
     return (
       <Layout className={cls(styles['container-box'])}>
@@ -215,7 +215,7 @@ class SummaryAnalysis extends Component {
           />
         </Header>
         <Content className="chart-body">
-          <ExtEcharts {...this.getChartProps()} />
+          {loading.global ? <ListLoader /> : <ExtEcharts {...this.getChartProps()} />}
         </Content>
       </Layout>
     );
