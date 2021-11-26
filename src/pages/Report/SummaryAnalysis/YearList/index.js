@@ -62,7 +62,7 @@ const YearList = ({ style, onChange, year, years = [] }) => {
         style={{
           padding: 0,
           height: 232,
-          width: 120,
+          width: 130,
           backgroundColor: '#ffffff',
         }}
       >
