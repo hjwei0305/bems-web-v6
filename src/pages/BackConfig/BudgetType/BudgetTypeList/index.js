@@ -328,8 +328,16 @@ class BudgetTypeList extends Component {
       <>
         <div style={{ marginBottom: 8 }}>{`期间类型为${get(periodType, 'title')}`}</div>
         <div>
-          {item.roll ? <Tag color="magenta">可结转</Tag> : null}
-          {item.use ? <Tag color="cyan">业务可用</Tag> : null}
+          {item.roll ? (
+            <Tag color="magenta" style={{ borderColor: 'transparent' }}>
+              可结转
+            </Tag>
+          ) : null}
+          {item.use ? (
+            <Tag color="cyan" style={{ borderColor: 'transparent' }}>
+              业务可用
+            </Tag>
+          ) : null}
         </div>
       </>
     );
@@ -359,7 +367,11 @@ class BudgetTypeList extends Component {
         {orderCategories.map(itKey => {
           const it = ORDER_CATEGORY[itKey];
           if (it) {
-            return <Tag key={itKey}>{it.title}</Tag>;
+            return (
+              <Tag key={itKey} style={{ borderColor: 'transparent' }}>
+                {it.title}
+              </Tag>
+            );
           }
           return null;
         })}
