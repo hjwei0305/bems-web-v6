@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-11-05 11:24:18
+ * @Last Modified time: 2021-12-01 15:38:00
  */
 import { base } from '../../public/app.config.json';
 
@@ -135,6 +135,13 @@ const REQUEST_ITEM_STATUS = {
   ALL: { key: 'ALL', title: '全部', color: '' },
   NORMAL: { key: 'NORMAL', title: '正常', color: 'green' },
   ERROR: { key: 'ERROR', title: '异常', color: 'red' },
+};
+
+const MASTER_CLASSIFICATION = {
+  ALL: { key: 'ALL', title: '全部', color: '' },
+  DEPARTMENT: { key: 'DEPARTMENT', title: '部门级', color: 'blue' },
+  PROJECT: { key: 'PROJECT', title: '项目级', color: 'cyan' },
+  COST_CENTER: { key: 'COST_CENTER', title: '成本中心级', color: 'orange' },
 };
 
 /** 申请单操作 */
@@ -283,4 +290,5 @@ export default {
   BUDGET_POOL_ACTION,
   POOL_OPERATION,
   SEARCH_DATE_TIME_PERIOD,
+  MASTER_CLASSIFICATION,
 };

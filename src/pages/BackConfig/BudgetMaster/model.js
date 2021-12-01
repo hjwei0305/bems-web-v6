@@ -1,7 +1,12 @@
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
+import { constants } from '@/utils';
 import { del, save } from './service';
 
+const { MASTER_CLASSIFICATION } = constants;
+const MASTER_CLASSIFICATION_DATA = Object.keys(MASTER_CLASSIFICATION)
+  .map(key => MASTER_CLASSIFICATION[key])
+  .filter(it => it.key !== MASTER_CLASSIFICATION.ALL.key);
 const { dvaModel } = utils;
 const { modelExtend, model } = dvaModel;
 
@@ -11,6 +16,7 @@ export default modelExtend(model, {
   state: {
     rowData: null,
     showModal: false,
+    classificationData: MASTER_CLASSIFICATION_DATA,
   },
   effects: {
     *save({ payload, callback }, { call }) {

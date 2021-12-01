@@ -4,9 +4,10 @@ import cls from 'classnames';
 import { get } from 'lodash';
 import { Button, Popconfirm, Tag, Badge } from 'antd';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { ExtTable, ExtIcon } from 'suid';
+import { ExtTable, ExtIcon, Space } from 'suid';
 import { constants } from '@/utils';
 import FormModal from './FormModal';
+import Classification from './Classification';
 import styles from './index.less';
 
 const { SERVER_PATH } = constants;
@@ -116,9 +117,26 @@ class BudgetMaster extends Component {
     return <ExtIcon className="del" type="delete" antd />;
   };
 
+  handlerRowDataChange = rowData => {
+    const {
+      dispatch,
+      budgetMaster: { rowData: originRowData },
+    } = this.props;
+    const orgList = get(originRowData, 'orgList') || [];
+    dispatch({
+      type: 'budgetMaster/updateState',
+      payload: {
+        rowData: {
+          ...rowData,
+          orgList,
+        },
+      },
+    });
+  };
+
   render() {
     const { budgetMaster, loading } = this.props;
-    const { showModal, rowData } = budgetMaster;
+    const { showModal, rowData, classificationData } = budgetMaster;
     const columns = [
       {
         title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
@@ -145,22 +163,18 @@ class BudgetMaster extends Component {
         ),
       },
       {
-        title: '优先级',
-        dataIndex: 'rank',
-        width: 80,
-        required: true,
-      },
-      {
-        title: '主体代码',
-        dataIndex: 'code',
-        width: 100,
-        required: true,
-      },
-      {
         title: '主体名称',
         dataIndex: 'name',
         width: 360,
         required: true,
+        render: (t, r) => {
+          return (
+            <Space>
+              {t}
+              <Classification enumName={r.classification} />
+            </Space>
+          );
+        },
       },
       {
         title: '执行策略',
@@ -195,23 +209,15 @@ class BudgetMaster extends Component {
         dataIndex: 'corporationName',
         width: 360,
       },
-      {
-        title: '组织代码',
-        dataIndex: 'orgCode',
-        width: 90,
-      },
-      {
-        title: '组织名称',
-        dataIndex: 'orgName',
-        width: 220,
-      },
     ];
     const formModalProps = {
       save: this.save,
       rowData,
       showModal,
+      classificationData,
       closeFormModal: this.closeFormModal,
       saving: loading.effects['budgetMaster/save'],
+      onRowDataChange: this.handlerRowDataChange,
     };
     const toolBarProps = {
       left: (

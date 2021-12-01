@@ -52,5 +52,38 @@
     .ant-input-number-handler-wrap {
       display: none;
     }
+    .ant-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .ant-empty-image {
+      height: auto;
+    }
+    .ant-modal-body {
+      height: 520px;
+      padding: 0;
+    }
+    .btn-triiger-org {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 48px;
+      padding: 0 16px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all ease 0.3s;
+      &:hover {
+        box-shadow: @box-shadow-base;
+      }
+      .icon {
+        color: fade(@primary-color, 85%);
+      }
+      .arrow {
+        font-size: 12px;
+      }
+    }
   }
 }

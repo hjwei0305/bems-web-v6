@@ -1,11 +1,13 @@
 import React, { PureComponent } from 'react';
-import { get } from 'lodash';
-import { Form, Input } from 'antd';
-import { ExtModal, ComboList, ComboTree, MoneyInput } from 'suid';
+import { get, isEqual } from 'lodash';
+import { Form, Input, Empty, Switch, Alert, List, message } from 'antd';
+import { ExtModal, ComboList, utils, ListLoader, ExtIcon, Space, ScrollBar } from 'suid';
 import { constants } from '@/utils';
+import OrgAssign from './OrgAssign';
 import styles from './index.less';
 
-const { SERVER_PATH, STRATEGY_TYPE } = constants;
+const { request } = utils;
+const { SERVER_PATH, STRATEGY_TYPE, MASTER_CLASSIFICATION } = constants;
 const FormItem = Form.Item;
 const formItemLayout = {
   labelCol: {
@@ -16,32 +18,192 @@ const formItemLayout = {
   },
 };
 
-@Form.create()
+@Form.create({
+  onValuesChange: (props, _changedValues, allValues) => {
+    const { onRowDataChange } = props;
+    onRowDataChange(allValues);
+  },
+})
 class FormModal extends PureComponent {
-  handlerFormSubmit = () => {
-    const { form, save, rowData } = this.props;
-    form.validateFields((err, formData) => {
-      if (err) {
-        return;
+  static scrollBarRef;
+
+  static loaded;
+
+  static orgRef;
+
+  static selectOrgList;
+
+  constructor(props) {
+    super(props);
+    this.selectOrgList = [];
+    this.loaded = false;
+    this.state = {
+      loading: false,
+      showTriggerBack: false,
+      showOrgAssign: false,
+      classification: MASTER_CLASSIFICATION.DEPARTMENT,
+    };
+  }
+
+  componentDidMount() {
+    const { rowData } = this.props;
+    if (rowData && rowData.id) {
+      this.getData();
+    }
+  }
+
+  componentDidUpdate(preProps) {
+    const { rowData, showModal } = this.props;
+    if (rowData && rowData.id && showModal) {
+      if (this.loaded === false && !isEqual(rowData, preProps.rowData)) {
+        this.getData();
       }
-      const params = {};
-      Object.assign(params, rowData || {});
-      Object.assign(params, formData);
-      save(params);
+    }
+  }
+
+  handlerTriggerBack = () => {
+    this.setState({
+      showTriggerBack: false,
+      showOrgAssign: false,
     });
   };
 
-  render() {
-    const { form, rowData, closeFormModal, saving, showModal } = this.props;
+  renderTitle = () => {
+    const { rowData } = this.props;
+    const { showOrgAssign } = this.state;
+    let title = rowData && rowData.id ? '修改预算主体' : '新建预算主体';
+    if (showOrgAssign) {
+      title = '选择部门';
+    }
+    return title;
+  };
+
+  getData = () => {
+    const { rowData, classificationData, onRowDataChange } = this.props;
+    const id = get(rowData, 'id');
+    this.setState({ loading: true });
+    request({
+      url: `${SERVER_PATH}/bems-v6/subject/findOne`,
+      params: { id },
+    })
+      .then(res => {
+        this.loaded = true;
+        if (res.success) {
+          const masterData = res.data;
+          const classificationKey = get(masterData, 'classification');
+          const [classification] = classificationData.filter(it => it.key === classificationKey);
+          this.setState({ classification }, () => {
+            this.selectOrgList = get(masterData, 'orgList') || [];
+            onRowDataChange({ ...masterData, classificationName: classification.title });
+            setTimeout(() => {
+              if (this.scrollBarRef) {
+                this.scrollBarRef.updateScroll();
+              }
+            }, 300);
+          });
+        }
+      })
+      .finally(() => {
+        this.setState({ loading: false });
+      });
+  };
+
+  handlerFormSubmit = () => {
+    const { showOrgAssign } = this.state;
+    const { form, save, rowData } = this.props;
+    if (showOrgAssign) {
+      message.destroy();
+      if (this.selectOrgList.length === 0) {
+        message.error('请选择部门');
+        return false;
+      }
+      this.setState({ showTriggerBack: false, showOrgAssign: false });
+    } else {
+      form.validateFields(err => {
+        if (err) {
+          return;
+        }
+        save({ ...rowData, orgList: this.selectOrgList });
+      });
+    }
+  };
+
+  getClassificationName = classificationKey => {
+    const { classificationData } = this.props;
+    const [currentClassification] = classificationData.filter(it => it.key === classificationKey);
+    if (currentClassification) {
+      return currentClassification.title;
+    }
+    return '';
+  };
+
+  handlerShowAssignOrgList = () => {
+    this.setState({
+      showTriggerBack: true,
+      showOrgAssign: true,
+    });
+  };
+
+  handlerOrgSelectChange = orgList => {
+    const { onRowDataChange, rowData } = this.props;
+    this.selectOrgList = [...orgList];
+    onRowDataChange(rowData);
+  };
+
+  renderAssignOrgTrigger = () => {
+    const { classification } = this.state;
+    if (classification.key === MASTER_CLASSIFICATION.DEPARTMENT.key) {
+      const orgList = this.selectOrgList;
+      return (
+        <>
+          <div className="btn-triiger-org" onClick={this.handlerShowAssignOrgList}>
+            <Space size={4}>
+              <ExtIcon type="cluster" antd className="icon" />
+              {`部门(${orgList.length})`}
+            </Space>
+            <ExtIcon type="right" antd className="arrow" />
+          </div>
+          <List
+            bordered={false}
+            dataSource={orgList}
+            renderItem={it => (
+              <List.Item>
+                <List.Item.Meta title={it.name} description={it.namePath} />
+              </List.Item>
+            )}
+          />
+        </>
+      );
+    }
+    this.selectOrgList = [];
+    return null;
+  };
+
+  handlerCloseModal = () => {
+    const { closeFormModal } = this.props;
+    if (closeFormModal && closeFormModal instanceof Function) {
+      closeFormModal();
+      this.setState({
+        showTriggerBack: false,
+        showOrgAssign: false,
+      });
+    }
+  };
+
+  renderContent = () => {
+    const { loading } = this.state;
+    const { form, classificationData, rowData } = this.props;
     const { getFieldDecorator } = form;
-    getFieldDecorator('corporationCode', { initialValue: get(rowData, 'corporationCode') });
+    getFieldDecorator('classification', {
+      initialValue: get(rowData, 'classification') || MASTER_CLASSIFICATION.DEPARTMENT.key,
+    });
     getFieldDecorator('currencyCode', { initialValue: get(rowData, 'currencyCode') });
-    getFieldDecorator('orgId', { initialValue: get(rowData, 'orgId') });
-    getFieldDecorator('orgCode', { initialValue: get(rowData, 'orgCode') });
     getFieldDecorator('strategyId', { initialValue: get(rowData, 'strategyId') });
-    const title = rowData ? '修改预算主体' : '新建预算主体';
+    getFieldDecorator('corporationCode', { initialValue: get(rowData, 'corporationCode') });
+    const edit = !!rowData && !!rowData.id;
     const corporationProps = {
       form,
+      disabled: edit,
       name: 'corporationName',
       store: {
         url: `${SERVER_PATH}/bems-v6/subject/findUserAuthorizedCorporations`,
@@ -50,20 +212,36 @@ class FormModal extends PureComponent {
       field: ['corporationCode'],
       afterSelect: item => {
         form.setFieldsValue({
-          code: get(item, 'erpCode'),
-          name: get(item, 'name'),
           currencyName: get(item, 'baseCurrencyName'),
           currencyCode: get(item, 'baseCurrencyCode'),
         });
       },
       reader: {
         name: 'name',
-        field: ['erpCode'],
-        description: 'erpCode',
+        field: ['code'],
+        description: 'code',
+      },
+    };
+    const classificationProps = {
+      form,
+      disabled: edit,
+      name: 'classificationName',
+      showSearch: false,
+      pagination: false,
+      dataSource: classificationData,
+      field: ['classification'],
+      afterSelect: it => {
+        this.setState({ classification: it });
+      },
+      reader: {
+        name: 'title',
+        field: ['key'],
+        description: 'key',
       },
     };
     const currencyProps = {
       form,
+      disabled: edit,
       name: 'currencyName',
       store: {
         url: `${SERVER_PATH}/bems-v6/subject/findCurrencies`,
@@ -75,18 +253,6 @@ class FormModal extends PureComponent {
         name: 'name',
         field: ['code'],
         description: 'code',
-      },
-    };
-    const orgProps = {
-      form,
-      name: 'orgName',
-      store: {
-        url: `${SERVER_PATH}/bems-v6/subject/findOrgTree`,
-      },
-      field: ['orgCode', 'orgId'],
-      reader: {
-        name: 'name',
-        field: ['code', 'id'],
       },
     };
     const strategyProps = {
@@ -106,103 +272,109 @@ class FormModal extends PureComponent {
         field: ['id'],
       },
     };
+    if (loading) {
+      return <Empty image={<ListLoader />} description="加载中..." />;
+    }
+    return (
+      <Form {...formItemLayout} layout="horizontal" style={{ margin: 24 }}>
+        <FormItem label="公司名称">
+          {getFieldDecorator('corporationName', {
+            initialValue: get(rowData, 'corporationName'),
+            rules: [
+              {
+                required: true,
+                message: '公司名称不能为空',
+              },
+            ],
+          })(<ComboList {...corporationProps} />)}
+        </FormItem>
+        <FormItem label="主体分类">
+          {getFieldDecorator('classificationName', {
+            initialValue: MASTER_CLASSIFICATION.DEPARTMENT.title,
+            rules: [
+              {
+                required: true,
+                message: '主体分类不能为空',
+              },
+            ],
+          })(<ComboList {...classificationProps} />)}
+        </FormItem>
+        <FormItem label="主体名称">
+          {getFieldDecorator('name', {
+            initialValue: get(rowData, 'name'),
+            rules: [
+              {
+                required: true,
+                message: '主体名称不能为空',
+              },
+            ],
+          })(<Input autoComplete="off" />)}
+        </FormItem>
+        <FormItem label="币种">
+          {getFieldDecorator('currencyName', {
+            initialValue: get(rowData, 'currencyName'),
+            rules: [
+              {
+                required: true,
+                message: '币种不能为空',
+              },
+            ],
+          })(<ComboList {...currencyProps} />)}
+        </FormItem>
+        <FormItem label="执行策略">
+          {getFieldDecorator('strategyName', {
+            initialValue: get(rowData, 'strategyName'),
+            rules: [
+              {
+                required: true,
+                message: '执行策略不能为空',
+              },
+            ],
+          })(<ComboList {...strategyProps} />)}
+        </FormItem>
+        <FormItem label="停用">
+          {getFieldDecorator('frozen', {
+            valuePropName: 'checked',
+            initialValue: get(rowData, 'frozen') || false,
+          })(<Switch size="small" />)}
+        </FormItem>
+        {this.renderAssignOrgTrigger()}
+      </Form>
+    );
+  };
+
+  render() {
+    const { saving, showModal, rowData } = this.props;
+    const { showTriggerBack, showOrgAssign } = this.state;
     return (
       <ExtModal
         destroyOnClose
-        onCancel={closeFormModal}
+        onCancel={this.handlerCloseModal}
         visible={showModal}
         maskClosable={false}
         centered
         width={420}
         wrapClassName={styles['form-modal-box']}
-        bodyStyle={{ padding: 0 }}
         confirmLoading={saving}
-        title={title}
+        title={this.renderTitle()}
         cancelButtonProps={{ disabled: saving }}
         onOk={this.handlerFormSubmit}
+        showTriggerBack={showTriggerBack}
+        onTriggerBack={this.handlerTriggerBack}
       >
-        <Form {...formItemLayout} layout="horizontal" style={{ margin: 24 }}>
-          <FormItem label="公司名称">
-            {getFieldDecorator('corporationName', {
-              initialValue: get(rowData, 'corporationName'),
-              rules: [
-                {
-                  required: true,
-                  message: '公司名称不能为空',
-                },
-              ],
-            })(<ComboList {...corporationProps} />)}
-          </FormItem>
-          <FormItem label="主体代码">
-            {getFieldDecorator('code', {
-              initialValue: get(rowData, 'code'),
-              rules: [
-                {
-                  required: true,
-                  message: '主体代码不能为空',
-                },
-              ],
-            })(<Input autoComplete="off" />)}
-          </FormItem>
-          <FormItem label="主体名称">
-            {getFieldDecorator('name', {
-              initialValue: get(rowData, 'name'),
-              rules: [
-                {
-                  required: true,
-                  message: '主体名称不能为空',
-                },
-              ],
-            })(<Input autoComplete="off" />)}
-          </FormItem>
-          <FormItem label="币种">
-            {getFieldDecorator('currencyName', {
-              initialValue: get(rowData, 'currencyName'),
-              rules: [
-                {
-                  required: true,
-                  message: '币种不能为空',
-                },
-              ],
-            })(<ComboList {...currencyProps} />)}
-          </FormItem>
-          <FormItem label="组织机构">
-            {getFieldDecorator('orgName', {
-              initialValue: get(rowData, 'orgName'),
-              rules: [
-                {
-                  required: true,
-                  message: '组织机构不能为空',
-                },
-              ],
-            })(<ComboTree {...orgProps} />)}
-          </FormItem>
-          <FormItem label="执行策略">
-            {getFieldDecorator('strategyName', {
-              initialValue: get(rowData, 'strategyName'),
-              rules: [
-                {
-                  required: true,
-                  message: '执行策略不能为空',
-                },
-              ],
-            })(<ComboList {...strategyProps} />)}
-          </FormItem>
-          <FormItem
-            label="优先级"
-            extra="值越小优先级越高。当一个公司下有多个预算主体时，条件相同时预算占用将按此优先级处理"
-          >
-            {getFieldDecorator('rank', {
-              initialValue: get(rowData, 'rank') || 0,
-              rules: [
-                {
-                  required: true,
-                  message: '优先级不能为空',
-                },
-              ],
-            })(<MoneyInput textAlign="left" min={0} thousand={false} precision={0} />)}
-          </FormItem>
-        </Form>
+        {showOrgAssign ? (
+          <OrgAssign
+            corpCode={get(rowData, 'corporationCode')}
+            orgList={this.selectOrgList}
+            onOrgRef={ref => (this.orgRef = ref)}
+            onSelectChange={this.handlerOrgSelectChange}
+          />
+        ) : (
+          <ScrollBar ref={ref => (this.scrollBarRef = ref)}>
+            <Alert message="公司名称、主体分类和币种一旦创建将不能修改！" banner />
+            {this.renderContent()}
+          </ScrollBar>
+        )}
       </ExtModal>
     );
   }
