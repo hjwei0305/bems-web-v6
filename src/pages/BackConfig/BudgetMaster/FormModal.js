@@ -109,7 +109,7 @@ class FormModal extends PureComponent {
   };
 
   handlerFormSubmit = () => {
-    const { showOrgAssign } = this.state;
+    const { showOrgAssign, classification } = this.state;
     const { form, save, rowData } = this.props;
     if (showOrgAssign) {
       message.destroy();
@@ -119,6 +119,14 @@ class FormModal extends PureComponent {
       }
       this.setState({ showTriggerBack: false, showOrgAssign: false });
     } else {
+      if (
+        classification.key === MASTER_CLASSIFICATION.DEPARTMENT.key &&
+        this.selectOrgList.length === 0
+      ) {
+        message.destroy();
+        message.error('请选择部门');
+        return false;
+      }
       form.validateFields(err => {
         if (err) {
           return;
