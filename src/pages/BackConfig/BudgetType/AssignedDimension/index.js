@@ -8,7 +8,7 @@ import { ExtTable, BannerTitle, Space } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
-const { SERVER_PATH, TYPE_CLASS } = constants;
+const { SERVER_PATH, TYPE_CLASS, MASTER_CLASSIFICATION } = constants;
 
 @connect(({ budgetType, loading }) => ({ budgetType, loading }))
 class AssignedDimension extends Component {
@@ -137,6 +137,10 @@ class AssignedDimension extends Component {
       checkbox: {
         getCheckboxProps: item => {
           if (item.required) {
+            return { disabled: true };
+          }
+          const classification = get(selectedBudgetType, 'classification');
+          if (classification === MASTER_CLASSIFICATION.DEPARTMENT.key && item.code === 'org') {
             return { disabled: true };
           }
           return { disabled: false };
