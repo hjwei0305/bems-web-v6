@@ -4,7 +4,7 @@ import { get } from 'lodash';
 import cls from 'classnames';
 import { formatMessage } from 'umi-plugin-react/locale';
 import { Input, Empty, Popconfirm, Layout, Tag, Avatar } from 'antd';
-import { ExtIcon, ListCard } from 'suid';
+import { ExtIcon, ListCard, Space } from 'suid';
 import empty from '@/assets/item_empty.svg';
 import { constants } from '@/utils';
 import BudgetAdd from '../components/BudgetTypeForm/Add';
@@ -332,7 +332,15 @@ class BudgetTypeList extends Component {
     return (
       <>
         <div style={{ marginBottom: 8 }}>
-          {`期间类型为${get(periodType, 'title')}，预算分类为${get(classification, 'title')}`}
+          <Space>
+            <span>
+              期间类型: <Tag style={{ borderColor: 'transparent' }}>{get(periodType, 'title')}</Tag>
+            </span>
+            <span>
+              预算分类:{' '}
+              <Tag style={{ borderColor: 'transparent' }}>{get(classification, 'title')}</Tag>
+            </span>
+          </Space>
         </div>
         <div>
           {item.roll ? (

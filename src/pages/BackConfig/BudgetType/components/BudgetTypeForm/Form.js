@@ -143,6 +143,7 @@ class BudgetTypeForm extends PureComponent {
 
     const classificationProps = {
       form,
+      disabled: !!rowData,
       name: 'classificationName',
       dataSource: classificationData,
       field: ['classification'],
