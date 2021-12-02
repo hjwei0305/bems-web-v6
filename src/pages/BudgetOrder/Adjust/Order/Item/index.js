@@ -101,6 +101,8 @@ class RequestItem extends PureComponent {
       clearItem(() => {
         if (this.detailItemRef) {
           this.detailItemRef.reloadData();
+          this.detailItemRef.onCancelBatchRemove();
+          this.detailItemRef.pagingData = {};
         }
       });
     }

@@ -164,6 +164,7 @@ class DetailItem extends PureComponent {
             {!globalDisabled ? (
               <>
                 <Checkbox
+                  disabled={pagingKeys.length === 0}
                   checked={checked}
                   indeterminate={indeterminate}
                   onChange={this.handlerSelectAll}
