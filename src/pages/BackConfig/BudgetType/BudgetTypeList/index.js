@@ -318,6 +318,10 @@ class BudgetTypeList extends Component {
         {frozen === true ? (
           <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
         ) : null}
+        <span className="use-tip">
+          用途:
+          {this.renderTypeClass(item)}
+        </span>
       </>
     );
   };
@@ -366,19 +370,15 @@ class BudgetTypeList extends Component {
   renderTypeClass = item => {
     const orderCategories = get(item, 'orderCategories') || [];
     return (
-      <div>
+      <>
         {orderCategories.map(itKey => {
           const it = ORDER_CATEGORY[itKey];
           if (it) {
-            return (
-              <Tag key={itKey} style={{ borderColor: 'transparent' }}>
-                {it.title}
-              </Tag>
-            );
+            return <span key={itKey}>{it.title}</span>;
           }
           return null;
         })}
-      </div>
+      </>
     );
   };
 
@@ -401,7 +401,6 @@ class BudgetTypeList extends Component {
         avatar: ({ item }) => this.renderType(item),
         title: item => this.renderName(item),
         description: item => this.renderDescription(item),
-        extra: this.renderTypeClass,
       },
       itemTool: this.renderItemAction,
     };

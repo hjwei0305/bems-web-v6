@@ -73,6 +73,20 @@
             }
           }
         }
+        .use-tip {
+          margin-left: 8px;
+          color: fade(@black, 65%);
+          font-size: 12px;
+          &::before {
+            content: '(';
+          }
+          &::after {
+            content: ')';
+          }
+          span {
+            padding: 0 2px;
+          }
+        }
       }
     }
     .main-content {

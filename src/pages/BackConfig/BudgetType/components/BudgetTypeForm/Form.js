@@ -195,7 +195,7 @@ class BudgetTypeForm extends PureComponent {
             </FormItem>
             <FormItem
               required
-              label="管理类型选项"
+              label="用途"
               help={this.orderCategoryKeys.length === 0 ? '至少选择一项' : ''}
               validateStatus={this.orderCategoryKeys.length === 0 ? 'error' : 'success'}
             >
