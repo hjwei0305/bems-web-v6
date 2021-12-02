@@ -3,7 +3,10 @@ import { utils, message } from 'suid';
 import { constants } from '@/utils';
 import { del, save, frozen, privateReference, assign, unassign } from './service';
 
-const { TYPE_CLASS } = constants;
+const { TYPE_CLASS, MASTER_CLASSIFICATION } = constants;
+const MASTER_CLASSIFICATION_DATA = Object.keys(MASTER_CLASSIFICATION)
+  .map(key => MASTER_CLASSIFICATION[key])
+  .filter(it => it.key !== MASTER_CLASSIFICATION.ALL.key);
 const TYPE_CLASS_DATA = Object.keys(TYPE_CLASS).map(key => TYPE_CLASS[key]);
 const { dvaModel } = utils;
 const { modelExtend, model } = dvaModel;
@@ -18,6 +21,7 @@ export default modelExtend(model, {
     currentMaster: null,
     selectTypeClass: defaultTypeClass,
     typeClassData: TYPE_CLASS_DATA,
+    classificationData: MASTER_CLASSIFICATION_DATA,
     selectedBudgetType: null,
     showAssign: false,
   },

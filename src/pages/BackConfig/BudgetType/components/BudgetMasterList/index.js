@@ -3,7 +3,8 @@ import cls from 'classnames';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Input, Descriptions } from 'antd';
-import { ListCard } from 'suid';
+import { ListCard, Space } from 'suid';
+import { Classification } from '@/components';
 import { constants } from '@/utils';
 import styles from './index.less';
 
@@ -69,16 +70,17 @@ class BudgetMasterList extends Component {
       },
       remotePaging: true,
       itemField: {
-        title: item => item.name,
+        title: item => (
+          <Space>
+            {item.name}
+            <Classification enumName={item.classification} />
+          </Space>
+        ),
         description: item => (
           <Descriptions column={1} bordered={false}>
             <Descriptions.Item label="公司">{`${get(item, 'corporationName')}(${get(
               item,
               'corporationCode',
-            )})`}</Descriptions.Item>
-            <Descriptions.Item label="组织">{`${get(item, 'orgName')}(${get(
-              item,
-              'orgCode',
             )})`}</Descriptions.Item>
           </Descriptions>
         ),

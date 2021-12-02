@@ -3,8 +3,9 @@ import { connect } from 'dva';
 import cls from 'classnames';
 import { get } from 'lodash';
 import { Input, Empty, Layout, Descriptions } from 'antd';
-import { ListCard } from 'suid';
+import { ListCard, Space } from 'suid';
 import empty from '@/assets/item_empty.svg';
+import { Classification } from '@/components';
 import { constants } from '@/utils';
 import PeriodList from './PeriodList';
 import styles from './index.less';
@@ -82,16 +83,17 @@ class BudgetPeriod extends Component {
       },
       remotePaging: true,
       itemField: {
-        title: item => item.name,
+        title: item => (
+          <Space>
+            {item.name}
+            <Classification enumName={item.classification} />
+          </Space>
+        ),
         description: item => (
           <Descriptions column={1} bordered={false}>
             <Descriptions.Item label="公司">{`${get(item, 'corporationName')}(${get(
               item,
               'corporationCode',
-            )})`}</Descriptions.Item>
-            <Descriptions.Item label="组织">{`${get(item, 'orgName')}(${get(
-              item,
-              'orgCode',
             )})`}</Descriptions.Item>
           </Descriptions>
         ),

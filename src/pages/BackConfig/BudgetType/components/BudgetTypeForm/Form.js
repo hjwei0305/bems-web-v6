@@ -7,7 +7,10 @@ import { BannerTitle, ComboList, Space } from 'suid';
 import { constants } from '@/utils';
 import styles from './Form.less';
 
-const { ORDER_CATEGORY, PERIOD_TYPE } = constants;
+const { ORDER_CATEGORY, PERIOD_TYPE, MASTER_CLASSIFICATION } = constants;
+const classificationData = Object.keys(MASTER_CLASSIFICATION)
+  .map(key => MASTER_CLASSIFICATION[key])
+  .filter(it => it.key !== MASTER_CLASSIFICATION.ALL.key);
 const periodTypeData = Object.keys(PERIOD_TYPE)
   .map(key => PERIOD_TYPE[key])
   .filter(t => t.key !== PERIOD_TYPE.ALL.key);
@@ -86,6 +89,15 @@ class BudgetTypeForm extends PureComponent {
     return '';
   };
 
+  getClassificationName = () => {
+    const { rowData } = this.props;
+    const classification = MASTER_CLASSIFICATION[get(rowData, 'classification')];
+    if (classification) {
+      return classification.title;
+    }
+    return '';
+  };
+
   orderCategoryChange = keys => {
     if (keys instanceof Array) {
       this.orderCategoryKeys = keys;
@@ -113,6 +125,7 @@ class BudgetTypeForm extends PureComponent {
     const { form, rowData, saving } = this.props;
     const { getFieldDecorator } = form;
     getFieldDecorator('periodType', { initialValue: get(rowData, 'periodType') });
+    getFieldDecorator('classification', { initialValue: get(rowData, 'classification') });
     const title = rowData ? '编辑' : '新建';
     const periodTypeProps = {
       form,
@@ -127,6 +140,19 @@ class BudgetTypeForm extends PureComponent {
         field: ['key'],
       },
     };
+
+    const classificationProps = {
+      form,
+      name: 'classificationName',
+      dataSource: classificationData,
+      field: ['classification'],
+      showSearch: false,
+      pagination: false,
+      reader: {
+        name: 'title',
+        field: ['key'],
+      },
+    };
     return (
       <div key="form-box" className={cls(styles['form-box'])}>
         <div className="base-view-body">
@@ -134,6 +160,17 @@ class BudgetTypeForm extends PureComponent {
             <BannerTitle title={title} subTitle="预算类型" />
           </div>
           <Form {...formItemLayout}>
+            <FormItem label="预算分类">
+              {getFieldDecorator('classificationName', {
+                initialValue: this.getClassificationName(),
+                rules: [
+                  {
+                    required: true,
+                    message: '预算分类不能为空',
+                  },
+                ],
+              })(<ComboList {...classificationProps} />)}
+            </FormItem>
             <FormItem label="预算类型名称">
               {getFieldDecorator('name', {
                 initialValue: get(rowData, 'name'),

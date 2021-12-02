@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-12-01 15:38:00
+ * @Last Modified time: 2021-12-02 14:08:32
  */
 import { base } from '../../public/app.config.json';
 
@@ -140,7 +140,7 @@ const REQUEST_ITEM_STATUS = {
 const MASTER_CLASSIFICATION = {
   ALL: { key: 'ALL', title: '全部', color: '' },
   DEPARTMENT: { key: 'DEPARTMENT', title: '部门级', color: 'blue' },
-  PROJECT: { key: 'PROJECT', title: '项目级', color: 'cyan' },
+  PROJECT: { key: 'PROJECT', title: '项目级', color: 'purple' },
   COST_CENTER: { key: 'COST_CENTER', title: '成本中心级', color: 'orange' },
 };
 

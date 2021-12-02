@@ -5,9 +5,9 @@ import { get } from 'lodash';
 import { Button, Popconfirm, Tag, Badge, Dropdown, Menu } from 'antd';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
 import { ExtTable, ExtIcon } from 'suid';
+import { Classification } from '@/components';
 import { constants } from '@/utils';
 import FormModal from './FormModal';
-import Classification from './Classification';
 import styles from './index.less';
 
 const { SERVER_PATH } = constants;
@@ -172,7 +172,7 @@ class BudgetMaster extends Component {
       {
         title: '执行策略',
         dataIndex: 'strategyName',
-        width: 100,
+        width: 160,
         render: t => (
           <Tag>
             <Badge color="blue" />

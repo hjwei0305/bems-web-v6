@@ -6,6 +6,7 @@ import PeriodType from './PeriodType';
 import FilterDimension from './FilterDimension';
 import BudgetYearPicker from './BudgetYearPicker';
 import MasterView from './MasterView';
+import Classification from './Classification';
 
 export {
   Loader,
@@ -16,4 +17,5 @@ export {
   FilterDimension,
   BudgetYearPicker,
   MasterView,
+  Classification,
 };

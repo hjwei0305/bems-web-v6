@@ -3,8 +3,9 @@ import { connect } from 'dva';
 import cls from 'classnames';
 import { get } from 'lodash';
 import { Input, Empty, Layout, Descriptions, Tag } from 'antd';
-import { ListCard } from 'suid';
+import { ListCard, Space } from 'suid';
 import empty from '@/assets/item_empty.svg';
+import { Classification } from '@/components';
 import { constants } from '@/utils';
 import SubjectList from './SubjectList';
 import styles from './index.less';
@@ -84,29 +85,26 @@ class BudgetSubject extends Component {
       },
       remotePaging: true,
       itemField: {
-        title: item => item.name,
+        title: item => (
+          <Space>
+            {item.name}
+            <Classification enumName={item.classification} />
+          </Space>
+        ),
         description: item => (
-          <>
-            <Descriptions column={1} bordered={false}>
-              <Descriptions.Item label="公司">{`${get(item, 'corporationName')}(${get(
-                item,
-                'corporationCode',
-              )})`}</Descriptions.Item>
-              <Descriptions.Item label="组织">{`${get(item, 'orgName')}(${get(
-                item,
-                'orgCode',
-              )})`}</Descriptions.Item>
-            </Descriptions>
-            <Descriptions column={2} bordered={false}>
-              <Descriptions.Item label="币种">{`${get(item, 'currencyName')}(${get(
-                item,
-                'currencyCode',
-              )})`}</Descriptions.Item>
-              <Descriptions.Item label="执行策略">
-                <Tag color="blue">{`${get(item, 'strategyName')}`}</Tag>
-              </Descriptions.Item>
-            </Descriptions>
-          </>
+          <Descriptions column={1} bordered={false}>
+            <Descriptions.Item label="公司">{`${get(item, 'corporationName')}(${get(
+              item,
+              'corporationCode',
+            )})`}</Descriptions.Item>
+            <Descriptions.Item label="币种">{`${get(item, 'currencyName')}(${get(
+              item,
+              'currencyCode',
+            )})`}</Descriptions.Item>
+            <Descriptions.Item label="执行策略">
+              <Tag>{`${get(item, 'strategyName')}`}</Tag>
+            </Descriptions.Item>
+          </Descriptions>
         ),
       },
     };

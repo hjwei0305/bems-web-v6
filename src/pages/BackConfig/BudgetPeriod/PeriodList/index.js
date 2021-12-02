@@ -11,7 +11,7 @@ import FormModal from './FormModal';
 import ExtAction from './ExtAction';
 import styles from './index.less';
 
-const { SERVER_PATH, PERIOD_TYPE, BUDGET_PERIOD_USER_ACTION } = constants;
+const { SERVER_PATH, PERIOD_TYPE, BUDGET_PERIOD_USER_ACTION, MASTER_CLASSIFICATION } = constants;
 
 @connect(({ budgetPeriod, loading }) => ({ budgetPeriod, loading }))
 class PeriodList extends Component {
@@ -274,6 +274,12 @@ class PeriodList extends Component {
   render() {
     const { budgetPeriod, loading } = this.props;
     const { currentMaster, showModal, rowData, selectPeriodType, periodTypeData } = budgetPeriod;
+    const classification = get(currentMaster, 'classification');
+    const isProject = classification === MASTER_CLASSIFICATION.PROJECT.key;
+    let periodTypeDataList = periodTypeData;
+    if (!isProject) {
+      periodTypeDataList = periodTypeData.filter(it => it.key !== PERIOD_TYPE.CUSTOMIZE.key);
+    }
     const columns = [
       {
         title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
@@ -315,7 +321,7 @@ class PeriodList extends Component {
             title="期间类型"
             style={{ marginRight: 16, minWidth: 140 }}
             currentViewType={selectPeriodType}
-            viewTypeData={periodTypeData}
+            viewTypeData={periodTypeDataList}
             onAction={this.handlerPeriodTypeChange}
             reader={{
               title: 'title',
@@ -351,6 +357,7 @@ class PeriodList extends Component {
     const formModalProps = {
       showModal,
       rowData,
+      classification,
       closeFormModal: this.closeFormModal,
       saving:
         loading.effects['budgetPeriod/createNormalPeriod'] ||

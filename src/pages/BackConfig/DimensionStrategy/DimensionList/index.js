@@ -56,7 +56,7 @@ const DimensionList = props => {
         type: 'dimensionStrategy/transformSubmit',
         payload: {
           code: rowItem.code,
-          isPrivate: checked,
+          isPrivate: !checked,
           subjectId: get(currentMaster, 'id'),
         },
         callback: res => {
@@ -93,11 +93,10 @@ const DimensionList = props => {
             );
           return (
             <Switch
-              size="small"
               onChange={checked => handlerTransformSave(checked, r)}
-              checkedChildren="私有"
-              unCheckedChildren="通用"
-              checked={!!chk}
+              checkedChildren="通用"
+              unCheckedChildren="私有"
+              checked={!chk}
             />
           );
         },

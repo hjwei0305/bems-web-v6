@@ -6,6 +6,7 @@ import { formatMessage } from 'umi-plugin-react/locale';
 import { Input, Empty, Popconfirm, Layout, Tag, Avatar } from 'antd';
 import { ExtIcon, ListCard } from 'suid';
 import empty from '@/assets/item_empty.svg';
+import { Classification } from '@/components';
 import { constants } from '@/utils';
 import BudgetAdd from '../components/BudgetTypeForm/Add';
 import BudgetEdit from '../components/BudgetTypeForm/Edit';
@@ -328,6 +329,7 @@ class BudgetTypeList extends Component {
       <>
         <div style={{ marginBottom: 8 }}>{`期间类型为${get(periodType, 'title')}`}</div>
         <div>
+          <Classification enumName={item.classification} />
           {item.roll ? (
             <Tag color="magenta" style={{ borderColor: 'transparent' }}>
               可结转
@@ -422,7 +424,7 @@ class BudgetTypeList extends Component {
     return (
       <div className={cls(styles['container-box'])}>
         <Layout className="auto-height">
-          <Sider width={420} className="auto-height" theme="light">
+          <Sider width={460} className="auto-height" theme="light">
             <ListCard key={selectTypeClass.key} {...deployTemplateProps} />
           </Sider>
           <Content className={cls('main-content', 'auto-height')} style={{ paddingLeft: 4 }}>

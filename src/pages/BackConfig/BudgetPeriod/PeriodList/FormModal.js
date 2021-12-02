@@ -8,7 +8,7 @@ import { constants } from '@/utils';
 import styles from './FormModal.less';
 
 const FormItem = Form.Item;
-const { PERIOD_TYPE } = constants;
+const { PERIOD_TYPE, MASTER_CLASSIFICATION } = constants;
 const formItemLayout = {
   labelCol: {
     span: 24,
@@ -34,6 +34,7 @@ class FormModal extends PureComponent {
     createNormalPeriod: PropTypes.func,
     closeFormModal: PropTypes.func,
     saving: PropTypes.bool,
+    classification: PropTypes.string,
   };
 
   constructor(props) {
@@ -166,9 +167,10 @@ class FormModal extends PureComponent {
 
   render() {
     const { periodType } = this.state;
-    const { form, saving, showModal, rowData } = this.props;
+    const { form, saving, showModal, rowData, classification } = this.props;
     const { getFieldDecorator } = form;
     const title = rowData ? '修改期间' : '新建期间';
+    const isProject = classification === MASTER_CLASSIFICATION.PROJECT.key;
     return (
       <ExtModal
         destroyOnClose
@@ -190,9 +192,11 @@ class FormModal extends PureComponent {
               <Radio.Button key="NORMAL" value="NORMAL">
                 标准
               </Radio.Button>
-              <Radio.Button key="CUSTOMIZE" value="CUSTOMIZE">
-                自定义
-              </Radio.Button>
+              {isProject ? (
+                <Radio.Button key="CUSTOMIZE" value="CUSTOMIZE">
+                  自定义
+                </Radio.Button>
+              ) : null}
             </Radio.Group>
           </FormItem>
           {periodType === PERIOD_TYPE_GROUP.NORMAL ? (
