@@ -17,6 +17,7 @@ export default modelExtend(model, {
     rowData: null,
     showModal: false,
     classificationData: MASTER_CLASSIFICATION_DATA,
+    currentClassification: {},
   },
   effects: {
     *save({ payload, callback }, { call }) {

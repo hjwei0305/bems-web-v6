@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
 import { get } from 'lodash';
-import { Button, Popconfirm, Tag, Badge } from 'antd';
+import { Button, Popconfirm, Tag, Badge, Dropdown, Menu } from 'antd';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { ExtTable, ExtIcon, Space } from 'suid';
+import { ExtTable, ExtIcon } from 'suid';
 import { constants } from '@/utils';
 import FormModal from './FormModal';
 import Classification from './Classification';
@@ -29,24 +29,19 @@ class BudgetMaster extends Component {
     }
   };
 
-  add = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'budgetMaster/updateState',
-      payload: {
-        showModal: true,
-        rowData: null,
-      },
-    });
-  };
-
   edit = rowData => {
-    const { dispatch } = this.props;
+    const {
+      dispatch,
+      budgetMaster: { classificationData },
+    } = this.props;
+    const classificationKey = get(rowData, 'classification');
+    const [classification] = classificationData.filter(it => it.key === classificationKey);
     dispatch({
       type: 'budgetMaster/updateState',
       payload: {
         showModal: true,
         rowData,
+        currentClassification: classification,
       },
     });
   };
@@ -104,6 +99,7 @@ class BudgetMaster extends Component {
       payload: {
         showModal: false,
         rowData: null,
+        currentClassification: {},
       },
     });
   };
@@ -117,26 +113,23 @@ class BudgetMaster extends Component {
     return <ExtIcon className="del" type="delete" antd />;
   };
 
-  handlerRowDataChange = rowData => {
-    const {
-      dispatch,
-      budgetMaster: { rowData: originRowData },
-    } = this.props;
-    const orgList = get(originRowData, 'orgList') || [];
+  handlerClassificationAction = e => {
+    const { dispatch, budgetMaster } = this.props;
+    const { classificationData } = budgetMaster;
+    const [classification] = classificationData.filter(it => it.key === e.key);
     dispatch({
       type: 'budgetMaster/updateState',
       payload: {
-        rowData: {
-          ...rowData,
-          orgList,
-        },
+        showModal: true,
+        rowData: null,
+        currentClassification: classification,
       },
     });
   };
 
   render() {
     const { budgetMaster, loading } = this.props;
-    const { showModal, rowData, classificationData } = budgetMaster;
+    const { showModal, rowData, classificationData, currentClassification } = budgetMaster;
     const columns = [
       {
         title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
@@ -167,14 +160,13 @@ class BudgetMaster extends Component {
         dataIndex: 'name',
         width: 360,
         required: true,
-        render: (t, r) => {
-          return (
-            <Space>
-              {t}
-              <Classification enumName={r.classification} />
-            </Space>
-          );
-        },
+      },
+      {
+        title: '主体分类',
+        dataIndex: 'classification',
+        width: 100,
+        required: true,
+        render: t => <Classification enumName={t} />,
       },
       {
         title: '执行策略',
@@ -214,17 +206,25 @@ class BudgetMaster extends Component {
       save: this.save,
       rowData,
       showModal,
-      classificationData,
+      currentClassification,
       closeFormModal: this.closeFormModal,
       saving: loading.effects['budgetMaster/save'],
-      onRowDataChange: this.handlerRowDataChange,
     };
+    const menu = (
+      <Menu onClick={this.handlerClassificationAction} className={styles['action-box']}>
+        {classificationData.map(it => {
+          return <Menu.Item key={it.key}>{it.title}</Menu.Item>;
+        })}
+      </Menu>
+    );
     const toolBarProps = {
       left: (
         <>
-          <Button type="primary" onClick={this.add}>
-            <FormattedMessage id="global.add" defaultMessage="新建" />
-          </Button>
+          <Dropdown overlay={menu} trigger={['click']}>
+            <Button type="primary">
+              <FormattedMessage id="global.add" defaultMessage="新建" />
+            </Button>
+          </Dropdown>
           <Button onClick={this.reloadData}>
             <FormattedMessage id="global.refresh" defaultMessage="刷新" />
           </Button>

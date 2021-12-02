@@ -62,28 +62,29 @@
       height: auto;
     }
     .ant-modal-body {
-      height: 520px;
+      height: 460px;
       padding: 0;
+      .ant-layout-header {
+        height: 36px;
+        padding: 0;
+        line-height: unset;
+        background: transparent;
+      }
+      .ant-card-body {
+        padding: 0;
+        .ant-list-item {
+          padding: 12px 24px;
+        }
+      }
     }
-    .btn-triiger-org {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 48px;
-      padding: 0 16px;
-      border: 1px solid #d9d9d9;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all ease 0.3s;
-      &:hover {
-        box-shadow: @box-shadow-base;
-      }
-      .icon {
-        color: fade(@primary-color, 85%);
-      }
-      .arrow {
-        font-size: 12px;
-      }
+  }
+}
+
+.action-box {
+  :global {
+    .ant-dropdown-menu-item {
+      width: 120px;
+      padding: 12px;
     }
   }
 }

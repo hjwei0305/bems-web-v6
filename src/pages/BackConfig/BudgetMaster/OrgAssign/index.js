@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
-import { trim, isEqual, intersectionWith } from 'lodash';
+import { trim, intersectionWith } from 'lodash';
 import PropTypes from 'prop-types';
-import { Input, Tree, Empty } from 'antd';
+import { Input, Tree, Empty, Button, Popover } from 'antd';
 import { ScrollBar, ListLoader, utils, ExtIcon, message } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
@@ -20,6 +20,8 @@ class Organization extends PureComponent {
 
   static flatData = [];
 
+  static loaded = false;
+
   static propTypes = {
     corpCode: PropTypes.string,
     onSelectChange: PropTypes.func,
@@ -29,8 +31,10 @@ class Organization extends PureComponent {
 
   constructor(props) {
     super(props);
+    this.loaded = false;
     const { orgList } = props;
     this.state = {
+      orgShow: false,
       loading: false,
       treeData: [],
       expandedKeys: [],
@@ -42,12 +46,12 @@ class Organization extends PureComponent {
   componentDidMount() {
     const { onOrgRef } = this.props;
     onOrgRef(this);
-    this.getTreeData();
   }
 
-  componentDidUpdate(preProps) {
+  componentDidUpdate() {
     const { corpCode } = this.props;
-    if (corpCode && !isEqual(preProps.corpCode, corpCode)) {
+    const { orgShow, loading } = this.state;
+    if (corpCode && orgShow && this.loaded === false && loading === false) {
       this.getTreeData();
     }
   }
@@ -62,33 +66,32 @@ class Organization extends PureComponent {
 
   getTreeData = () => {
     const { corpCode } = this.props;
-    if (corpCode) {
-      this.setState({ loading: true });
-      const url = `${SERVER_PATH}/bems-v6/subject/findOrgTreeByCorpCode`;
-      request({
-        url,
-        params: {
-          corpCode,
-        },
+    this.setState({ loading: true });
+    const url = `${SERVER_PATH}/bems-v6/subject/findOrgTreeByCorpCode`;
+    request({
+      url,
+      params: {
+        corpCode,
+      },
+    })
+      .then(res => {
+        this.loaded = true;
+        let treeData = [];
+        let expandedKeys = [];
+        message.destroy();
+        if (res.success) {
+          treeData = [res.data];
+          expandedKeys = treeData.map(p => p.id);
+          this.data = [...treeData];
+          this.flatData = getFlatTree(this.data, childFieldKey, []);
+        } else {
+          message.error(res.message);
+        }
+        this.setState({ treeData, expandedKeys });
       })
-        .then(res => {
-          let treeData = [];
-          let expandedKeys = [];
-          message.destroy();
-          if (res.success) {
-            treeData = [res.data];
-            expandedKeys = treeData.map(p => p.id);
-            this.data = [...treeData];
-            this.flatData = getFlatTree(this.data, childFieldKey, []);
-          } else {
-            message.error(res.message);
-          }
-          this.setState({ treeData, expandedKeys });
-        })
-        .finally(() => {
-          this.setState({ loading: false });
-        });
-    }
+      .finally(() => {
+        this.setState({ loading: false });
+      });
   };
 
   filterNodes = (valueKey, tree, expKeys) => {
@@ -231,7 +234,16 @@ class Organization extends PureComponent {
     );
   };
 
-  render() {
+  onVisibleChange = v => {
+    this.setState({
+      orgShow: v,
+    });
+    if (v === false) {
+      this.loaded = false;
+    }
+  };
+
+  renderOrgContent = () => {
     const { allValue } = this.state;
     return (
       <div className={styles['container-box']}>
@@ -249,6 +261,25 @@ class Organization extends PureComponent {
           <ScrollBar>{this.renderTreeContent()}</ScrollBar>
         </div>
       </div>
+    );
+  };
+
+  render() {
+    return (
+      <Popover
+        trigger="click"
+        placement="rightTop"
+        key="list-popover-box"
+        destroyTooltipOnHide
+        title="添加部门"
+        onVisibleChange={this.onVisibleChange}
+        overlayClassName={styles['list-popover-box']}
+        content={this.renderOrgContent()}
+      >
+        <Button icon="plus" type="link">
+          添加部门
+        </Button>
+      </Popover>
     );
   }
 }

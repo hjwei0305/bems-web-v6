@@ -1,11 +1,13 @@
 import React, { PureComponent } from 'react';
 import { get, isEqual } from 'lodash';
-import { Form, Input, Empty, Switch, Alert, List, message } from 'antd';
-import { ExtModal, ComboList, utils, ListLoader, ExtIcon, Space, ScrollBar } from 'suid';
+import PropTypes from 'prop-types';
+import { Form, Input, Empty, Switch, Alert, List, message, Layout, Card } from 'antd';
+import { ExtModal, ComboList, utils, ListLoader, ScrollBar } from 'suid';
 import { constants } from '@/utils';
 import OrgAssign from './OrgAssign';
 import styles from './index.less';
 
+const { Sider, Content, Header } = Layout;
 const { request } = utils;
 const { SERVER_PATH, STRATEGY_TYPE, MASTER_CLASSIFICATION } = constants;
 const FormItem = Form.Item;
@@ -18,12 +20,7 @@ const formItemLayout = {
   },
 };
 
-@Form.create({
-  onValuesChange: (props, _changedValues, allValues) => {
-    const { onRowDataChange } = props;
-    onRowDataChange(allValues);
-  },
-})
+@Form.create()
 class FormModal extends PureComponent {
   static scrollBarRef;
 
@@ -31,184 +28,151 @@ class FormModal extends PureComponent {
 
   static orgRef;
 
-  static selectOrgList;
+  static propTypes = {
+    save: PropTypes.func,
+    rowData: PropTypes.object,
+    showModal: PropTypes.bool,
+    currentClassification: PropTypes.object,
+    closeFormModal: PropTypes.func,
+    saving: PropTypes.bool,
+  };
 
   constructor(props) {
     super(props);
-    this.selectOrgList = [];
     this.loaded = false;
     this.state = {
       loading: false,
-      showTriggerBack: false,
-      showOrgAssign: false,
-      classification: MASTER_CLASSIFICATION.DEPARTMENT,
+      orgList: [],
     };
   }
 
   componentDidMount() {
-    const { rowData } = this.props;
-    if (rowData && rowData.id) {
+    const { rowData, currentClassification } = this.props;
+    if (rowData && currentClassification.key) {
       this.getData();
     }
   }
 
   componentDidUpdate(preProps) {
-    const { rowData, showModal } = this.props;
-    if (rowData && rowData.id && showModal) {
-      if (this.loaded === false && !isEqual(rowData, preProps.rowData)) {
-        this.getData();
-      }
+    const { rowData } = this.props;
+    if (!isEqual(preProps.rowData, rowData)) {
+      this.getData();
     }
   }
 
-  handlerTriggerBack = () => {
-    this.setState({
-      showTriggerBack: false,
-      showOrgAssign: false,
-    });
-  };
-
-  renderTitle = () => {
-    const { rowData } = this.props;
-    const { showOrgAssign } = this.state;
-    let title = rowData && rowData.id ? '修改预算主体' : '新建预算主体';
-    if (showOrgAssign) {
-      title = '选择部门';
-    }
-    return title;
-  };
-
   getData = () => {
-    const { rowData, classificationData, onRowDataChange } = this.props;
+    const { rowData } = this.props;
     const id = get(rowData, 'id');
-    this.setState({ loading: true });
-    request({
-      url: `${SERVER_PATH}/bems-v6/subject/findOne`,
-      params: { id },
-    })
-      .then(res => {
-        this.loaded = true;
-        if (res.success) {
-          const masterData = res.data;
-          const classificationKey = get(masterData, 'classification');
-          const [classification] = classificationData.filter(it => it.key === classificationKey);
-          this.setState({ classification }, () => {
-            this.selectOrgList = get(masterData, 'orgList') || [];
-            onRowDataChange({ ...masterData, classificationName: classification.title });
-            setTimeout(() => {
+    if (id) {
+      this.setState({ loading: true });
+      request({
+        url: `${SERVER_PATH}/bems-v6/subject/findOne`,
+        params: { id },
+      })
+        .then(res => {
+          this.loaded = true;
+          if (res.success) {
+            const masterData = res.data;
+            const orgList = get(masterData, 'orgList') || [];
+            this.setState({ orgList }, () => {
               if (this.scrollBarRef) {
                 this.scrollBarRef.updateScroll();
               }
-            }, 300);
-          });
-        }
-      })
-      .finally(() => {
-        this.setState({ loading: false });
-      });
+            });
+          }
+        })
+        .finally(() => {
+          this.setState({ loading: false });
+        });
+    }
   };
 
   handlerFormSubmit = () => {
-    const { showOrgAssign, classification } = this.state;
-    const { form, save, rowData } = this.props;
-    if (showOrgAssign) {
+    const { orgList } = this.state;
+    const { form, save, rowData, currentClassification } = this.props;
+    if (
+      currentClassification.key === MASTER_CLASSIFICATION.DEPARTMENT.key &&
+      orgList.length === 0
+    ) {
       message.destroy();
-      if (this.selectOrgList.length === 0) {
-        message.error('请选择部门');
-        return false;
-      }
-      this.setState({ showTriggerBack: false, showOrgAssign: false });
-    } else {
-      if (
-        classification.key === MASTER_CLASSIFICATION.DEPARTMENT.key &&
-        this.selectOrgList.length === 0
-      ) {
-        message.destroy();
-        message.error('请选择部门');
-        return false;
-      }
-      form.validateFields(err => {
-        if (err) {
-          return;
-        }
-        save({ ...rowData, orgList: this.selectOrgList });
-      });
+      message.error('请选择部门');
+      return false;
     }
-  };
-
-  getClassificationName = classificationKey => {
-    const { classificationData } = this.props;
-    const [currentClassification] = classificationData.filter(it => it.key === classificationKey);
-    if (currentClassification) {
-      return currentClassification.title;
-    }
-    return '';
-  };
-
-  handlerShowAssignOrgList = () => {
-    this.setState({
-      showTriggerBack: true,
-      showOrgAssign: true,
+    form.validateFields((err, formData) => {
+      if (err) {
+        return;
+      }
+      const params = {
+        ...rowData,
+        ...formData,
+        orgList,
+        classification: currentClassification.key,
+      };
+      save(params);
     });
   };
 
   handlerOrgSelectChange = orgList => {
-    const { onRowDataChange, rowData } = this.props;
-    this.selectOrgList = [...orgList];
-    onRowDataChange(rowData);
+    this.setState({ orgList });
   };
 
-  renderAssignOrgTrigger = () => {
-    const { classification } = this.state;
-    if (classification.key === MASTER_CLASSIFICATION.DEPARTMENT.key) {
-      const orgList = this.selectOrgList;
-      return (
-        <>
-          <div className="btn-triiger-org" onClick={this.handlerShowAssignOrgList}>
-            <Space size={4}>
-              <ExtIcon type="cluster" antd className="icon" />
-              {`部门(${orgList.length})`}
-            </Space>
-            <ExtIcon type="right" antd className="arrow" />
-          </div>
-          <List
-            bordered={false}
-            dataSource={orgList}
-            renderItem={it => (
-              <List.Item>
-                <List.Item.Meta title={it.name} description={it.namePath} />
-              </List.Item>
-            )}
-          />
-        </>
-      );
-    }
-    this.selectOrgList = [];
-    return null;
+  renderOrgList = () => {
+    const { orgList } = this.state;
+    return (
+      <>
+        <List
+          bordered={false}
+          dataSource={orgList}
+          renderItem={it => (
+            <List.Item>
+              <List.Item.Meta title={it.name} description={it.namePath} />
+            </List.Item>
+          )}
+        />
+      </>
+    );
   };
 
   handlerCloseModal = () => {
     const { closeFormModal } = this.props;
     if (closeFormModal && closeFormModal instanceof Function) {
       closeFormModal();
+      this.loaded = false;
       this.setState({
-        showTriggerBack: false,
-        showOrgAssign: false,
+        loading: false,
+        orgList: [],
       });
     }
   };
 
+  renderBtnTrigger = () => {
+    const { orgList } = this.state;
+    const { rowData, form } = this.props;
+    const edit = !!rowData;
+    if (edit) {
+      return null;
+    }
+    const corporationCode =
+      form.getFieldValue('corporationCode') || get(rowData, 'corporationCode');
+    return (
+      <OrgAssign
+        corpCode={corporationCode}
+        orgList={orgList}
+        onOrgRef={ref => (this.orgRef = ref)}
+        onSelectChange={this.handlerOrgSelectChange}
+      />
+    );
+  };
+
   renderContent = () => {
-    const { loading } = this.state;
-    const { form, classificationData, rowData } = this.props;
+    const { loading, orgList } = this.state;
+    const { form, rowData, currentClassification } = this.props;
     const { getFieldDecorator } = form;
-    getFieldDecorator('classification', {
-      initialValue: get(rowData, 'classification') || MASTER_CLASSIFICATION.DEPARTMENT.key,
-    });
     getFieldDecorator('currencyCode', { initialValue: get(rowData, 'currencyCode') });
     getFieldDecorator('strategyId', { initialValue: get(rowData, 'strategyId') });
     getFieldDecorator('corporationCode', { initialValue: get(rowData, 'corporationCode') });
-    const edit = !!rowData && !!rowData.id;
+    const isDepartment = currentClassification.key === MASTER_CLASSIFICATION.DEPARTMENT.key;
+    const edit = !!rowData;
     const corporationProps = {
       form,
       disabled: edit,
@@ -228,23 +192,6 @@ class FormModal extends PureComponent {
         name: 'name',
         field: ['code'],
         description: 'code',
-      },
-    };
-    const classificationProps = {
-      form,
-      disabled: edit,
-      name: 'classificationName',
-      showSearch: false,
-      pagination: false,
-      dataSource: classificationData,
-      field: ['classification'],
-      afterSelect: it => {
-        this.setState({ classification: it });
-      },
-      reader: {
-        name: 'title',
-        field: ['key'],
-        description: 'key',
       },
     };
     const currencyProps = {
@@ -284,76 +231,90 @@ class FormModal extends PureComponent {
       return <Empty image={<ListLoader />} description="加载中..." />;
     }
     return (
-      <Form {...formItemLayout} layout="horizontal" style={{ margin: 24 }}>
-        <FormItem label="公司名称">
-          {getFieldDecorator('corporationName', {
-            initialValue: get(rowData, 'corporationName'),
-            rules: [
-              {
-                required: true,
-                message: '公司名称不能为空',
-              },
-            ],
-          })(<ComboList {...corporationProps} />)}
-        </FormItem>
-        <FormItem label="主体分类">
-          {getFieldDecorator('classificationName', {
-            initialValue: MASTER_CLASSIFICATION.DEPARTMENT.title,
-            rules: [
-              {
-                required: true,
-                message: '主体分类不能为空',
-              },
-            ],
-          })(<ComboList {...classificationProps} />)}
-        </FormItem>
-        <FormItem label="主体名称">
-          {getFieldDecorator('name', {
-            initialValue: get(rowData, 'name'),
-            rules: [
-              {
-                required: true,
-                message: '主体名称不能为空',
-              },
-            ],
-          })(<Input autoComplete="off" />)}
-        </FormItem>
-        <FormItem label="币种">
-          {getFieldDecorator('currencyName', {
-            initialValue: get(rowData, 'currencyName'),
-            rules: [
-              {
-                required: true,
-                message: '币种不能为空',
-              },
-            ],
-          })(<ComboList {...currencyProps} />)}
-        </FormItem>
-        <FormItem label="执行策略">
-          {getFieldDecorator('strategyName', {
-            initialValue: get(rowData, 'strategyName'),
-            rules: [
-              {
-                required: true,
-                message: '执行策略不能为空',
-              },
-            ],
-          })(<ComboList {...strategyProps} />)}
-        </FormItem>
-        <FormItem label="停用">
-          {getFieldDecorator('frozen', {
-            valuePropName: 'checked',
-            initialValue: get(rowData, 'frozen') || false,
-          })(<Switch size="small" />)}
-        </FormItem>
-        {this.renderAssignOrgTrigger()}
-      </Form>
+      <Layout className="auto-height">
+        <Header>
+          {' '}
+          <Alert message="公司名称、主体分类、部门和币种一旦创建将不能修改！" banner />
+        </Header>
+        <Layout className="auto-height">
+          <Content className="auto-height" style={{ paddingRight: isDepartment ? 4 : 0 }}>
+            <Form
+              {...formItemLayout}
+              layout="horizontal"
+              style={{ padding: 24, height: '100%', backgroundColor: '#fff' }}
+            >
+              <FormItem label="公司名称">
+                {getFieldDecorator('corporationName', {
+                  initialValue: get(rowData, 'corporationName'),
+                  rules: [
+                    {
+                      required: true,
+                      message: '公司名称不能为空',
+                    },
+                  ],
+                })(<ComboList {...corporationProps} />)}
+              </FormItem>
+              <FormItem label="主体名称">
+                {getFieldDecorator('name', {
+                  initialValue: get(rowData, 'name'),
+                  rules: [
+                    {
+                      required: true,
+                      message: '主体名称不能为空',
+                    },
+                  ],
+                })(<Input autoComplete="off" />)}
+              </FormItem>
+              <FormItem label="币种">
+                {getFieldDecorator('currencyName', {
+                  initialValue: get(rowData, 'currencyName'),
+                  rules: [
+                    {
+                      required: true,
+                      message: '币种不能为空',
+                    },
+                  ],
+                })(<ComboList {...currencyProps} />)}
+              </FormItem>
+              <FormItem label="执行策略">
+                {getFieldDecorator('strategyName', {
+                  initialValue: get(rowData, 'strategyName'),
+                  rules: [
+                    {
+                      required: true,
+                      message: '执行策略不能为空',
+                    },
+                  ],
+                })(<ComboList {...strategyProps} />)}
+              </FormItem>
+              <FormItem label="停用">
+                {getFieldDecorator('frozen', {
+                  valuePropName: 'checked',
+                  initialValue: get(rowData, 'frozen') || false,
+                })(<Switch size="small" />)}
+              </FormItem>
+            </Form>
+          </Content>
+          {isDepartment ? (
+            <Sider width={380} className="auto-height" theme="light">
+              <Card
+                bordered={false}
+                title={`主体部门(${orgList.length})`}
+                extra={this.renderBtnTrigger()}
+              >
+                <ScrollBar ref={ref => (this.scrollBarRef = ref)}>{this.renderOrgList()}</ScrollBar>
+              </Card>
+            </Sider>
+          ) : null}
+        </Layout>
+      </Layout>
     );
   };
 
   render() {
-    const { saving, showModal, rowData } = this.props;
-    const { showTriggerBack, showOrgAssign } = this.state;
+    const { saving, showModal, rowData, currentClassification } = this.props;
+    const isDepartment = currentClassification.key === MASTER_CLASSIFICATION.DEPARTMENT.key;
+    const title = rowData ? '修改预算主体' : '新建预算主体';
     return (
       <ExtModal
         destroyOnClose
@@ -361,28 +322,15 @@ class FormModal extends PureComponent {
         visible={showModal}
         maskClosable={false}
         centered
-        width={420}
+        width={isDepartment ? 800 : 420}
         wrapClassName={styles['form-modal-box']}
         confirmLoading={saving}
-        title={this.renderTitle()}
+        title={title}
+        subTitle={currentClassification.title}
         cancelButtonProps={{ disabled: saving }}
         onOk={this.handlerFormSubmit}
-        showTriggerBack={showTriggerBack}
-        onTriggerBack={this.handlerTriggerBack}
       >
-        {showOrgAssign ? (
-          <OrgAssign
-            corpCode={get(rowData, 'corporationCode')}
-            orgList={this.selectOrgList}
-            onOrgRef={ref => (this.orgRef = ref)}
-            onSelectChange={this.handlerOrgSelectChange}
-          />
-        ) : (
-          <ScrollBar ref={ref => (this.scrollBarRef = ref)}>
-            <Alert message="公司名称、主体分类和币种一旦创建将不能修改！" banner />
-            {this.renderContent()}
-          </ScrollBar>
-        )}
+        {this.renderContent()}
       </ExtModal>
     );
   }
