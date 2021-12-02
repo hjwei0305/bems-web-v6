@@ -46,7 +46,7 @@ class BudgetMaster extends Component {
     });
   };
 
-  save = data => {
+  save = (data, callback = () => {}) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'budgetMaster/save',
@@ -55,6 +55,7 @@ class BudgetMaster extends Component {
       },
       callback: res => {
         if (res.success) {
+          callback();
           dispatch({
             type: 'budgetMaster/updateState',
             payload: {

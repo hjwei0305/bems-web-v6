@@ -87,6 +87,14 @@ class FormModal extends PureComponent {
     }
   };
 
+  initState = () => {
+    this.loaded = false;
+    this.setState({
+      loading: false,
+      orgList: [],
+    });
+  };
+
   handlerFormSubmit = () => {
     const { orgList } = this.state;
     const { form, save, rowData, currentClassification } = this.props;
@@ -108,7 +116,9 @@ class FormModal extends PureComponent {
         orgList,
         classification: currentClassification.key,
       };
-      save(params);
+      save(params, () => {
+        this.initState();
+      });
     });
   };
 
@@ -137,11 +147,7 @@ class FormModal extends PureComponent {
     const { closeFormModal } = this.props;
     if (closeFormModal && closeFormModal instanceof Function) {
       closeFormModal();
-      this.loaded = false;
-      this.setState({
-        loading: false,
-        orgList: [],
-      });
+      this.initState();
     }
   };
 
