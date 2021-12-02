@@ -424,7 +424,7 @@ class BudgetTypeList extends Component {
     return (
       <div className={cls(styles['container-box'])}>
         <Layout className="auto-height">
-          <Sider width={480} className="auto-height" theme="light">
+          <Sider width={420} className="auto-height" theme="light">
             <ListCard key={selectTypeClass.key} {...deployTemplateProps} />
           </Sider>
           <Content className={cls('main-content', 'auto-height')} style={{ paddingLeft: 4 }}>
