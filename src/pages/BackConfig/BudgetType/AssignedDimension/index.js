@@ -134,6 +134,7 @@ class AssignedDimension extends Component {
       lineNumber: false,
       columns,
       allowCustomColumns: false,
+      showSearch: false,
       checkbox: {
         getCheckboxProps: item => {
           if (item.required) {
