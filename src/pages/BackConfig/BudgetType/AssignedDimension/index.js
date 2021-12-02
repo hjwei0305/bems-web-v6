@@ -143,6 +143,15 @@ class AssignedDimension extends Component {
           if (classification === MASTER_CLASSIFICATION.DEPARTMENT.key && item.code === 'org') {
             return { disabled: true };
           }
+          if (classification === MASTER_CLASSIFICATION.PROJECT.key && item.code === 'project') {
+            return { disabled: true };
+          }
+          if (
+            classification === MASTER_CLASSIFICATION.COST_CENTER.key &&
+            item.code === 'costCenter'
+          ) {
+            return { disabled: true };
+          }
           return { disabled: false };
         },
       },
