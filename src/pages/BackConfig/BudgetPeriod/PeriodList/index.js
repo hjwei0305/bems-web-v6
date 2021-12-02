@@ -173,7 +173,7 @@ class PeriodList extends Component {
     }
   };
 
-  saveCustomizePeriod = data => {
+  saveCustomizePeriod = (data, callback = () => {}) => {
     const { dispatch, budgetPeriod } = this.props;
     const { currentMaster } = budgetPeriod;
     dispatch({
@@ -191,12 +191,13 @@ class PeriodList extends Component {
             },
           });
           this.reloadData();
+          callback();
         }
       },
     });
   };
 
-  createNormalPeriod = data => {
+  createNormalPeriod = (data, callback = () => {}) => {
     const { dispatch, budgetPeriod } = this.props;
     const { currentMaster } = budgetPeriod;
     dispatch({
@@ -214,6 +215,7 @@ class PeriodList extends Component {
             },
           });
           this.reloadData();
+          callback();
         }
       },
     });

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { get, isEqual, omit } from 'lodash';
+import { get, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Form, Input, Radio, Checkbox } from 'antd';
@@ -40,27 +40,9 @@ class FormModal extends PureComponent {
   constructor(props) {
     super(props);
     this.normalKeys = normalTypeData.map(t => t.key);
-    const { rowData } = props;
-    const type = get(rowData, 'type');
-    let periodType = PERIOD_TYPE_GROUP.NORMAL;
-    if (type && type === PERIOD_TYPE.CUSTOMIZE.key) {
-      periodType = PERIOD_TYPE_GROUP.CUSTOMIZE;
-    }
     this.state = {
-      periodType,
+      periodType: PERIOD_TYPE_GROUP.NORMAL,
     };
-  }
-
-  componentDidUpdate(prevProps) {
-    const { rowData } = this.props;
-    if (!isEqual(prevProps.rowData, rowData)) {
-      const type = get(rowData, 'type');
-      let periodType = PERIOD_TYPE_GROUP.NORMAL;
-      if (type && type === PERIOD_TYPE.CUSTOMIZE.key) {
-        periodType = PERIOD_TYPE_GROUP.CUSTOMIZE;
-      }
-      this.setState({ periodType });
-    }
   }
 
   handlerFormSubmit = () => {
@@ -79,12 +61,16 @@ class FormModal extends PureComponent {
           startDate,
           endDate,
         });
-        saveCustomizePeriod(params);
+        saveCustomizePeriod(params, () => {
+          this.setState({ periodType: PERIOD_TYPE_GROUP.NORMAL });
+        });
       } else if (this.normalKeys.length > 0) {
         Object.assign(params, {
           periodTypes: this.normalKeys,
         });
-        createNormalPeriod(params);
+        createNormalPeriod(params, () => {
+          this.setState({ periodType: PERIOD_TYPE_GROUP.NORMAL });
+        });
       }
     });
   };
@@ -97,6 +83,7 @@ class FormModal extends PureComponent {
     const { closeFormModal } = this.props;
     if (closeFormModal) {
       closeFormModal();
+      this.setState({ periodType: PERIOD_TYPE_GROUP.NORMAL });
     }
   };
 
