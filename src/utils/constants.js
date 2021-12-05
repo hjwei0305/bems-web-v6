@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-12-02 14:08:32
+ * @Last Modified time: 2021-12-05 08:27:27
  */
 import { base } from '../../public/app.config.json';
 
@@ -28,10 +28,18 @@ const getServerPath = () => {
   return `${BASE_DOMAIN}${GATEWAY}`;
 };
 
-const WSBaseUrl =
-  process.env.NODE_ENV !== 'production'
-    ? 'ws://dsei.changhong.com'
-    : `ws://${window.location.host}`;
+const getWebSocketPath = () => {
+  if (process.env.NODE_ENV !== 'production') {
+    return 'ws://dsei.changhong.com';
+  }
+  const { protocol } = window.location;
+  if (protocol.indexOf('https') !== -1) {
+    return `wss://${window.location.host}`;
+  }
+  return `ws://${window.location.host}`;
+};
+
+const WSBaseUrl = getWebSocketPath();
 
 /** 项目的站点基地址 */
 const APP_BASE = base;
