@@ -58,6 +58,7 @@ class RequestOrder extends Component {
         showDimensionSelection: false,
         dimensionsData: [],
         showProgressResult: false,
+        orderMaxWidth: 1000,
       },
     });
   }
@@ -340,6 +341,16 @@ class RequestOrder extends Component {
     });
   };
 
+  handlerSliderChange = v => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'injectionOrder/updateState',
+      payload: {
+        orderMaxWidth: v,
+      },
+    });
+  };
+
   render() {
     const { action, title, loading, injectionOrder } = this.props;
     const {
@@ -348,10 +359,12 @@ class RequestOrder extends Component {
       showDimensionSelection,
       showProgressResult,
       subDimensionFields,
+      orderMaxWidth,
     } = injectionOrder;
     const bannerProps = {
       headData,
       title,
+      onSliderChange: this.handlerSliderChange,
       actionProps: {
         action,
         tempDisabled: showDimensionSelection || showProgressResult,
@@ -399,8 +412,12 @@ class RequestOrder extends Component {
       onAttachmentRef: this.handlerAttachmentRef,
     };
     const headLoading = loading.effects['injectionOrder/getHead'];
+    let styleOrderStyles = { maxWidth: orderMaxWidth };
+    if (orderMaxWidth === '100%') {
+      styleOrderStyles = { width: '100%' };
+    }
     return (
-      <Layout className={cls(styles['order-box'], 'flow-order-box')}>
+      <Layout style={styleOrderStyles} className={cls(styles['order-box'], 'flow-order-box')}>
         <Content className="order-content-box">
           {headLoading ? (
             <ListLoader />

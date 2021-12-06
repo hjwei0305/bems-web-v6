@@ -1,0 +1,64 @@
+@import '../../themes/vars.less';
+.order-slider-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+  text-align: center;
+  transition: all ease-in-out 0.3s;
+  :global {
+    .order-slider {
+      display: inline-block;
+      width: 140px;
+      height: 32px;
+      overflow: hidden;
+      background-color: rgba(255, 255, 255, 0.6);
+      border-color: rgba(0, 0, 0, 0.1);
+      border-style: solid;
+      border-width: 0 1px 1px 1px;
+      border-radius: 0 0 8px 8px;
+      transition: all ease-in 0.2s;
+      user-select: none;
+      &:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+      .zoom {
+        display: inline-block;
+        width: 74px;
+        height: 30px;
+        line-height: 32px;
+        cursor: pointer;
+        transition: all ease-in 0.2s;
+      }
+      .btn {
+        display: inline-block;
+        width: 32px;
+        height: 31px;
+        line-height: 32px;
+        cursor: pointer;
+        transition: all ease-in 0.2s;
+        &:hover {
+          color: @primary-color;
+          background-color: fade(@black, 5%);
+        }
+        &.zoom-in {
+          float: left;
+          border-radius: 0 0 0 8px;
+        }
+        &.zoom-out {
+          float: right;
+          border-radius: 0 0 8px 0;
+        }
+      }
+    }
+  }
+}
+
+.slider-menu-box {
+  :global {
+    .ant-dropdown-menu {
+      width: 140px;
+    }
+  }
+}

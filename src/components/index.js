@@ -7,6 +7,7 @@ import FilterDimension from './FilterDimension';
 import BudgetYearPicker from './BudgetYearPicker';
 import MasterView from './MasterView';
 import Classification from './Classification';
+import OrderSlider from './OrderSlider';
 
 export {
   Loader,
@@ -18,4 +19,5 @@ export {
   BudgetYearPicker,
   MasterView,
   Classification,
+  OrderSlider,
 };
