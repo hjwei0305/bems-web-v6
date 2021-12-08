@@ -72,7 +72,7 @@ class Organization extends PureComponent {
         let treeData = [];
         let expandedKeys = [];
         if (res.success) {
-          treeData = [res.data];
+          treeData = res.data;
           expandedKeys = treeData.map(p => p.id);
           this.data = [...treeData];
           this.flatData = getFlatTree(this.data, childFieldKey, []);
