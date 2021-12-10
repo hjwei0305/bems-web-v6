@@ -541,12 +541,6 @@ class AdjustRequestList extends Component {
         width: 180,
       },
       {
-        title: '归口部门',
-        dataIndex: 'managerOrgName',
-        width: 220,
-        optional: true,
-      },
-      {
         title: '创建人',
         dataIndex: 'creatorName',
         width: 120,
