@@ -16,7 +16,7 @@ const filterFields = {
   subjectId: { fieldName: 'subjectId' },
   item: { fieldName: 'itemCodes' },
   org: { fieldName: 'orgIds' },
-  project: { fieldName: 'projectCodes' },
+  project: { fieldName: 'projectIds' },
   udf1: { fieldName: 'udf1s' },
 };
 
