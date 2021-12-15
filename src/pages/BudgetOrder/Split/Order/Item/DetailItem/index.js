@@ -165,11 +165,12 @@ class DetailItem extends PureComponent {
 
   renderDescription = item => {
     const { globalDisabled } = this.state;
-    const { subDimensionFields, itemMoneySaving, onSaveItemMoney, removing } = this.props;
+    const { subDimensionFields, itemMoneySaving, onSaveItemMoney, removing, action } = this.props;
     const originPoolAmount = get(item, 'originPoolAmount');
     const originPoolCode = get(item, 'originPoolCode');
     const items = get(item, 'children');
     const splitItemProps = {
+      action,
       onlyView: globalDisabled,
       originPoolCode,
       originPoolAmount,
@@ -180,17 +181,19 @@ class DetailItem extends PureComponent {
       onRemoveItem: this.handlerRemoveItem,
       removing,
     };
+    const originPoolAmountContent =
+      action === REQUEST_ORDER_ACTION.ADD ? (
+        <div className="field-item">
+          <span className="label">预算余额</span>
+          <span>
+            <Money value={originPoolAmount} />
+          </span>
+        </div>
+      ) : null;
 
     return (
       <div key={item.id}>
-        <div className="origin-money-box">
-          <div className="field-item">
-            <span className="label">预算余额</span>
-            <span>
-              <Money value={originPoolAmount} />
-            </span>
-          </div>
-        </div>
+        <div className="origin-money-box">{originPoolAmountContent}</div>
         <SplitItem {...splitItemProps} />
       </div>
     );
