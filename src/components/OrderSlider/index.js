@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import cls from 'classnames';
 import { findIndex } from 'lodash';
 import { Dropdown, Menu } from 'antd';
@@ -18,12 +18,6 @@ const stepData = [
 const OrderSlider = props => {
   const { onChange = () => {}, defaultWidth = 1000 } = props;
   const [sliderIndex, setSliderIndex] = useState(3);
-
-  useEffect(() => {
-    const step = stepData[sliderIndex];
-    const width = defaultWidth * Number(step.v);
-    onChange(width);
-  }, [defaultWidth, onChange, sliderIndex]);
 
   const handleMenuClick = useCallback(
     e => {
