@@ -190,9 +190,8 @@ class DetailItem extends PureComponent {
           </span>
         </div>
       ) : null;
-
     return (
-      <div key={item.id}>
+      <div key={item.id} className={action !== REQUEST_ORDER_ACTION.ADD ? 'view' : ''}>
         <div className="origin-money-box">{originPoolAmountContent}</div>
         <SplitItem {...splitItemProps} />
       </div>
