@@ -98,7 +98,7 @@ const Project = props => {
       checkbox: false,
       remotePaging: false,
       allowCancelSelect: true,
-      rowKey: 'code',
+      rowKey: 'id',
       onListCardRef: ref => (listRef = ref),
       customTool: renderCustomTool,
       itemField: {

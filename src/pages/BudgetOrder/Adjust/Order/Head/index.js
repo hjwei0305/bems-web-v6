@@ -15,8 +15,6 @@ const bindFormFields = [
   'currencyName',
   'applyOrgId',
   'applyOrgCode',
-  'managerOrgId',
-  'managerOrgCode',
   'categoryId',
   'orderCategory',
   'periodType',
@@ -29,16 +27,6 @@ const formItemLayout = {
   },
   wrapperCol: {
     span: 18,
-  },
-};
-
-const formItemRemarkLayout = {
-  style: { margin: '0 auto' },
-  labelCol: {
-    span: 3,
-  },
-  wrapperCol: {
-    span: 21,
   },
 };
 
@@ -179,20 +167,6 @@ class RequestHead extends PureComponent {
         field: ['id', 'code'],
       },
     };
-    const managerOrgProps = {
-      allowClear: true,
-      disabled: globalDisabled,
-      form,
-      name: 'managerOrgName',
-      field: ['managerOrgId', 'managerOrgCode'],
-      store: {
-        url: `${SERVER_PATH}/bems-v6/order/findOrgTree`,
-      },
-      reader: {
-        name: 'name',
-        field: ['id', 'code'],
-      },
-    };
     const budgetTypeProps = {
       disabled: disabled || !!orderId,
       form,
@@ -261,14 +235,7 @@ class RequestHead extends PureComponent {
               </FormItem>
             </Col>
             <Col span={12}>
-              <FormItem label="归口部门">
-                {getFieldDecorator('managerOrgName', {
-                  initialValue: get(headData, 'managerOrgName'),
-                })(<ComboTree {...managerOrgProps} />)}
-              </FormItem>
-            </Col>
-            <Col span={24}>
-              <FormItem label="调整说明" {...formItemRemarkLayout}>
+              <FormItem label="调整说明">
                 {getFieldDecorator('remark', {
                   initialValue: get(headData, 'remark'),
                 })(

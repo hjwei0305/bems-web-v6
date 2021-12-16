@@ -37,7 +37,7 @@ const filterFields = {
   org: { fieldName: 'orgIds' },
   item: { fieldName: 'itemCodes' },
   period: { fieldName: 'periodIds' },
-  project: { fieldName: 'projectCodes' },
+  project: { fieldName: 'projectIds' },
 };
 
 @connect(({ budgetPool, loading }) => ({ budgetPool, loading }))

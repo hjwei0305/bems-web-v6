@@ -4,6 +4,7 @@ import cls from 'classnames';
 import PropTypes from 'prop-types';
 import { Button, Input, Tooltip, Radio, Descriptions, Tag } from 'antd';
 import { ExtModal, ListCard, Space } from 'suid';
+import { Classification } from '@/components';
 import { constants } from '@/utils';
 import styles from './index.less';
 
@@ -118,29 +119,26 @@ class CopySubject extends PureComponent {
       selectedKeys,
       itemField: {
         avatar: this.renderAvatar,
-        title: item => `${item.name}(${item.code})`,
+        title: item => (
+          <Space>
+            {item.name}
+            <Classification enumName={item.classification} />
+          </Space>
+        ),
         description: item => (
-          <>
-            <Descriptions column={1} bordered={false}>
-              <Descriptions.Item label="公司">{`${get(item, 'corporationName')}(${get(
-                item,
-                'corporationCode',
-              )})`}</Descriptions.Item>
-              <Descriptions.Item label="组织">{`${get(item, 'orgName')}(${get(
-                item,
-                'orgCode',
-              )})`}</Descriptions.Item>
-            </Descriptions>
-            <Descriptions column={2} bordered={false}>
-              <Descriptions.Item label="币种">{`${get(item, 'currencyName')}(${get(
-                item,
-                'currencyCode',
-              )})`}</Descriptions.Item>
-              <Descriptions.Item label="执行策略">
-                <Tag color="blue">{`${get(item, 'strategyName')}`}</Tag>
-              </Descriptions.Item>
-            </Descriptions>
-          </>
+          <Descriptions column={1} bordered={false}>
+            <Descriptions.Item label="公司">{`${get(item, 'corporationName')}(${get(
+              item,
+              'corporationCode',
+            )})`}</Descriptions.Item>
+            <Descriptions.Item label="币种">{`${get(item, 'currencyName')}(${get(
+              item,
+              'currencyCode',
+            )})`}</Descriptions.Item>
+            <Descriptions.Item label="执行策略">
+              <Tag>{`${get(item, 'strategyName')}`}</Tag>
+            </Descriptions.Item>
+          </Descriptions>
         ),
       },
       showArrow: false,

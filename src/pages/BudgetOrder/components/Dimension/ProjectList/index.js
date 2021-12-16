@@ -13,8 +13,8 @@ const ProjectList = ({ subjectId, onSelectChange }) => {
       if (onSelectChange && onSelectChange instanceof Function) {
         const data = items.map(it => {
           return {
-            text: it.name,
-            value: it.code,
+            text: `${it.name}(${it.code})`,
+            value: it.id,
           };
         });
         onSelectChange(data);
@@ -60,8 +60,7 @@ const ProjectList = ({ subjectId, onSelectChange }) => {
       showArrow: false,
       showSearch: false,
       itemField: {
-        title: item => item.name,
-        description: item => item.code,
+        title: item => `${item.name}(${item.code})`,
         extra: item => (
           <Button ghost type="primary" size="small" onClick={e => handlerRemove(e, item)}>
             移除

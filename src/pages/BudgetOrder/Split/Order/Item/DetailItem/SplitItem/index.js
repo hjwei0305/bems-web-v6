@@ -3,10 +3,12 @@ import { get } from 'lodash';
 import { Decimal } from 'decimal.js';
 import { Descriptions, Alert, Timeline, Empty, Checkbox, Button, Popconfirm } from 'antd';
 import { Money, ExtIcon, Space } from 'suid';
+import { constants } from '@/utils';
 import BudgetMoney from '../../../../../components/BudgetMoney';
 import styles from './index.less';
 
 const splitAmount = {};
+const { REQUEST_ORDER_ACTION } = constants;
 
 const SplitItem = ({
   onlyView = false,
@@ -18,6 +20,7 @@ const SplitItem = ({
   onSaveItemMoney = () => {},
   removing,
   onRemoveItem = () => {},
+  action,
 }) => {
   const [maxAmount, setMaxAmount] = useState(0);
 
@@ -116,6 +119,24 @@ const SplitItem = ({
     [getDisplaySubDimensionFields],
   );
 
+  const renderPoolAmountField = useCallback(
+    item => {
+      if (action === REQUEST_ORDER_ACTION.ADD) {
+        const poolAmount = get(item, 'poolAmount');
+        return (
+          <div className="field-item">
+            <span className="label">预算余额</span>
+            <span>
+              <Money value={poolAmount} />
+            </span>
+          </div>
+        );
+      }
+      return null;
+    },
+    [action],
+  );
+
   const handlerSelectChange = useCallback(
     (e, item) => {
       const itemId = get(item, 'id');
@@ -180,12 +201,7 @@ const SplitItem = ({
         <>
           {renderSubField(item)}
           <div className="money-box">
-            <div className="field-item">
-              <span className="label">预算余额</span>
-              <span>
-                <Money value={poolAmount} />
-              </span>
-            </div>
+            {renderPoolAmountField(item)}
             <BudgetMoney
               className="inject-money"
               amount={amount}
