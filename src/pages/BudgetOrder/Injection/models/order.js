@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-12-06 15:31:35
+ * @Last Modified time: 2021-12-16 15:45:05
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -48,7 +48,6 @@ export default modelExtend(model, {
     dimensionsData: [],
     showProgressResult: false,
     subDimensionFields: [],
-    orderMaxWidth: 1000,
   },
   effects: {
     *save({ payload, callback }, { call, put }) {
