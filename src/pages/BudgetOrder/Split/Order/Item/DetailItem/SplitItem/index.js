@@ -223,13 +223,14 @@ const SplitItem = ({
       );
     },
     [
-      handlerSaveMoney,
-      itemMoneySaving,
-      onlyView,
       getSplitItem,
       renderSubField,
-      setCurrentItemMaxAmount,
+      renderPoolAmountField,
       maxAmount,
+      itemMoneySaving,
+      onlyView,
+      handlerSaveMoney,
+      setCurrentItemMaxAmount,
     ],
   );
 

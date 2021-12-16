@@ -168,7 +168,7 @@ class DetailItem extends PureComponent {
     const { subDimensionFields, itemMoneySaving, onSaveItemMoney, removing, action } = this.props;
     const originPoolAmount = get(item, 'originPoolAmount');
     const originPoolCode = get(item, 'originPoolCode');
-    const items = get(item, 'children');
+    const items = get(item, 'children') || [];
     const splitItemProps = {
       action,
       onlyView: globalDisabled,
