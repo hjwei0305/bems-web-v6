@@ -1,4 +1,4 @@
-import React, { Component, memo } from 'react';
+import React, { Component } from 'react';
 import cls from 'classnames';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -9,19 +9,6 @@ import Action from './Action';
 import styles from './index.less';
 
 const { getCurrentUser } = userUtils;
-
-const OrderBarCode = memo(props => {
-  const { code } = props;
-  return (
-    <BarCode
-      text={code || 'No.-'}
-      textAlign="left"
-      height={42}
-      width={0.92}
-      wrapperClassName="bar-code"
-    />
-  );
-}, []);
 
 class Banner extends Component {
   static propTypes = {
@@ -50,7 +37,13 @@ class Banner extends Component {
     return (
       <div className={cls('suid-banner', styles['banner-box'], 'horizontal')}>
         <div className="banner-content row-start horizontal">
-          <OrderBarCode code={get(headData, 'code')} />
+          <BarCode
+            text={get(headData, 'code') || 'No.-'}
+            textAlign="left"
+            height={42}
+            width={0.92}
+            wrapperClassName="bar-code"
+          />
           <div className="banner-detail vertical">
             <div className="title">
               {title}
