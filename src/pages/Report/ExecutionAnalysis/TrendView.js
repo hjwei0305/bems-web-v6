@@ -16,7 +16,7 @@ const getMonthData = () => {
   return y;
 };
 const TrendView = props => {
-  const { onClose, showTrend, year, years, rowData, subjectId } = props;
+  const { onClose, showTrend, year, years, rowData, subjectId, subjectName } = props;
   const [loading, setLoading] = useState(false);
   const [trendYear, setTrendYear] = useState({});
 
@@ -110,7 +110,6 @@ const TrendView = props => {
 
   const chartProps = useMemo(() => {
     const imgName = get(rowData, 'itemName');
-    const subjectName = get(rowData, 'subjectName');
     const extChartProps = {
       option: {
         tooltip: {

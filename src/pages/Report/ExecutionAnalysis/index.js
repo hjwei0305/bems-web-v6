@@ -277,6 +277,7 @@ class ExecutionAnalysis extends Component {
     } = this.props;
     const { cols } = this.getSubCols();
     const subjectId = get(currentMaster, 'id');
+    const subjectName = get(currentMaster, 'name');
     const { filters } = this.getFilters();
     const columns = [
       {
@@ -445,6 +446,7 @@ class ExecutionAnalysis extends Component {
     }
     const trendViewProps = {
       subjectId,
+      subjectName,
       onClose: this.handlerCloseTrendView,
       showTrend,
       rowData,
