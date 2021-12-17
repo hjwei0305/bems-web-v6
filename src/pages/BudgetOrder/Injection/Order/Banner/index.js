@@ -38,11 +38,12 @@ class Banner extends Component {
       <div className={cls('suid-banner', styles['banner-box'], 'horizontal')}>
         <div className="banner-content row-start horizontal">
           <BarCode
-            text={get(headData, 'code') || 'No.-'}
+            encodeText={get(headData, 'code') || 'No.-'}
+            renderer="canvas"
             textAlign="left"
             height={42}
             width={0.92}
-            wrapperClassName="bar-code"
+            fontSize={14}
           />
           <div className="banner-detail vertical">
             <div className="title">
