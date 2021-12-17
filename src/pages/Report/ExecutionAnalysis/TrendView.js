@@ -87,6 +87,9 @@ const TrendView = props => {
         emphasis: {
           focus: 'series',
         },
+        label: {
+          show: true,
+        },
         smooth: true,
       };
       if (Number(y) === year) {

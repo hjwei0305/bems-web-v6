@@ -1,4 +1,11 @@
-import React, { Suspense, useCallback, useMemo, useState, useRef } from 'react';
+import React, {
+  Suspense,
+  useCallback,
+  useMemo,
+  useState,
+  useRef,
+  useImperativeHandle,
+} from 'react';
 import { Dropdown, Tabs, Empty, Button } from 'antd';
 import { ListLoader, ExtIcon, Space } from 'suid';
 import { constants } from '@/utils';
@@ -21,6 +28,7 @@ const FilterDimension = props => {
     year,
     periodType,
     submitDimension = () => {},
+    dimensionRef,
   } = props;
   const [show, setShow] = useState(false);
   const [periodData, setPeriodData] = useState([]);
@@ -80,6 +88,17 @@ const FilterDimension = props => {
     }
     return `已选择(${dm})`;
   }, [organizationData.length, periodData.length, projectData.length, subjectData.length]);
+
+  useImperativeHandle(dimensionRef, () => ({
+    clearData: () => {
+      setPeriodData([]);
+      setProjectData([]);
+      setOrganizationData([]);
+      setSubjectData([]);
+      setLabel('未选择');
+      clearData();
+    },
+  }));
 
   const handlerSubmit = useCallback(() => {
     submitDimension({

@@ -64,7 +64,7 @@ const MasterView = ({ style, defaultTitle, onChange, readTitle = 'name' }) => {
       onListCardRef: ref => (listCardRef = ref),
       itemField: {
         title: item => item.name,
-        description: item => item.code,
+        description: item => item.corporationName,
       },
     };
     return (

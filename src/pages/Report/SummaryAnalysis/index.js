@@ -79,6 +79,7 @@ class SummaryAnalysis extends Component {
             type: 'pie',
             radius: '50%',
             label: {
+              show: true,
               fontSize: 14,
             },
             labelLine: {
@@ -129,6 +130,9 @@ class SummaryAnalysis extends Component {
           type: 'bar',
           stack: `${year}`,
           barWidth: 80,
+          label: {
+            show: true,
+          },
           emphasis: {
             focus: 'series',
           },
@@ -138,6 +142,7 @@ class SummaryAnalysis extends Component {
           name: `${year}年-已使用`,
           type: 'bar',
           stack: `${year}`,
+          label: { show: true, position: 'top', color: 'auto' },
           emphasis: {
             focus: 'series',
           },

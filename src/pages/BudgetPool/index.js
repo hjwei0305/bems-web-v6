@@ -51,6 +51,7 @@ class BudgetPool extends Component {
   constructor() {
     super();
     this.total = 0;
+    this.dimensionRef = React.createRef();
   }
 
   componentWillUnmount() {
@@ -105,10 +106,9 @@ class BudgetPool extends Component {
   };
 
   handlerMasterSelect = currentMaster => {
-    const { dispatch, budgetPool } = this.props;
-    const { filterData: originFilterData } = budgetPool;
+    const { dispatch } = this.props;
     const subjectId = get(currentMaster, 'id');
-    const filterData = { ...originFilterData, subjectId };
+    const filterData = { subjectId };
     dispatch({
       type: 'budgetPool/getMasterDimension',
       payload: {
@@ -122,6 +122,9 @@ class BudgetPool extends Component {
         currentMaster,
       },
     });
+    if (this.dimensionRef) {
+      this.dimensionRef.current.clearData();
+    }
   };
 
   handlerSubmitDimension = dimension => {
@@ -341,6 +344,7 @@ class BudgetPool extends Component {
           />
           <Divider type="vertical" />
           <FilterDimension
+            dimensionRef={this.dimensionRef}
             submitDimension={this.handlerSubmitDimension}
             dimensions={masterDimension}
             subjectId={get(currentMaster, 'id')}
