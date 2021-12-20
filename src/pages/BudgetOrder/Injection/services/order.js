@@ -142,3 +142,13 @@ export async function cancel(params) {
     data: {},
   });
 }
+
+/** 行项目数据导出 */
+export async function dataExport(params) {
+  const url = `${SERVER_PATH}/bems-v6/order/export`;
+  return request({
+    url,
+    method: 'GET',
+    params,
+  });
+}

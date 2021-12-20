@@ -340,6 +340,18 @@ class RequestOrder extends Component {
     });
   };
 
+  handlerDataExport = orderId => {
+    const { dispatch, injectionOrder } = this.props;
+    const { headData } = injectionOrder;
+    const id = get(headData, 'id') || orderId;
+    dispatch({
+      type: 'injectionOrder/dataExport',
+      payload: {
+        orderId: id,
+      },
+    });
+  };
+
   render() {
     const { action, title, loading, injectionOrder } = this.props;
     const {
@@ -397,6 +409,8 @@ class RequestOrder extends Component {
       removing: loading.effects['injectionOrder/removeOrderItems'],
       completeImport: this.handlerCompleteImport,
       onAttachmentRef: this.handlerAttachmentRef,
+      dataExport: this.handlerDataExport,
+      exporting: loading.effects['injectionOrder/dataExport'],
     };
     const headLoading = loading.effects['injectionOrder/getHead'];
     return (

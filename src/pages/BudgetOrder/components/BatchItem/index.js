@@ -193,6 +193,7 @@ const BatchItem = ({ headData, closeBatchImport, showBatch, completeImport }) =>
                 style={{ display: 'none' }}
                 ref={btnFileRef}
                 type="file"
+                multiple
                 accept=".xlsx, .xls"
                 onChange={handlerReadFile}
               />
