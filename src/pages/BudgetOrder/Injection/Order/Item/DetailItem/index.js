@@ -219,18 +219,17 @@ class DetailItem extends PureComponent {
 
   renderMasterTitle = item => {
     const poolCode = get(item, 'poolCode');
-    if (poolCode) {
-      return (
-        <>
+    return (
+      <>
+        {poolCode ? (
           <div className="pool-box">
             <span className="title">池号</span>
             <span className="no">{poolCode}</span>
           </div>
-          <div className="master-title">{`${item.periodName} ${item.itemName}(${item.item})`}</div>
-        </>
-      );
-    }
-    return `${item.periodName} ${item.itemName}`;
+        ) : null}
+        <div className="master-title">{`${item.periodName} ${item.itemName}(${item.item})`}</div>
+      </>
+    );
   };
 
   getDisplaySubDimensionFields = item => {
