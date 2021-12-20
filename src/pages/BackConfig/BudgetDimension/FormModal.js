@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { get } from 'lodash';
-import { Form, Input } from 'antd';
+import { Form } from 'antd';
 import { ExtModal, ComboList, MoneyInput } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
@@ -38,13 +38,15 @@ class FormModal extends PureComponent {
     const { form, rowData, closeFormModal, saving, showModal } = this.props;
     const { getFieldDecorator } = form;
     getFieldDecorator('strategyId', { initialValue: get(rowData, 'strategyId') });
+    getFieldDecorator('code', { initialValue: get(rowData, 'code') });
     const title = rowData ? '修改预算维度' : '新建预算维度';
-    const codeProps = {
+    const budgetDimensionProps = {
       form,
-      name: 'code',
+      name: 'name',
       store: {
         url: `${SERVER_PATH}/bems-v6/dimension/findAllCodes`,
       },
+      field: ['code'],
       pagination: false,
       showSearch: false,
       afterSelect: item => {
@@ -56,8 +58,9 @@ class FormModal extends PureComponent {
         form.setFieldsValue({ name });
       },
       reader: {
-        name: 'key',
-        description: 'value',
+        name: 'value',
+        field: ['key'],
+        description: 'key',
       },
     };
     const strategyProps = {
@@ -103,27 +106,16 @@ class FormModal extends PureComponent {
         onOk={this.handlerFormSubmit}
       >
         <Form {...formItemLayout} layout="horizontal" style={{ margin: 24 }}>
-          <FormItem label="维度代码">
-            {getFieldDecorator('code', {
-              initialValue: get(rowData, 'code'),
-              rules: [
-                {
-                  required: true,
-                  message: '维度代码不能为空',
-                },
-              ],
-            })(<ComboList {...codeProps} />)}
-          </FormItem>
-          <FormItem label="维度名称">
+          <FormItem label="预算维度">
             {getFieldDecorator('name', {
               initialValue: get(rowData, 'name'),
               rules: [
                 {
                   required: true,
-                  message: '维度名称不能为空',
+                  message: '预算维度不能为空',
                 },
               ],
-            })(<Input autoComplete="off" />)}
+            })(<ComboList {...budgetDimensionProps} />)}
           </FormItem>
           <FormItem label="维度策略">
             {getFieldDecorator('strategyName', {
