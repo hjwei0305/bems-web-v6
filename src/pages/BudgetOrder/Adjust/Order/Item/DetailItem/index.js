@@ -59,7 +59,7 @@ class DetailItem extends PureComponent {
   componentDidUpdate(preProps) {
     const { headData } = this.props;
     const status = get(headData, 'status');
-    if (!isEqual(preProps.headData, headData)) {
+    if (status && !isEqual(preProps.headData, headData)) {
       let globalDisabled = true;
       if (status === REQUEST_VIEW_STATUS.PREFAB.key || status === REQUEST_VIEW_STATUS.DRAFT.key) {
         globalDisabled = false;
