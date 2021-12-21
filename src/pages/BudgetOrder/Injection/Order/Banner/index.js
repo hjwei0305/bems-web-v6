@@ -39,7 +39,6 @@ class Banner extends Component {
         <div className="banner-content row-start horizontal">
           <BarCode
             encodeText={get(headData, 'code') || 'No.-'}
-            renderer="canvas"
             textAlign="left"
             height={42}
             width={0.92}
