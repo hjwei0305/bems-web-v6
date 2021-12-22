@@ -1,78 +1,69 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import cls from 'classnames';
 import { get } from 'lodash';
-import { PubSub } from 'pubsub-js';
 import QueueAnim from 'rc-queue-anim';
 import { Progress, Badge, Result } from 'antd';
-import { Space, ListLoader, message } from 'suid';
-import { constants, wsocket } from '@/utils';
+import { Space, ListLoader, message, utils } from 'suid';
+import { constants } from '@/utils';
 import styles from './index.less';
 
-const { closeWebSocket, createWebSocket } = wsocket;
-const { WSBaseUrl } = constants;
-const validJson = wsData => {
-  let valid = true;
-  if (wsData) {
-    try {
-      const str = wsData.replace(/[\r\n\s]/g, '');
-      JSON.parse(str);
-    } catch (e) {
-      valid = false;
-    }
-  }
-  return valid;
-};
+const { request } = utils;
+const { SERVER_PATH } = constants;
 
-let messageSocket;
+let intervalTimer;
+let getResultDone = true;
 
 const ProgressResult = ({ orderId, show, handlerCompleted }) => {
   const [zIndex, setZindex] = useState(-1);
   const [progressData, setProgressData] = useState();
 
-  const closeSocket = useCallback(() => {
-    closeWebSocket();
-    PubSub.unsubscribe(messageSocket);
-  }, []);
-
-  const connectWebSocket = useCallback(() => {
-    const url = `${WSBaseUrl}/api-gateway/bems-v6/websocket/order/${orderId}`;
-    createWebSocket(url);
-    messageSocket = PubSub.subscribe('message', (topic, msgObj) => {
-      // message 为接收到的消息  这里进行业务处理
-      if (topic === 'message') {
-        const wsData = get(msgObj, 'wsData') || '';
-        if (validJson(wsData)) {
-          const str = wsData.replace(/[\r\n\s]/g, '');
-          const { success, message: msg, data } = JSON.parse(str);
-          if (success) {
-            setProgressData(data);
-            const finished = get(data, 'finish') || false;
-            // 处理完成后断开socket连接，并展示明细信息
-            if (finished === true && handlerCompleted && handlerCompleted instanceof Function) {
-              handlerCompleted();
-              closeSocket();
-            }
-          } else {
-            closeSocket();
-            message.destroy();
-            message.error(msg);
+  const getImportResult = useCallback(() => {
+    if (!getResultDone) {
+      return;
+    }
+    getResultDone = false;
+    request({
+      url: `${SERVER_PATH}/bems-v6/order/getProcessingStatus`,
+      params: { orderId },
+    }).then(res => {
+      getResultDone = true;
+      if (res.success) {
+        const resultData = res.data;
+        setProgressData(resultData);
+        const { finish } = resultData;
+        if (finish) {
+          handlerCompleted();
+          if (intervalTimer) {
+            window.clearInterval(intervalTimer);
           }
-        } else {
-          closeSocket();
-          message.destroy();
-          message.error('返回的数据格式不正确');
         }
+      } else {
+        message.destroy();
+        message.error(res.message);
       }
     });
-  }, [closeSocket, orderId, handlerCompleted]);
+  }, [handlerCompleted, orderId]);
+
+  const endTimer = useCallback(() => {
+    if (intervalTimer) {
+      window.clearInterval(intervalTimer);
+    }
+  }, []);
+
+  const startTimer = useCallback(() => {
+    endTimer();
+    intervalTimer = setInterval(() => {
+      getImportResult();
+    }, 500);
+  }, [endTimer, getImportResult]);
 
   useEffect(() => {
     if (show === true) {
       setZindex(9);
-      connectWebSocket();
+      startTimer();
     }
-    return closeSocket;
-  }, [show, connectWebSocket, closeSocket]);
+    return endTimer;
+  }, [endTimer, show, startTimer]);
 
   const handlerEnd = ({ type }) => {
     if (type === 'leave') {
