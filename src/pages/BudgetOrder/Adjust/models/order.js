@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-12-22 08:58:58
+ * @Last Modified time: 2021-12-22 15:32:32
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -62,10 +62,18 @@ export default modelExtend(model, {
       if (!beforeStartFlow) {
         message.destroy();
         if (re.success) {
+          const headData = re.data;
+          const summary = yield call(getAdjustData, { orderId: get(headData, 'id') });
           yield put({
             type: 'updateState',
             payload: {
-              headData: re.data,
+              headData: {
+                ...headData,
+                updownAmount: {
+                  up: get(summary, 'data.ADD', 0),
+                  down: get(summary, 'data.SUB', 0),
+                },
+              },
             },
           });
           message.success(formatMessage({ id: 'global.save-success', defaultMessage: '保存成功' }));
@@ -269,11 +277,15 @@ export default modelExtend(model, {
       message.destroy();
       if (res.success) {
         const resHeadData = res.data;
+        const summary = yield call(getAdjustData, { orderId: get(resHeadData, 'id') });
         const processing = get(resHeadData, 'processing') || false;
         yield put({
           type: 'updateState',
           payload: {
-            headData: resHeadData,
+            headData: {
+              ...resHeadData,
+              updownAmount: { up: get(summary, 'data.ADD', 0), down: get(summary, 'data.SUB', 0) },
+            },
             showProgressResult: processing,
           },
         });
@@ -300,11 +312,18 @@ export default modelExtend(model, {
         const res = yield call(confirm, { orderId: get(reHeadData, 'id') });
         if (res.success) {
           const resHeadData = res.data;
+          const summary = yield call(getAdjustData, { orderId: get(resHeadData, 'id') });
           const processing = get(resHeadData, 'processing') || false;
           yield put({
             type: 'updateState',
             payload: {
-              headData: resHeadData,
+              headData: {
+                ...resHeadData,
+                updownAmount: {
+                  up: get(summary, 'data.ADD', 0),
+                  down: get(summary, 'data.SUB', 0),
+                },
+              },
               showProgressResult: processing,
             },
           });
@@ -324,11 +343,15 @@ export default modelExtend(model, {
       message.destroy();
       if (res.success) {
         const resHeadData = res.data;
+        const summary = yield call(getAdjustData, { orderId: get(resHeadData, 'id') });
         const processing = get(resHeadData, 'processing') || false;
         yield put({
           type: 'updateState',
           payload: {
-            headData: resHeadData,
+            headData: {
+              ...resHeadData,
+              updownAmount: { up: get(summary, 'data.ADD', 0), down: get(summary, 'data.SUB', 0) },
+            },
             showProgressResult: processing,
           },
         });
