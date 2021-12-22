@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
-import { trim, isEqual, uniq, intersectionWith } from 'lodash';
+import { trim, isEqual, uniq, intersectionWith , get } from 'lodash';
 import PropTypes from 'prop-types';
+
 import { Input, Tree } from 'antd';
 import { ScrollBar, ListLoader, utils, ExtIcon } from 'suid';
 import { constants } from '@/utils';
@@ -129,11 +130,18 @@ class Organization extends PureComponent {
     });
   };
 
-  handlerCheck = chkKeys => {
+  handlerCheck = (chkKeys, e) => {
+    let keys = [];
     const { checkedKeys } = this.state;
+    const { checked: nodeChecked } = e;
     const { onSelectChange } = this.props;
     const { checked } = chkKeys;
-    const keys = [...checkedKeys, ...checked];
+    if (nodeChecked) {
+      keys = [...checkedKeys, ...checked];
+    } else {
+      const nodeId = get(e, 'node.props.eventKey', null) || null;
+      keys = checkedKeys.map(id => id !== nodeId);
+    }
     this.setState({ checkedKeys: uniq(keys) });
     const checkedData = intersectionWith(this.flatData, keys, (o, orgId) => o.id === orgId).map(
       it => {
