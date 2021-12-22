@@ -342,6 +342,18 @@ class RequestOrder extends Component {
     });
   };
 
+  handlerDataExport = orderId => {
+    const { dispatch, adjustOrder } = this.props;
+    const { headData } = adjustOrder;
+    const id = get(headData, 'id') || orderId;
+    dispatch({
+      type: 'adjustOrder/dataExport',
+      payload: {
+        orderId: id,
+      },
+    });
+  };
+
   render() {
     const { action, title, loading, adjustOrder } = this.props;
     const {
@@ -399,6 +411,8 @@ class RequestOrder extends Component {
       removing: loading.effects['adjustOrder/removeOrderItems'],
       completeImport: this.handlerCompleteImport,
       onAttachmentRef: this.handlerAttachmentRef,
+      dataExport: this.handlerDataExport,
+      exporting: loading.effects['adjustOrder/dataExport'],
     };
     const headLoading = loading.effects['adjustOrder/getHead'];
     return (

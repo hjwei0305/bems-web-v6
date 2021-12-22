@@ -171,7 +171,7 @@ class RequestItem extends PureComponent {
             新建明细
           </Button>
           <Popconfirm
-            disabled={dimensionselectChecking || !orderId}
+            disabled={dimensionselectChecking || !orderId || exporting}
             title={<Tip topic="确定要清除所有明细信息吗?" description="清空后数据将会丢失!" />}
             onConfirm={this.handlerClearItem}
           >

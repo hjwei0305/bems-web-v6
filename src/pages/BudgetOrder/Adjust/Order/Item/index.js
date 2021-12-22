@@ -42,6 +42,8 @@ class RequestItem extends PureComponent {
     removing: PropTypes.bool,
     completeImport: PropTypes.func,
     onAttachmentRef: PropTypes.func,
+    exporting: PropTypes.bool,
+    dataExport: PropTypes.func,
   };
 
   constructor(props) {
@@ -152,12 +154,13 @@ class RequestItem extends PureComponent {
     if (activeKey === 'attachment') {
       return null;
     }
-    const { clearing, dimensionselectChecking, headData } = this.props;
+    const { clearing, dimensionselectChecking, headData, exporting, dataExport } = this.props;
     if (allowEdit) {
       const orderId = get(headData, 'id');
       return (
         <Space>
           <Button
+            disabled={exporting}
             loading={dimensionselectChecking}
             onClick={this.showDimensionSelection}
             type="primary"
@@ -167,15 +170,26 @@ class RequestItem extends PureComponent {
             新建明细
           </Button>
           <Popconfirm
-            disabled={dimensionselectChecking || !orderId}
+            disabled={dimensionselectChecking || !orderId || exporting}
             title={<Tip topic="确定要清除所有明细信息吗?" description="清空后数据将会丢失!" />}
             onConfirm={this.handlerClearItem}
           >
-            <Button size="small" disabled={dimensionselectChecking || !orderId} loading={clearing}>
+            <Button
+              size="small"
+              disabled={dimensionselectChecking || !orderId || exporting}
+              loading={clearing}
+            >
               清空明细
             </Button>
           </Popconfirm>
-          <Button disabled={dimensionselectChecking} onClick={this.showBatchImport} size="small">
+          <Button loading={exporting} onClick={() => dataExport(orderId)} size="small">
+            数据导出
+          </Button>
+          <Button
+            disabled={dimensionselectChecking || exporting}
+            onClick={this.showBatchImport}
+            size="small"
+          >
             批量导入
           </Button>
         </Space>

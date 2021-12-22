@@ -17,6 +17,15 @@ const ProgressResult = ({ orderId, show, handlerCompleted }) => {
   const [zIndex, setZindex] = useState(-1);
   const [progressData, setProgressData] = useState();
 
+  const endTimer = useCallback(() => {
+    if (intervalTimer) {
+      window.clearInterval(intervalTimer);
+    }
+    setTimeout(() => {
+      setProgressData(null);
+    }, 1000);
+  }, []);
+
   const getImportResult = useCallback(() => {
     if (!getResultDone) {
       return;
@@ -33,28 +42,20 @@ const ProgressResult = ({ orderId, show, handlerCompleted }) => {
         const { finish } = resultData;
         if (finish) {
           handlerCompleted();
-          if (intervalTimer) {
-            window.clearInterval(intervalTimer);
-          }
+          endTimer();
         }
       } else {
         message.destroy();
         message.error(res.message);
       }
     });
-  }, [handlerCompleted, orderId]);
-
-  const endTimer = useCallback(() => {
-    if (intervalTimer) {
-      window.clearInterval(intervalTimer);
-    }
-  }, []);
+  }, [endTimer, handlerCompleted, orderId]);
 
   const startTimer = useCallback(() => {
     endTimer();
     intervalTimer = setInterval(() => {
       getImportResult();
-    }, 500);
+    }, 1000);
   }, [endTimer, getImportResult]);
 
   useEffect(() => {

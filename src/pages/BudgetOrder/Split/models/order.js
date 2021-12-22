@@ -2,11 +2,12 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-06-15 13:54:29
+ * @Last Modified time: 2021-12-22 09:04:42
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
-import { get } from 'lodash';
+import { get, pick } from 'lodash';
+import * as XLSX from 'xlsx';
 import { constants } from '@/utils';
 import {
   save,
@@ -20,6 +21,7 @@ import {
   effective,
   confirm,
   cancel,
+  dataExport,
 } from '../services/order';
 
 const { dvaModel } = utils;
@@ -298,6 +300,38 @@ export default modelExtend(model, {
         }
         message.success('操作成功');
       } else {
+        message.error(res.message);
+      }
+    },
+    *dataExport({ payload }, { call, select }) {
+      const { headData } = yield select(sel => sel.splitOrder);
+      const subjectName = get(headData, 'subjectName');
+      const categoryName = get(headData, 'categoryName');
+      const res = yield call(dataExport, payload);
+      if (res.success) {
+        const { head, data } = res.data;
+        const pickData = [];
+        const pickHead = [];
+        (head || []).forEach(it => {
+          const { filed, value } = it;
+          pickHead.push(value);
+          pickData.push(filed);
+        });
+        const fileTitle = `${subjectName}-${categoryName}-分解明细`;
+        const header = [...pickHead];
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet([header]);
+        const exportData = (data || []).map(it => {
+          return pick(it, pickData);
+        });
+
+        XLSX.utils.sheet_add_json(ws, exportData, { skipHeader: true, origin: 'A2' });
+        ws['!cols'] = [];
+        header.forEach(() => ws['!cols'].push({ wpx: 260 }));
+        XLSX.utils.book_append_sheet(wb, ws, fileTitle);
+        XLSX.writeFile(wb, `${fileTitle}.xlsx`);
+      } else {
+        message.destroy();
         message.error(res.message);
       }
     },

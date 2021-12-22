@@ -340,6 +340,18 @@ class RequestOrder extends Component {
     });
   };
 
+  handlerDataExport = orderId => {
+    const { dispatch, splitOrder } = this.props;
+    const { headData } = splitOrder;
+    const id = get(headData, 'id') || orderId;
+    dispatch({
+      type: 'splitOrder/dataExport',
+      payload: {
+        orderId: id,
+      },
+    });
+  };
+
   render() {
     const { action, title, loading, splitOrder } = this.props;
     const {
@@ -397,6 +409,8 @@ class RequestOrder extends Component {
       removing: loading.effects['splitOrder/removeOrderItems'],
       completeImport: this.handlerCompleteImport,
       onAttachmentRef: this.handlerAttachmentRef,
+      dataExport: this.handlerDataExport,
+      exporting: loading.effects['splitOrder/dataExport'],
     };
     const headLoading = loading.effects['splitOrder/getHead'];
     return (
