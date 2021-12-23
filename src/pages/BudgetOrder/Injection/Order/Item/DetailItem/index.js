@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { get, isEqual } from 'lodash';
-import { Descriptions, Input, Button, Popconfirm, Checkbox, Alert } from 'antd';
+import { Descriptions, Input, Button, Popconfirm, Checkbox, Alert, Tag } from 'antd';
 import { ListCard, Money, Space } from 'suid';
 import { FilterView } from '@/components';
 import { constants } from '@/utils';
@@ -334,7 +334,6 @@ class DetailItem extends PureComponent {
         return { tabIndex: -1 };
       },
       selectedKeys,
-      className: styles['detail-item-box'],
       onListCardRef: ref => (this.listCardRef = ref),
       customTool: this.renderCustomTool,
       searchProperties: [
@@ -378,7 +377,20 @@ class DetailItem extends PureComponent {
         },
       });
     }
-    return <ListCard {...listProps} />;
+    return (
+      <div className={styles['detail-item-box']}>
+        <ListCard {...listProps} />
+        <div className="detail-summary">
+          <Tag color="green" style={{ borderColor: 'transparent', backgroundColor: 'transparent' }}>
+            <Money
+              prefix="合计金额"
+              style={{ fontWeight: 700 }}
+              value={get(headData, 'totalAmount') || 0}
+            />
+          </Tag>
+        </div>
+      </div>
+    );
   }
 }
 

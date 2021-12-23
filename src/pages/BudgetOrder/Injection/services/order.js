@@ -152,3 +152,15 @@ export async function dataExport(params) {
     params,
   });
 }
+
+/**
+ * 获取初始的合计金额
+ * @id
+ */
+export async function getSumAmount(params) {
+  const url = `${SERVER_PATH}/bems-v6/order/getSumAmount`;
+  return request({
+    url,
+    params,
+  });
+}

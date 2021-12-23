@@ -407,7 +407,7 @@ class DetailItem extends PureComponent {
                   调增
                 </>
               }
-              style={{ color: '#52c41a' }}
+              style={{ color: '#52c41a', fontWeight: 700 }}
               value={this.updownAmount.up}
             />
           </Tag>
@@ -419,7 +419,7 @@ class DetailItem extends PureComponent {
                   调减
                 </>
               }
-              style={{ color: '#f5222d' }}
+              style={{ color: '#f5222d', fontWeight: 700 }}
               value={this.updownAmount.down}
             />
           </Tag>

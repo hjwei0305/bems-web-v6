@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-12-22 09:00:11
+ * @Last Modified time: 2021-12-23 14:49:31
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -22,6 +22,7 @@ import {
   confirm,
   cancel,
   dataExport,
+  getSumAmount,
 } from '../services/order';
 
 const { dvaModel } = utils;
@@ -61,10 +62,19 @@ export default modelExtend(model, {
       if (!beforeStartFlow) {
         message.destroy();
         if (re.success) {
+          const headData = re.data;
+          let totalAmount = 0;
+          const summary = yield call(getSumAmount, { orderId: get(headData, 'id') });
+          if (summary.success) {
+            totalAmount = summary.data;
+          }
           yield put({
             type: 'updateState',
             payload: {
-              headData: re.data,
+              headData: {
+                ...headData,
+                totalAmount,
+              },
             },
           });
           message.success(formatMessage({ id: 'global.save-success', defaultMessage: '保存成功' }));
@@ -82,10 +92,18 @@ export default modelExtend(model, {
         const { dimensions, ...rest } = res.data;
         const subDimensionFields = setSubDimensionFields(dimensions);
         const processing = get(rest, 'processing') || false;
+        let totalAmount = 0;
+        const summary = yield call(getSumAmount, { orderId: get(rest, 'id') });
+        if (summary.success) {
+          totalAmount = summary.data;
+        }
         yield put({
           type: 'updateState',
           payload: {
-            headData: rest,
+            headData: {
+              ...rest,
+              totalAmount,
+            },
             subDimensionFields,
             showProgressResult: processing,
           },
@@ -105,10 +123,18 @@ export default modelExtend(model, {
         const res = yield call(getHead, { id: orderId });
         if (res.success) {
           const processing = get(res.data, 'processing') || false;
+          let totalAmount = 0;
+          const summary = yield call(getSumAmount, { orderId });
+          if (summary.success) {
+            totalAmount = summary.data;
+          }
           yield put({
             type: 'updateState',
             payload: {
-              headData: res.data,
+              headData: {
+                ...res.data,
+                totalAmount,
+              },
               showProgressResult: processing,
             },
           });
@@ -149,25 +175,56 @@ export default modelExtend(model, {
         message.error(re.message);
       }
     },
-    *saveItemMoney({ payload, callback }, { call }) {
+    *saveItemMoney({ payload, callback }, { call, select, put }) {
       const { rowItem } = payload;
       const re = yield call(saveItemMoney, {
         detailId: get(rowItem, 'id'),
         amount: get(rowItem, 'amount'),
       });
       message.destroy();
-      if (!re.success) {
+      if (re.success) {
+        const { headData } = yield select(sel => sel.injectionOrder);
+        let totalAmount = 0;
+        const summary = yield call(getSumAmount, { orderId: get(headData, 'id') });
+        if (summary.success) {
+          totalAmount = summary.data;
+        }
+        yield put({
+          type: 'updateState',
+          payload: {
+            headData: {
+              ...headData,
+              totalAmount,
+            },
+          },
+        });
+      } else {
         message.error(re.message);
       }
       if (callback && callback instanceof Function) {
         callback(re);
       }
     },
-    *removeOrderItems({ payload, successCallback }, { call }) {
+    *removeOrderItems({ payload, successCallback }, { call, select, put }) {
       const ids = [...payload];
       const re = yield call(removeOrderItems, ids);
       message.destroy();
       if (re.success) {
+        const { headData } = yield select(sel => sel.injectionOrder);
+        let totalAmount = 0;
+        const summary = yield call(getSumAmount, { orderId: get(headData, 'id') });
+        if (summary.success) {
+          totalAmount = summary.data;
+        }
+        yield put({
+          type: 'updateState',
+          payload: {
+            headData: {
+              ...headData,
+              totalAmount,
+            },
+          },
+        });
         if (successCallback && successCallback instanceof Function) {
           successCallback(re);
         }
@@ -176,7 +233,7 @@ export default modelExtend(model, {
         message.error(re.message);
       }
     },
-    *clearOrderItems({ successCallback }, { call, select }) {
+    *clearOrderItems({ successCallback }, { call, select, put }) {
       const { headData } = yield select(sel => sel.injectionOrder);
       const orderId = get(headData, 'id');
       message.destroy();
@@ -186,6 +243,15 @@ export default modelExtend(model, {
           if (successCallback && successCallback instanceof Function) {
             successCallback(re);
           }
+          yield put({
+            type: 'updateState',
+            payload: {
+              headData: {
+                ...headData,
+                totalAmount: 0,
+              },
+            },
+          });
         } else {
           message.error(re.message);
         }
@@ -233,10 +299,18 @@ export default modelExtend(model, {
       if (res.success) {
         const resHeadData = res.data;
         const processing = get(resHeadData, 'processing') || false;
+        let totalAmount = 0;
+        const summary = yield call(getSumAmount, { orderId: get(resHeadData, 'id') });
+        if (summary.success) {
+          totalAmount = summary.data;
+        }
         yield put({
           type: 'updateState',
           payload: {
-            headData: resHeadData,
+            headData: {
+              ...resHeadData,
+              totalAmount,
+            },
             showProgressResult: processing,
           },
         });
@@ -264,10 +338,18 @@ export default modelExtend(model, {
         if (res.success) {
           const resHeadData = res.data;
           const processing = get(resHeadData, 'processing') || false;
+          let totalAmount = 0;
+          const summary = yield call(getSumAmount, { orderId: get(resHeadData, 'id') });
+          if (summary.success) {
+            totalAmount = summary.data;
+          }
           yield put({
             type: 'updateState',
             payload: {
-              headData: resHeadData,
+              headData: {
+                ...resHeadData,
+                totalAmount,
+              },
               showProgressResult: processing,
             },
           });
@@ -288,10 +370,18 @@ export default modelExtend(model, {
       if (res.success) {
         const resHeadData = res.data;
         const processing = get(resHeadData, 'processing') || false;
+        let totalAmount = 0;
+        const summary = yield call(getSumAmount, { orderId: get(resHeadData, 'id') });
+        if (summary.success) {
+          totalAmount = summary.data;
+        }
         yield put({
           type: 'updateState',
           payload: {
-            headData: resHeadData,
+            headData: {
+              ...resHeadData,
+              totalAmount,
+            },
             showProgressResult: processing,
           },
         });
