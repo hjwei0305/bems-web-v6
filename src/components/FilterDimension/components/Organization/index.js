@@ -155,11 +155,8 @@ class Organization extends PureComponent {
     this.setState({ checkedKeys: uniq(keys) });
     const checkedData = intersectionWith(this.flatData, keys, (o, orgId) => o.id === orgId).map(
       it => {
-        const { id, name } = it;
-        return {
-          text: name,
-          value: id,
-        };
+        const { id } = it;
+        return id;
       },
     );
     if (onSelectChange && onSelectChange instanceof Function) {
