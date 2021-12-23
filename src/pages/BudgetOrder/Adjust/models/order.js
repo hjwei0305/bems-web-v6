@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-12-22 15:32:32
+ * @Last Modified time: 2021-12-23 14:04:50
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -117,11 +117,18 @@ export default modelExtend(model, {
       if (orderId) {
         const res = yield call(getHead, { id: orderId });
         if (res.success) {
+          const summary = yield call(getAdjustData, { orderId });
           const processing = get(res.data, 'processing') || false;
           yield put({
             type: 'updateState',
             payload: {
-              headData: res.data,
+              headData: {
+                ...res.data,
+                updownAmount: {
+                  up: get(summary, 'data.ADD', 0),
+                  down: get(summary, 'data.SUB', 0),
+                },
+              },
               showProgressResult: processing,
             },
           });

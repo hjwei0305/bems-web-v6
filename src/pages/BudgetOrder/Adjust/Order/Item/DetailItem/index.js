@@ -399,7 +399,7 @@ class DetailItem extends PureComponent {
       <div className={styles['detail-item-box']}>
         <ListCard {...listProps} />
         <div className="detail-summary">
-          <Tag color="green">
+          <Tag color="green" style={{ borderColor: 'transparent', backgroundColor: 'transparent' }}>
             <Money
               prefix={
                 <>
@@ -411,7 +411,7 @@ class DetailItem extends PureComponent {
               value={this.updownAmount.up}
             />
           </Tag>
-          <Tag color="red">
+          <Tag color="red" style={{ borderColor: 'transparent', backgroundColor: 'transparent' }}>
             <Money
               prefix={
                 <>

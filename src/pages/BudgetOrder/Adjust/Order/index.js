@@ -288,9 +288,6 @@ class RequestOrder extends Component {
     if (callBack && callBack instanceof Function) {
       callBack();
     }
-    dispatch({
-      type: 'adjustOrder/updateUpdownAmount',
-    });
   };
 
   handlerSaveItemMoney = (rowItem, amount, callBack) => {
