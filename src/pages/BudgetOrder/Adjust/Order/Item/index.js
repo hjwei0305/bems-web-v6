@@ -52,10 +52,7 @@ class RequestItem extends PureComponent {
     this.state = {
       activeKey: 'item',
       showBatch: false,
-      allowEdit:
-        action === REQUEST_ORDER_ACTION.ADD ||
-        action === REQUEST_ORDER_ACTION.EDIT ||
-        action === REQUEST_ORDER_ACTION.UPDATE_APPROVE_FLOW,
+      allowEdit: action === REQUEST_ORDER_ACTION.ADD || action === REQUEST_ORDER_ACTION.EDIT,
     };
   }
 
