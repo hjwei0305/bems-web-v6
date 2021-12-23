@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
-import { trim, isEqual, uniq, intersectionWith , get } from 'lodash';
+import { trim, isEqual, uniq, intersectionWith, get } from 'lodash';
 import PropTypes from 'prop-types';
-
 import { Input, Tree } from 'antd';
 import { ScrollBar, ListLoader, utils, ExtIcon } from 'suid';
 import { constants } from '@/utils';
