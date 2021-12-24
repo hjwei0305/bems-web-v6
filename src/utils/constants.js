@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-12-23 13:42:27
+ * @Last Modified time: 2021-12-24 09:45:14
  */
 import { base } from '../../public/app.config.json';
 
@@ -157,7 +157,6 @@ const REQUEST_ORDER_ACTION = {
   ADD: 'add',
   EDIT: 'edit',
   VIEW: 'view',
-  APPROVE_FLOW: 'approve_flow',
   VIEW_APPROVE_FLOW: 'view_approve_flow',
   LINK_VIEW: 'link_view',
 };

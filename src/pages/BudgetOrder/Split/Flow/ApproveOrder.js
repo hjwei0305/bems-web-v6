@@ -41,7 +41,11 @@ class ApproveOrder extends PureComponent {
     return (
       <Approve className={styles['approve-wrapper']} {...approveProps}>
         <div className="approve-order-content">
-          <Order title="预算分解申请" requestId={id} action={REQUEST_ORDER_ACTION.APPROVE_FLOW} />
+          <Order
+            title="预算分解申请"
+            requestId={id}
+            action={REQUEST_ORDER_ACTION.VIEW_APPROVE_FLOW}
+          />
         </div>
       </Approve>
     );
