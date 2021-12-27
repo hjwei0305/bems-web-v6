@@ -150,7 +150,7 @@ class Organization extends PureComponent {
       keys = [...checkedKeys, ...checked];
     } else {
       const nodeId = get(e, 'node.props.eventKey', null) || null;
-      keys = checkedKeys.map(id => id !== nodeId);
+      keys = checkedKeys.filter(id => id !== nodeId);
     }
     this.setState({ checkedKeys: uniq(keys) });
     const checkedData = intersectionWith(this.flatData, keys, (o, orgId) => o.id === orgId).map(
