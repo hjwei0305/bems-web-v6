@@ -52,6 +52,7 @@ class RequestItem extends PureComponent {
     this.state = {
       activeKey: 'item',
       showBatch: false,
+      fileList: [],
       allowEdit: action === REQUEST_ORDER_ACTION.ADD || action === REQUEST_ORDER_ACTION.EDIT,
     };
   }
@@ -146,6 +147,10 @@ class RequestItem extends PureComponent {
     });
   };
 
+  handlerFileListChange = fileList => {
+    this.setState({ fileList });
+  };
+
   renderItemAction = () => {
     const { allowEdit, activeKey } = this.state;
     if (activeKey === 'attachment') {
@@ -195,7 +200,7 @@ class RequestItem extends PureComponent {
   };
 
   render() {
-    const { activeKey, showBatch, allowEdit } = this.state;
+    const { activeKey, showBatch, allowEdit, fileList } = this.state;
     const {
       action,
       showDimensionSelection,
@@ -219,6 +224,7 @@ class RequestItem extends PureComponent {
       allowDelete: allowEdit,
       entityId: orderId,
       showViewType: false,
+      onChange: this.handlerFileListChange,
     };
     const detailItemProps = {
       action,
@@ -249,7 +255,7 @@ class RequestItem extends PureComponent {
           <TabPane tab="明细信息" key="item" forceRender className="detail-box">
             <DetailItem {...detailItemProps} />
           </TabPane>
-          <TabPane tab="附件信息" key="attachment" forceRender>
+          <TabPane tab={`附件信息(${fileList.length})`} key="attachment" forceRender>
             <Attachment {...attachmentProps} />
           </TabPane>
         </Tabs>
