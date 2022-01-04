@@ -25,10 +25,6 @@ class ExtAction extends PureComponent {
     tempDisabled: PropTypes.bool,
     effective: PropTypes.func,
     effecting: PropTypes.bool,
-    confirm: PropTypes.func,
-    confirming: PropTypes.bool,
-    cancel: PropTypes.func,
-    canceling: PropTypes.bool,
   };
 
   renderExtActions = () => {
@@ -43,12 +39,8 @@ class ExtAction extends PureComponent {
       tempDisabled,
       effective,
       effecting,
-      confirm,
-      confirming,
-      cancel,
-      canceling,
     } = this.props;
-    const disabled = tempDisabled || saving || effecting || confirming || canceling;
+    const disabled = tempDisabled || saving || effecting;
     const orderCode = get(headData, 'code');
     const status = get(headData, 'status');
     const startFlowProps = {
@@ -91,130 +83,6 @@ class ExtAction extends PureComponent {
           >
             <Button disabled={loadingGlobal}>返回</Button>
           </Popconfirm>
-          {orderCode ? (
-            <Popconfirm
-              disabled={disabled}
-              icon={<Icon type="question-circle-o" />}
-              placement="bottomRight"
-              trigger="click"
-              title={
-                <Tip topic="预算确认" description="提示:预算确认过程中，将会对预算进行预算占用!" />
-              }
-              onConfirm={confirm}
-            >
-              <Button
-                disabled={disabled}
-                type={action === REQUEST_ORDER_ACTION.VIEW ? 'primary' : ''}
-                loading={confirming}
-              >
-                预算确认
-              </Button>
-            </Popconfirm>
-          ) : null}
-          {action === REQUEST_ORDER_ACTION.EDIT || action === REQUEST_ORDER_ACTION.ADD ? (
-            <Button type="primary" disabled={disabled} loading={saving} onClick={e => saveOrder(e)}>
-              保存
-            </Button>
-          ) : null}
-        </Space>
-      );
-    }
-
-    if (status === REQUEST_VIEW_STATUS.CONFIRMING.key) {
-      return (
-        <Space>
-          <Popconfirm
-            disabled={loadingGlobal}
-            icon={<Icon type="question-circle-o" />}
-            placement="bottom"
-            trigger="click"
-            title={<Tip topic="确定要返回吗？" />}
-            onConfirm={closeOrder}
-          >
-            <Button disabled={loadingGlobal}>返回</Button>
-          </Popconfirm>
-          <Popconfirm
-            disabled={disabled}
-            icon={<Icon type="question-circle-o" />}
-            placement="bottomRight"
-            trigger="click"
-            title={
-              <Tip
-                topic="撤销确认"
-                description="提示:此操作会撤销之前的预算确认操作，其预占用的预算将会自动释放!"
-              />
-            }
-            onConfirm={cancel}
-          >
-            <Button disabled={disabled} type="danger" loading={canceling}>
-              撤销确认
-            </Button>
-          </Popconfirm>
-        </Space>
-      );
-    }
-
-    if (status === REQUEST_VIEW_STATUS.CANCELING.key) {
-      return (
-        <Space>
-          <Popconfirm
-            disabled={loadingGlobal}
-            icon={<Icon type="question-circle-o" />}
-            placement="bottom"
-            trigger="click"
-            title={<Tip topic="确定要返回吗？" />}
-            onConfirm={closeOrder}
-          >
-            <Button disabled={loadingGlobal}>返回</Button>
-          </Popconfirm>
-          <Popconfirm
-            disabled={disabled}
-            icon={<Icon type="question-circle-o" />}
-            placement="bottomRight"
-            trigger="click"
-            title={
-              <Tip topic="撤销确认" description="提示:当前正在撤销，确定要再次执行此操作吗？" />
-            }
-            onConfirm={cancel}
-          >
-            <Button disabled={disabled} type="danger" loading={canceling}>
-              撤销确认
-            </Button>
-          </Popconfirm>
-        </Space>
-      );
-    }
-
-    if (status === REQUEST_VIEW_STATUS.CONFIRMED.key) {
-      return (
-        <Space>
-          <Popconfirm
-            disabled={loadingGlobal}
-            icon={<Icon type="question-circle-o" />}
-            placement="bottom"
-            trigger="click"
-            title={<Tip topic="确定要返回吗？" />}
-            onConfirm={closeOrder}
-          >
-            <Button disabled={loadingGlobal}>返回</Button>
-          </Popconfirm>
-          <Popconfirm
-            disabled={disabled}
-            icon={<Icon type="question-circle-o" />}
-            placement="bottomRight"
-            trigger="click"
-            title={
-              <Tip
-                topic="撤销确认"
-                description="提示:此操作会撤销之前的预算确认操作，其预占用的预算将会自动释放!"
-              />
-            }
-            onConfirm={cancel}
-          >
-            <Button type="danger" disabled={disabled} loading={canceling}>
-              撤销确认
-            </Button>
-          </Popconfirm>
           <Popconfirm
             disabled={disabled}
             icon={<Icon type="question-circle-o" />}
@@ -229,15 +97,19 @@ class ExtAction extends PureComponent {
           </Popconfirm>
           <StartFlow {...startFlowProps}>
             {loading => (
-              <Button type="primary" disabled={loading || disabled} loading={loading}>
+              <Button disabled={loading || disabled} loading={loading}>
                 <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
               </Button>
             )}
           </StartFlow>
+          {action === REQUEST_ORDER_ACTION.EDIT || action === REQUEST_ORDER_ACTION.ADD ? (
+            <Button type="primary" disabled={disabled} loading={saving} onClick={e => saveOrder(e)}>
+              保存
+            </Button>
+          ) : null}
         </Space>
       );
     }
-
     if (status === REQUEST_VIEW_STATUS.EFFECTING.key) {
       return (
         <Space>

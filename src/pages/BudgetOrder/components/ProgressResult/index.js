@@ -26,7 +26,7 @@ const ProgressResult = ({ orderId, show, handlerCompleted }) => {
     }, 1000);
   }, []);
 
-  const getImportResult = useCallback(() => {
+  const getProcessResult = useCallback(() => {
     if (!getResultDone) {
       return;
     }
@@ -54,9 +54,9 @@ const ProgressResult = ({ orderId, show, handlerCompleted }) => {
   const startTimer = useCallback(() => {
     endTimer();
     intervalTimer = setInterval(() => {
-      getImportResult();
+      getProcessResult();
     }, 1000);
-  }, [endTimer, getImportResult]);
+  }, [endTimer, getProcessResult]);
 
   useEffect(() => {
     if (show === true) {

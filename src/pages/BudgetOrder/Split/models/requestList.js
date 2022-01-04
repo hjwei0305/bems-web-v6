@@ -2,7 +2,7 @@ import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
 import { constants } from '@/utils';
 import { del, checkSplitPrefab } from '../services/requestList';
-import { confirm, cancel, effective } from '../services/order';
+import { effective } from '../services/order';
 
 const { REQUEST_VIEW_STATUS, SEARCH_DATE_PERIOD } = constants;
 const { dvaModel } = utils;
@@ -81,30 +81,6 @@ export default modelExtend(model, {
     },
     *effective({ payload, callback }, { call }) {
       const res = yield call(effective, payload);
-      message.destroy();
-      if (res.success) {
-        message.success('操作成功');
-      } else {
-        message.error(res.message);
-      }
-      if (callback && callback instanceof Function) {
-        callback(res);
-      }
-    },
-    *confirm({ payload, callback }, { call }) {
-      const res = yield call(confirm, payload);
-      message.destroy();
-      if (res.success) {
-        message.success('操作成功');
-      } else {
-        message.error(res.message);
-      }
-      if (callback && callback instanceof Function) {
-        callback(res);
-      }
-    },
-    *cancel({ payload, callback }, { call }) {
-      const res = yield call(cancel, payload);
       message.destroy();
       if (res.success) {
         message.success('操作成功');

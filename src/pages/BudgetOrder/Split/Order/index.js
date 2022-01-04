@@ -132,41 +132,6 @@ class RequestOrder extends Component {
     return { docIds, isValidDoc };
   };
 
-  handlerConfirm = () => {
-    const { dispatch } = this.props;
-    const { isValid, data } = this.requestHeadRef.getHeaderData();
-    const { docIds, isValidDoc } = this.checkAttachment();
-    if (isValid && isValidDoc) {
-      dispatch({
-        type: 'splitOrder/confirm',
-        payload: {
-          ...data,
-          docIds,
-        },
-        callbackSuccess: () => {
-          this.needRefreshList = true;
-        },
-      });
-    }
-  };
-
-  handlerCancel = () => {
-    const {
-      dispatch,
-      splitOrder: { headData },
-    } = this.props;
-    const orderId = get(headData, 'id');
-    dispatch({
-      type: 'splitOrder/cancel',
-      payload: {
-        orderId,
-      },
-      callbackSuccess: () => {
-        this.needRefreshList = true;
-      },
-    });
-  };
-
   handlerAttachmentRef = ref => {
     this.requestAttachmentRef = ref;
   };
@@ -374,10 +339,6 @@ class RequestOrder extends Component {
         handlerStartComlete: this.handlerStartComlete,
         effective: this.effective,
         effecting: loading.effects['splitOrder/effective'],
-        confirm: this.handlerConfirm,
-        confirming: loading.effects['splitOrder/confirm'],
-        cancel: this.handlerCancel,
-        canceling: loading.effects['splitOrder/cancel'],
       },
     };
     const requestHeadProps = {

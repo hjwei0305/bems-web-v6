@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2021-12-24 09:45:14
+ * @Last Modified time: 2022-01-04 10:18:48
  */
 import { base } from '../../public/app.config.json';
 
@@ -130,9 +130,6 @@ const REQUEST_VIEW_STATUS = {
   ALL: { key: 'ALL', title: '全部', color: '' },
   PREFAB: { key: 'PREFAB', title: '预制', color: '' },
   DRAFT: { key: 'DRAFT', title: '草稿', color: '' },
-  CANCELING: { key: 'CANCELING', title: '撤销中', color: 'magenta' },
-  CONFIRMING: { key: 'CONFIRMING', title: '确认中', color: 'purple' },
-  CONFIRMED: { key: 'CONFIRMED', title: '已确认', color: 'geekblue' },
   EFFECTING: { key: 'EFFECTING', title: '生效中', color: 'orange' },
   APPROVING: { key: 'APPROVING', title: '审批中', color: 'blue' },
   COMPLETED: { key: 'COMPLETED', title: '已生效', color: 'green' },
@@ -158,6 +155,7 @@ const REQUEST_ORDER_ACTION = {
   EDIT: 'edit',
   VIEW: 'view',
   VIEW_APPROVE_FLOW: 'view_approve_flow',
+  UPDATE_APPROVE_FLOW: 'update_approve_flow',
   LINK_VIEW: 'link_view',
 };
 
@@ -176,8 +174,6 @@ const INJECTION_REQUEST_BTN_KEY = {
   DELETE: 'BEMS-INJECTION-SC',
   START_FLOW: 'BEMS-INJECTION-QDLC',
   FLOW_HISTORY: 'BEMS-INJECTION-LCLS',
-  CONFIRM: 'BEMS-INJECTION-CONFIRM',
-  CANCEL: 'BEMS-INJECTION-CANCEL',
   EFFECT: 'BEMS-INJECTION-EFFECT',
 };
 
@@ -188,9 +184,6 @@ const ADJUST_REQUEST_BTN_KEY = {
   VIEW: 'BEMS-ADJUST-XS',
   DELETE: 'BEMS-ADJUST-SC',
   START_FLOW: 'BEMS-ADJUST-QDLC',
-  FLOW_HISTORY: 'BEMS-ADJUST-LCLS',
-  CONFIRM: 'BEMS-ADJUST-CONFIRM',
-  CANCEL: 'BEMS-ADJUST-CANCEL',
   EFFECT: 'BEMS-ADJUST-EFFECT',
 };
 
@@ -202,8 +195,6 @@ const SPLIT_REQUEST_BTN_KEY = {
   DELETE: 'BEMS-SPLIT-SC',
   START_FLOW: 'BEMS-SPLIT-QDLC',
   FLOW_HISTORY: 'BEMS-SPLIT-LCLS',
-  CONFIRM: 'BEMS-SPLIT-CONFIRM',
-  CANCEL: 'BEMS-SPLIT-CANCEL',
   EFFECT: 'BEMS-SPLIT-EFFECT',
 };
 

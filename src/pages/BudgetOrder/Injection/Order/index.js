@@ -132,41 +132,6 @@ class RequestOrder extends Component {
     return { docIds, isValidDoc };
   };
 
-  handlerConfirm = () => {
-    const { dispatch } = this.props;
-    const { isValid, data } = this.requestHeadRef.getHeaderData();
-    const { docIds, isValidDoc } = this.checkAttachment();
-    if (isValid && isValidDoc) {
-      dispatch({
-        type: 'injectionOrder/confirm',
-        payload: {
-          ...data,
-          docIds,
-        },
-        callbackSuccess: () => {
-          this.needRefreshList = true;
-        },
-      });
-    }
-  };
-
-  handlerCancel = () => {
-    const {
-      dispatch,
-      injectionOrder: { headData },
-    } = this.props;
-    const orderId = get(headData, 'id');
-    dispatch({
-      type: 'injectionOrder/cancel',
-      payload: {
-        orderId,
-      },
-      callbackSuccess: () => {
-        this.needRefreshList = true;
-      },
-    });
-  };
-
   handlerAttachmentRef = ref => {
     this.requestAttachmentRef = ref;
   };
@@ -189,6 +154,7 @@ class RequestOrder extends Component {
         payload: {
           ...data,
           docIds,
+          beforeStartFlow: !!flowCallBack,
         },
         callback: res => {
           if (flowCallBack && flowCallBack instanceof Function) {
@@ -374,10 +340,6 @@ class RequestOrder extends Component {
         handlerStartComlete: this.handlerStartComlete,
         effective: this.effective,
         effecting: loading.effects['injectionOrder/effective'],
-        confirm: this.handlerConfirm,
-        confirming: loading.effects['injectionOrder/confirm'],
-        cancel: this.handlerCancel,
-        canceling: loading.effects['injectionOrder/cancel'],
       },
     };
     const requestHeadProps = {

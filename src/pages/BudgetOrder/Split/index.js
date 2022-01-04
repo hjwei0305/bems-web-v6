@@ -90,12 +90,6 @@ class SplitRequestList extends Component {
       case SPLIT_REQUEST_BTN_KEY.EFFECT:
         this.effectConfirm(record);
         break;
-      case SPLIT_REQUEST_BTN_KEY.CONFIRM:
-        this.confirmConfirm(record);
-        break;
-      case SPLIT_REQUEST_BTN_KEY.CANCEL:
-        this.cancelConfirm(record);
-        break;
       case SPLIT_REQUEST_BTN_KEY.START_FLOW:
         this.reloadData();
         break;

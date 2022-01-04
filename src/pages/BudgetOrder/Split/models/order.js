@@ -2,13 +2,12 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2021-12-23 14:49:30
+ * @Last Modified time: 2022-01-04 11:04:32
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
 import { get, pick } from 'lodash';
 import * as XLSX from 'xlsx';
-import { constants } from '@/utils';
 import {
   save,
   removeOrderItems,
@@ -19,15 +18,12 @@ import {
   getHead,
   saveItemMoney,
   effective,
-  confirm,
-  cancel,
   dataExport,
   getSumAmount,
 } from '../services/order';
 
 const { dvaModel } = utils;
 const { modelExtend, model } = dvaModel;
-const { REQUEST_VIEW_STATUS } = constants;
 const setSubDimensionFields = dimensionsData => {
   const subDimensionFields = [];
   dimensionsData.forEach(d => {
@@ -63,6 +59,7 @@ export default modelExtend(model, {
         message.destroy();
         if (re.success) {
           const headData = re.data;
+          const processing = get(headData, 'processing') || false;
           let totalAmount = 0;
           const summary = yield call(getSumAmount, { orderId: get(headData, 'id') });
           if (summary.success) {
@@ -75,6 +72,7 @@ export default modelExtend(model, {
                 ...headData,
                 totalAmount,
               },
+              showProgressResult: processing,
             },
           });
           message.success(formatMessage({ id: 'global.save-success', defaultMessage: '保存成功' }));
@@ -295,77 +293,6 @@ export default modelExtend(model, {
     },
     *effective({ payload, callbackSuccess }, { call, put }) {
       const res = yield call(effective, payload);
-      message.destroy();
-      if (res.success) {
-        const resHeadData = res.data;
-        const processing = get(resHeadData, 'processing') || false;
-        let totalAmount = 0;
-        const summary = yield call(getSumAmount, { orderId: get(resHeadData, 'id') });
-        if (summary.success) {
-          totalAmount = summary.data;
-        }
-        yield put({
-          type: 'updateState',
-          payload: {
-            headData: {
-              ...resHeadData,
-              totalAmount,
-            },
-            showProgressResult: processing,
-          },
-        });
-        if (callbackSuccess && callbackSuccess instanceof Function) {
-          callbackSuccess(res);
-        }
-        message.success('操作成功');
-      } else {
-        message.error(res.message);
-      }
-    },
-    *confirm({ payload, callbackSuccess }, { put, call, select }) {
-      const { headData: originHeadData } = yield select(sel => sel.splitOrder);
-      const head = { ...originHeadData };
-      Object.assign(head, { ...payload });
-      message.destroy();
-      const status = get(head, 'status');
-      let re = { success: true, data: head };
-      if (status === REQUEST_VIEW_STATUS.PREFAB.key || status === REQUEST_VIEW_STATUS.DRAFT.key) {
-        re = yield call(save, head);
-      }
-      if (re.success) {
-        const reHeadData = re.data;
-        const res = yield call(confirm, { orderId: get(reHeadData, 'id') });
-        if (res.success) {
-          const resHeadData = res.data;
-          const processing = get(resHeadData, 'processing') || false;
-          let totalAmount = 0;
-          const summary = yield call(getSumAmount, { orderId: get(resHeadData, 'id') });
-          if (summary.success) {
-            totalAmount = summary.data;
-          }
-          yield put({
-            type: 'updateState',
-            payload: {
-              headData: {
-                ...resHeadData,
-                totalAmount,
-              },
-              showProgressResult: processing,
-            },
-          });
-          if (callbackSuccess && callbackSuccess instanceof Function) {
-            callbackSuccess(res);
-          }
-          message.success('操作成功');
-        } else {
-          message.error(res.message);
-        }
-      } else {
-        message.error(re.message);
-      }
-    },
-    *cancel({ payload, callbackSuccess }, { put, call }) {
-      const res = yield call(cancel, payload);
       message.destroy();
       if (res.success) {
         const resHeadData = res.data;

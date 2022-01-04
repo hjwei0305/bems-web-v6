@@ -39,18 +39,6 @@ const menuData = () => [
     ignore: 'true',
   },
   {
-    title: '预算确认',
-    key: SPLIT_REQUEST_BTN_KEY.CONFIRM,
-    disabled: true,
-    ignore: 'true',
-  },
-  {
-    title: '撤销确认',
-    key: SPLIT_REQUEST_BTN_KEY.CANCEL,
-    disabled: true,
-    ignore: 'true',
-  },
-  {
     title: '直接生效',
     key: SPLIT_REQUEST_BTN_KEY.EFFECT,
     disabled: true,
@@ -109,32 +97,8 @@ class ExtAction extends PureComponent {
           if (
             m.key === SPLIT_REQUEST_BTN_KEY.EDIT ||
             m.key === SPLIT_REQUEST_BTN_KEY.DELETE ||
-            m.key === SPLIT_REQUEST_BTN_KEY.CONFIRM
-          ) {
-            Object.assign(m, { disabled: false });
-          }
-        });
-        break;
-      case REQUEST_VIEW_STATUS.CONFIRMING.key:
-        menus.forEach(m => {
-          if (m.key === SPLIT_REQUEST_BTN_KEY.CONFIRM || m.key === SPLIT_REQUEST_BTN_KEY.CANCEL) {
-            Object.assign(m, { disabled: false });
-          }
-        });
-        break;
-      case REQUEST_VIEW_STATUS.CANCELING.key:
-        menus.forEach(m => {
-          if (m.key === SPLIT_REQUEST_BTN_KEY.CANCEL) {
-            Object.assign(m, { disabled: false });
-          }
-        });
-        break;
-      case REQUEST_VIEW_STATUS.CONFIRMED.key:
-        menus.forEach(m => {
-          if (
-            m.key === SPLIT_REQUEST_BTN_KEY.START_FLOW ||
             m.key === SPLIT_REQUEST_BTN_KEY.EFFECT ||
-            m.key === SPLIT_REQUEST_BTN_KEY.CANCEL
+            m.key === SPLIT_REQUEST_BTN_KEY.START_FLOW
           ) {
             Object.assign(m, { disabled: false });
           }

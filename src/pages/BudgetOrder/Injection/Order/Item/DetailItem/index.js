@@ -275,7 +275,7 @@ class DetailItem extends PureComponent {
 
   renderDescription = item => {
     const { globalDisabled } = this.state;
-    const { itemMoneySaving, action } = this.props;
+    const { itemMoneySaving } = this.props;
     const rowKey = get(item, 'id');
     const poolCode = get(item, 'poolCode');
     const amount =
@@ -295,20 +295,10 @@ class DetailItem extends PureComponent {
     if (!poolCode) {
       Object.assign(budgetMoneyProps, { minAmount: 0, extra: '没有池号，注入金额不能小于0' });
     }
-    const poolAmountContent =
-      action === REQUEST_ORDER_ACTION.ADD ? (
-        <div className="field-item">
-          <span className="label">预算余额</span>
-          <span>
-            <Money value={get(item, 'poolAmount')} />
-          </span>
-        </div>
-      ) : null;
     return (
       <>
         {this.renderSubField(item)}
         <div className="money-box">
-          {poolAmountContent}
           <BudgetMoney {...budgetMoneyProps} />
           {errMsg ? <Alert type="error" message={errMsg} banner closable /> : null}
         </div>
