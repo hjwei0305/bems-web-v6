@@ -83,25 +83,31 @@ class ExtAction extends PureComponent {
           >
             <Button disabled={loadingGlobal}>返回</Button>
           </Popconfirm>
-          <Popconfirm
-            disabled={disabled}
-            icon={<Icon type="question-circle-o" />}
-            placement="bottom"
-            trigger="click"
-            title={<Tip topic="确定要直接生效吗？" description="警告：生效后预算可以被业务使用!" />}
-            onConfirm={effective}
-          >
-            <Button loading={effecting} disabled={disabled}>
-              直接生效
-            </Button>
-          </Popconfirm>
-          <StartFlow {...startFlowProps}>
-            {loading => (
-              <Button disabled={loading || disabled} loading={loading}>
-                <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
-              </Button>
-            )}
-          </StartFlow>
+          {status === REQUEST_VIEW_STATUS.DRAFT.key ? (
+            <>
+              <Popconfirm
+                disabled={disabled}
+                icon={<Icon type="question-circle-o" />}
+                placement="bottom"
+                trigger="click"
+                title={
+                  <Tip topic="确定要直接生效吗？" description="警告：生效后预算可以被业务使用!" />
+                }
+                onConfirm={effective}
+              >
+                <Button loading={effecting} disabled={disabled}>
+                  直接生效
+                </Button>
+              </Popconfirm>
+              <StartFlow {...startFlowProps}>
+                {loading => (
+                  <Button disabled={loading || disabled} loading={loading}>
+                    <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
+                  </Button>
+                )}
+              </StartFlow>
+            </>
+          ) : null}
           {action === REQUEST_ORDER_ACTION.EDIT || action === REQUEST_ORDER_ACTION.ADD ? (
             <Button type="primary" disabled={disabled} loading={saving} onClick={e => saveOrder(e)}>
               保存

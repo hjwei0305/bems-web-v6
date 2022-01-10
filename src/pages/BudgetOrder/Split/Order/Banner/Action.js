@@ -83,63 +83,36 @@ class ExtAction extends PureComponent {
           >
             <Button disabled={loadingGlobal}>返回</Button>
           </Popconfirm>
-          <Popconfirm
-            disabled={disabled}
-            icon={<Icon type="question-circle-o" />}
-            placement="bottom"
-            trigger="click"
-            title={<Tip topic="确定要直接生效吗？" description="警告：生效后预算可以被业务使用!" />}
-            onConfirm={effective}
-          >
-            <Button loading={effecting} disabled={disabled}>
-              直接生效
-            </Button>
-          </Popconfirm>
-          <StartFlow {...startFlowProps}>
-            {loading => (
-              <Button type="primary" disabled={loading || disabled} loading={loading}>
-                <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
-              </Button>
-            )}
-          </StartFlow>
+          {status === REQUEST_VIEW_STATUS.DRAFT.key ? (
+            <>
+              <Popconfirm
+                disabled={disabled}
+                icon={<Icon type="question-circle-o" />}
+                placement="bottom"
+                trigger="click"
+                title={
+                  <Tip topic="确定要直接生效吗？" description="警告：生效后预算可以被业务使用!" />
+                }
+                onConfirm={effective}
+              >
+                <Button loading={effecting} disabled={disabled}>
+                  直接生效
+                </Button>
+              </Popconfirm>
+              <StartFlow {...startFlowProps}>
+                {loading => (
+                  <Button type="primary" disabled={loading || disabled} loading={loading}>
+                    <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
+                  </Button>
+                )}
+              </StartFlow>
+            </>
+          ) : null}
           {action === REQUEST_ORDER_ACTION.EDIT || action === REQUEST_ORDER_ACTION.ADD ? (
             <Button type="primary" disabled={disabled} loading={saving} onClick={e => saveOrder(e)}>
               保存
             </Button>
           ) : null}
-        </Space>
-      );
-    }
-    if (status === REQUEST_VIEW_STATUS.EFFECTING.key) {
-      return (
-        <Space>
-          <Popconfirm
-            disabled={loadingGlobal}
-            icon={<Icon type="question-circle-o" />}
-            placement="bottom"
-            trigger="click"
-            title={<Tip topic="确定要返回吗？" />}
-            onConfirm={closeOrder}
-          >
-            <Button disabled={loadingGlobal}>返回</Button>
-          </Popconfirm>
-          <Popconfirm
-            disabled={disabled}
-            icon={<Icon type="question-circle-o" />}
-            placement="bottom"
-            trigger="click"
-            title={
-              <Tip
-                topic="确定要直接生效吗？"
-                description="提示:当前生效进行中，确定要再次执行此操作吗？"
-              />
-            }
-            onConfirm={effective}
-          >
-            <Button type="primary" loading={effecting} disabled={disabled}>
-              直接生效
-            </Button>
-          </Popconfirm>
         </Space>
       );
     }
