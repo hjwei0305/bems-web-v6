@@ -235,20 +235,27 @@ class DetailItem extends PureComponent {
     );
   };
 
+  handlerCreatePool = () => {};
+
   renderMasterTitle = item => {
     const poolCode = get(item, 'poolCode');
-    if (poolCode) {
-      return (
-        <>
-          <div className="pool-box">
-            <span className="title">池号</span>
-            <span className="no">{poolCode}</span>
-          </div>
-          <div className="master-title">{`${item.periodName} ${item.itemName}(${item.item})`}</div>
-        </>
-      );
-    }
-    return `${item.periodName} ${item.itemName}`;
+    return (
+      <>
+        <div className="pool-box">
+          <span className="title">池号</span>
+          <span className="no">
+            {poolCode || (
+              <Popconfirm title="确定要创建预算池?" onConfirm={() => this.handlerCreatePool(item)}>
+                <Button type="link" size="small">
+                  创建预算池
+                </Button>
+              </Popconfirm>
+            )}
+          </span>
+        </div>
+        <div className="master-title">{`${item.periodName} ${item.itemName}(${item.item})`}</div>
+      </>
+    );
   };
 
   getDisplaySubDimensionFields = item => {
