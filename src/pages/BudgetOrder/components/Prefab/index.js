@@ -16,17 +16,20 @@ const Prefab = ({
 }) => {
   const renderItemAction = useCallback(
     item => {
+      const processing = get(item, 'processing') || false;
       return (
         <Space>
-          <Popconfirm
-            disabled={trashing}
-            title="确定要删除吗？提示:删除后不能恢复"
-            onConfirm={() => onTrash(item)}
-          >
-            <Button size="small" loading={trashing} type="danger">
-              删除
-            </Button>
-          </Popconfirm>
+          {processing ? null : (
+            <Popconfirm
+              disabled={trashing}
+              title="确定要删除吗？提示:删除后不能恢复"
+              onConfirm={() => onTrash(item)}
+            >
+              <Button size="small" loading={trashing} type="danger">
+                删除
+              </Button>
+            </Popconfirm>
+          )}
           <Button type="primary" ghost size="small" onClick={() => onRecovery(item)}>
             恢复
           </Button>
