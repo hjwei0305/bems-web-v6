@@ -104,13 +104,6 @@ class ExtAction extends PureComponent {
           }
         });
         break;
-      case REQUEST_VIEW_STATUS.EFFECTING.key:
-        menus.forEach(m => {
-          if (m.key === INJECTION_REQUEST_BTN_KEY.EFFECT) {
-            Object.assign(m, { disabled: false });
-          }
-        });
-        break;
       case REQUEST_VIEW_STATUS.APPROVING.key:
       case REQUEST_VIEW_STATUS.COMPLETED.key:
         menus.forEach(m => {
