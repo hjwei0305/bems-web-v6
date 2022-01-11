@@ -10,6 +10,11 @@ const { SubMenu } = Menu;
 
 const menuData = [
   {
+    id: '1',
+    name: '本地登录',
+    path: '/user/login',
+  },
+  {
     id: '10',
     name: 'moduleName',
     children: [
