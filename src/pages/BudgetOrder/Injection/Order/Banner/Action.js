@@ -51,7 +51,8 @@ class ExtAction extends PureComponent {
     };
     if (
       status === REQUEST_VIEW_STATUS.COMPLETED.key ||
-      (status === REQUEST_VIEW_STATUS.APPROVING.key && action === REQUEST_ORDER_ACTION.VIEW)
+      (status === REQUEST_VIEW_STATUS.APPROVING.key && action === REQUEST_ORDER_ACTION.VIEW) ||
+      status === REQUEST_VIEW_STATUS.EFFECTING.key
     ) {
       return (
         <>
@@ -113,39 +114,6 @@ class ExtAction extends PureComponent {
               保存
             </Button>
           ) : null}
-        </Space>
-      );
-    }
-    if (status === REQUEST_VIEW_STATUS.EFFECTING.key) {
-      return (
-        <Space>
-          <Popconfirm
-            disabled={loadingGlobal}
-            icon={<Icon type="question-circle-o" />}
-            placement="bottom"
-            trigger="click"
-            title={<Tip topic="确定要返回吗？" />}
-            onConfirm={closeOrder}
-          >
-            <Button disabled={loadingGlobal}>返回</Button>
-          </Popconfirm>
-          <Popconfirm
-            disabled={disabled}
-            icon={<Icon type="question-circle-o" />}
-            placement="bottom"
-            trigger="click"
-            title={
-              <Tip
-                topic="确定要直接生效吗？"
-                description="提示:当前生效进行中，确定要再次执行此操作吗？"
-              />
-            }
-            onConfirm={effective}
-          >
-            <Button type="primary" loading={effecting} disabled={disabled}>
-              直接生效
-            </Button>
-          </Popconfirm>
         </Space>
       );
     }

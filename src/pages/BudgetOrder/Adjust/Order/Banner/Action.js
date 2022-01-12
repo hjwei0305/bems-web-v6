@@ -51,7 +51,8 @@ class ExtAction extends PureComponent {
     };
     if (
       status === REQUEST_VIEW_STATUS.COMPLETED.key ||
-      (status === REQUEST_VIEW_STATUS.APPROVING.key && action === REQUEST_ORDER_ACTION.VIEW)
+      (status === REQUEST_VIEW_STATUS.APPROVING.key && action === REQUEST_ORDER_ACTION.VIEW) ||
+      status === REQUEST_VIEW_STATUS.EFFECTING.key
     ) {
       return (
         <>
