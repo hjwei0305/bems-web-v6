@@ -165,7 +165,7 @@ class DetailItem extends PureComponent {
 
   renderDescription = item => {
     const { globalDisabled } = this.state;
-    const { subDimensionFields, itemMoneySaving, onSaveItemMoney, removing } = this.props;
+    const { subDimensionFields, itemMoneySaving, onSaveItemMoney, removing, action } = this.props;
     const originPoolAmount = get(item, 'originPoolAmount');
     const originPoolCode = get(item, 'originPoolCode');
     const items = get(item, 'children') || [];
@@ -181,7 +181,8 @@ class DetailItem extends PureComponent {
       removing,
     };
     return (
-      <div key={item.id}>
+      <div key={item.id} className={action === REQUEST_ORDER_ACTION.ADD ? '' : 'view'}>
+        <div className="origin-money-line" />
         <SplitItem {...splitItemProps} />
       </div>
     );
