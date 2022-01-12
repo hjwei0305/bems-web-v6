@@ -182,7 +182,7 @@ class DetailItem extends PureComponent {
     };
     return (
       <div key={item.id} className={action === REQUEST_ORDER_ACTION.ADD ? '' : 'view'}>
-        <div className="origin-money-line" />
+        {items.length > 0 ? <div className="origin-money-line" /> : null}
         <SplitItem {...splitItemProps} />
       </div>
     );
