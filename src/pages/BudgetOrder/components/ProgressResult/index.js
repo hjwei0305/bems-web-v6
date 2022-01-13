@@ -59,6 +59,12 @@ const ProgressResult = ({ orderId, show, handlerCompleted }) => {
   }, [endTimer, getProcessResult]);
 
   useEffect(() => {
+    return () => {
+      getResultDone = true;
+    };
+  }, []);
+
+  useEffect(() => {
     if (show === true) {
       setZindex(9);
       startTimer();
