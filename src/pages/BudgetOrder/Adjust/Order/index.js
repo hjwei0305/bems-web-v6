@@ -316,6 +316,17 @@ class RequestOrder extends Component {
     });
   };
 
+  handlerCreatePool = (detailId, callback) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'adjustOrder/createPool',
+      payload: {
+        detailId,
+      },
+      callback,
+    });
+  };
+
   render() {
     const { action, title, loading, adjustOrder } = this.props;
     const {
@@ -371,6 +382,8 @@ class RequestOrder extends Component {
       onAttachmentRef: this.handlerAttachmentRef,
       dataExport: this.handlerDataExport,
       exporting: loading.effects['adjustOrder/dataExport'],
+      createPool: this.handlerCreatePool,
+      creatingPool: loading.effects['adjustOrder/createPool'],
     };
     const headLoading = loading.effects['adjustOrder/getHead'];
     return (

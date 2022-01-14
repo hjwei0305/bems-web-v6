@@ -44,6 +44,8 @@ class RequestItem extends PureComponent {
     onAttachmentRef: PropTypes.func,
     exporting: PropTypes.bool,
     dataExport: PropTypes.func,
+    createPool: PropTypes.func,
+    creatingPool: PropTypes.bool,
   };
 
   constructor(props) {
@@ -213,6 +215,8 @@ class RequestItem extends PureComponent {
       removeOrderItems,
       removing,
       onAttachmentRef,
+      createPool,
+      creatingPool,
     } = this.props;
     const orderId = get(headData, 'id');
     const attachmentProps = {
@@ -236,6 +240,8 @@ class RequestItem extends PureComponent {
       onRemoveItem: removeOrderItems,
       subDimensionFields,
       removing,
+      createPool,
+      creatingPool,
     };
     const batchItemProps = {
       headData,

@@ -154,7 +154,7 @@ class RequestOrder extends Component {
         payload: {
           ...data,
           docIds,
-          beforeStartFlow: !!flowCallBack,
+          inFlow: !!flowCallBack,
         },
         callback: res => {
           if (flowCallBack && flowCallBack instanceof Function) {

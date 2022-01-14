@@ -33,6 +33,8 @@ class DetailItem extends PureComponent {
     onRemoveItem: PropTypes.func,
     removing: PropTypes.bool,
     subDimensionFields: PropTypes.array,
+    createPool: PropTypes.func,
+    creatingPool: PropTypes.bool,
   };
 
   constructor(props) {
@@ -44,6 +46,7 @@ class DetailItem extends PureComponent {
       selectedKeys: [],
       globalDisabled: false,
       itemStatus,
+      dealId: null,
     };
   }
 
@@ -235,18 +238,37 @@ class DetailItem extends PureComponent {
     );
   };
 
-  handlerCreatePool = () => {};
+  handlerCreatePool = item => {
+    const { createPool } = this.props;
+    if (createPool && createPool instanceof Function) {
+      const detailId = get(item, 'id');
+      this.setState({ dealId: detailId });
+      createPool(detailId, res => {
+        const rowKey = get(item, 'id');
+        this.pagingData[rowKey] = res.data;
+        this.setState({ dealId: null });
+      });
+    }
+  };
 
   renderMasterTitle = item => {
-    const poolCode = get(item, 'poolCode');
+    const { dealId } = this.state;
+    const rowKey = get(item, 'id');
+    const poolCode = get(item, 'poolCode') || get(this.pagingData[rowKey], 'poolCode');
+    const { creatingPool } = this.props;
+    const creating = dealId === rowKey && creatingPool;
     return (
       <>
         <div className="pool-box">
           <span className="title">池号</span>
           <span className="no">
             {poolCode || (
-              <Popconfirm title="确定要创建预算池?" onConfirm={() => this.handlerCreatePool(item)}>
-                <Button type="link" size="small">
+              <Popconfirm
+                disabled={creating}
+                title="确定要创建预算池?"
+                onConfirm={() => this.handlerCreatePool(item)}
+              >
+                <Button loading={creating} type="link" size="small">
                   创建预算池
                 </Button>
               </Popconfirm>

@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2022-01-04 11:04:32
+ * @Last Modified time: 2022-01-14 14:15:47
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -20,6 +20,7 @@ import {
   effective,
   dataExport,
   getSumAmount,
+  checkProcessed,
 } from '../services/order';
 
 const { dvaModel } = utils;
@@ -49,13 +50,37 @@ export default modelExtend(model, {
     subDimensionFields: [],
   },
   effects: {
-    *save({ payload, callback }, { call, put }) {
-      const { beforeStartFlow, ...rest } = payload;
+    *save({ payload, callback = () => {} }, { call, put }) {
+      const { inFlow, ...rest } = payload;
       const re = yield call(save, rest);
       /**
        * 如果是工作流期间的保存，保存结果及消息交给工作流组件
        */
-      if (!beforeStartFlow) {
+      if (inFlow) {
+        if (re.success) {
+          const headData = re.data;
+          const processing = get(headData, 'processing') || false;
+          let totalAmount = 0;
+          const summary = yield call(getSumAmount, { orderId: get(headData, 'id') });
+          if (summary.success) {
+            totalAmount = summary.data;
+          }
+          yield put({
+            type: 'updateState',
+            payload: {
+              headData: {
+                ...headData,
+                totalAmount,
+              },
+              showProgressResult: processing,
+            },
+          });
+          const checkRes = yield call(checkProcessed, { orderId: get(headData, 'id') });
+          callback(checkRes);
+        } else {
+          callback(re);
+        }
+      } else {
         message.destroy();
         if (re.success) {
           const headData = re.data;
@@ -79,9 +104,9 @@ export default modelExtend(model, {
         } else {
           message.error(re.message);
         }
-      }
-      if (callback && callback instanceof Function) {
-        callback(re);
+        if (callback && callback instanceof Function) {
+          callback(re);
+        }
       }
     },
     *getHead({ payload, callback }, { call, put }) {

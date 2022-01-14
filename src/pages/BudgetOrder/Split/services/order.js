@@ -135,3 +135,16 @@ export async function getSumAmount(params) {
     params,
   });
 }
+
+/**
+ * 检查行项是否存储未处理或有错误的
+ * @orderId
+ */
+export async function checkProcessed(params) {
+  const url = `${SERVER_PATH}/bems-v6/order/checkProcessed`;
+  return request({
+    url,
+    method: 'GET',
+    params,
+  });
+}

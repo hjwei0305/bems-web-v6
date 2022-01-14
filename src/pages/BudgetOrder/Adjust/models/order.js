@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2022-01-04 11:04:21
+ * @Last Modified time: 2022-01-14 14:16:55
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -20,6 +20,8 @@ import {
   effective,
   getAdjustData,
   dataExport,
+  createPool,
+  checkProcessed,
 } from '../services/order';
 
 const { dvaModel } = utils;
@@ -50,12 +52,35 @@ export default modelExtend(model, {
   },
   effects: {
     *save({ payload, callback }, { call, put }) {
-      const { beforeStartFlow, ...rest } = payload;
+      const { inFlow, ...rest } = payload;
       const re = yield call(save, rest);
       /**
        * 如果是工作流期间的保存，保存结果及消息交给工作流组件
        */
-      if (!beforeStartFlow) {
+      if (inFlow) {
+        if (re.success) {
+          const headData = re.data;
+          const processing = get(headData, 'processing') || false;
+          const summary = yield call(getAdjustData, { orderId: get(headData, 'id') });
+          yield put({
+            type: 'updateState',
+            payload: {
+              headData: {
+                ...headData,
+                updownAmount: {
+                  up: get(summary, 'data.ADD', 0),
+                  down: get(summary, 'data.SUB', 0),
+                },
+              },
+              showProgressResult: processing,
+            },
+          });
+          const checkRes = yield call(checkProcessed, { orderId: get(headData, 'id') });
+          callback(checkRes);
+        } else {
+          callback(re);
+        }
+      } else {
         message.destroy();
         if (re.success) {
           const headData = re.data;
@@ -344,6 +369,18 @@ export default modelExtend(model, {
         XLSX.writeFile(wb, `${fileTitle}.xlsx`);
       } else {
         message.destroy();
+        message.error(res.message);
+      }
+    },
+    *createPool({ payload, callback }, { call }) {
+      const res = yield call(createPool, payload);
+      message.destroy();
+      if (res.success) {
+        if (callback && callback instanceof Function) {
+          callback(res);
+        }
+        message.success('操作成功');
+      } else {
         message.error(res.message);
       }
     },

@@ -135,3 +135,30 @@ export async function dataExport(params) {
     params,
   });
 }
+
+/**
+ * 创建预算池
+ * @detailId
+ */
+export async function createPool(params) {
+  const url = `${SERVER_PATH}/bems-v6/order/createPool`;
+  return request({
+    url,
+    method: 'POST',
+    params,
+    data: {},
+  });
+}
+
+/**
+ * 检查行项是否存储未处理或有错误的
+ * @orderId
+ */
+export async function checkProcessed(params) {
+  const url = `${SERVER_PATH}/bems-v6/order/checkProcessed`;
+  return request({
+    url,
+    method: 'GET',
+    params,
+  });
+}
