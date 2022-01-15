@@ -373,7 +373,7 @@ class DetailItem extends PureComponent {
         <div className="detail-summary">
           <Tag color="green" style={{ borderColor: 'transparent', backgroundColor: 'transparent' }}>
             <Money
-              prefix="合计金额"
+              prefix="本单合计金额"
               style={{ fontWeight: 700 }}
               value={get(headData, 'totalAmount') || 0}
             />
