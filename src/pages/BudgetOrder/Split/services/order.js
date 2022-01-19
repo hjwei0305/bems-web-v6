@@ -39,6 +39,20 @@ export async function removeOrderItems(data) {
   });
 }
 
+/**
+ * 删除来源为空的行
+ * @groupId
+ */
+export async function removeOrderEmptyItems(params) {
+  const url = `${SERVER_PATH}/bems-v6/order/removeSplitOrderItems`;
+  return request({
+    url,
+    method: 'DELETE',
+    params,
+    data: {},
+  });
+}
+
 /** 检查是否可以添加明细包括导入
  * @subjectId
  * @categoryId

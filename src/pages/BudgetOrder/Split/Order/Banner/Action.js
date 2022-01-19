@@ -102,7 +102,7 @@ class ExtAction extends PureComponent {
               </Popconfirm>
               <StartFlow {...startFlowProps}>
                 {loading => (
-                  <Button type="primary" disabled={loading || disabled} loading={loading}>
+                  <Button disabled={loading || disabled} loading={loading}>
                     <FormattedMessage id="global.startFlow" defaultMessage="启动流程" />
                   </Button>
                 )}

@@ -36,6 +36,7 @@ class DetailItem extends PureComponent {
     this.state = {
       globalDisabled: false,
       itemStatus,
+      dealSourceItem: null,
     };
   }
 
@@ -151,12 +152,14 @@ class DetailItem extends PureComponent {
     return { filters };
   };
 
-  handlerRemoveItem = (keys, callback) => {
+  handlerRemoveItem = (sourceItem, keys, callback) => {
     const { onRemoveItem } = this.props;
     if (onRemoveItem && onRemoveItem instanceof Function) {
-      onRemoveItem(keys, () => {
+      this.setState({ dealSourceItem: sourceItem });
+      onRemoveItem({ keys, sourceItem }, () => {
         this.reloadData();
         if (callback && onRemoveItem instanceof Function) {
+          this.setState({ dealSourceItem: null });
           callback();
         }
       });
@@ -164,7 +167,7 @@ class DetailItem extends PureComponent {
   };
 
   renderDescription = item => {
-    const { globalDisabled } = this.state;
+    const { globalDisabled, dealSourceItem } = this.state;
     const { subDimensionFields, itemMoneySaving, onSaveItemMoney, removing, action } = this.props;
     const originPoolAmount = get(item, 'originPoolAmount');
     const originPoolCode = get(item, 'originPoolCode');
@@ -174,11 +177,12 @@ class DetailItem extends PureComponent {
       originPoolCode,
       originPoolAmount,
       subDimensionFields,
+      sourceItem: item,
       items,
       itemMoneySaving,
       onSaveItemMoney,
       onRemoveItem: this.handlerRemoveItem,
-      removing,
+      removing: removing && dealSourceItem && dealSourceItem.id === item.id,
     };
     return (
       <div key={item.id} className={action === REQUEST_ORDER_ACTION.ADD ? '' : 'view'}>

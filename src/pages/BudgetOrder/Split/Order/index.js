@@ -241,9 +241,20 @@ class RequestOrder extends Component {
 
   removeOrderItems = (data, successCallBack) => {
     const { dispatch } = this.props;
-    dispatch({
+    const { keys, sourceItem } = data;
+    const childrenItems = get(sourceItem, 'children') || [];
+    const dispatchProps = {
       type: 'splitOrder/removeOrderItems',
-      payload: data,
+      payload: keys,
+    };
+    if (childrenItems.length === 0) {
+      Object.assign(dispatchProps, {
+        type: 'splitOrder/removeOrderEmptyItems',
+        payload: { groupId: get(sourceItem, 'id') },
+      });
+    }
+    dispatch({
+      ...dispatchProps,
       successCallback: () => {
         if (successCallBack && successCallBack instanceof Function) {
           successCallBack();
@@ -373,7 +384,9 @@ class RequestOrder extends Component {
       onSaveItemMoney: this.handlerSaveItemMoney,
       itemMoneySaving: loading.effects['splitOrder/saveItemMoney'],
       removeOrderItems: this.removeOrderItems,
-      removing: loading.effects['splitOrder/removeOrderItems'],
+      removing:
+        loading.effects['splitOrder/removeOrderItems'] ||
+        loading.effects['splitOrder/removeOrderEmptyItems'],
       completeImport: this.handlerCompleteImport,
       onAttachmentRef: this.handlerAttachmentRef,
       dataExport: this.handlerDataExport,

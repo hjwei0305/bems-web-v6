@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-07-07 15:20:15
  * @Last Modified by: Eason
- * @Last Modified time: 2022-01-14 14:15:47
+ * @Last Modified time: 2022-01-18 17:19:19
  */
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
@@ -11,6 +11,7 @@ import * as XLSX from 'xlsx';
 import {
   save,
   removeOrderItems,
+  removeOrderEmptyItems,
   checkDimension,
   getDimension,
   clearOrderItems,
@@ -248,6 +249,18 @@ export default modelExtend(model, {
             },
           },
         });
+        if (successCallback && successCallback instanceof Function) {
+          successCallback(re);
+        }
+        message.success(formatMessage({ id: 'global.delete-success', defaultMessage: '删除成功' }));
+      } else {
+        message.error(re.message);
+      }
+    },
+    *removeOrderEmptyItems({ payload, successCallback }, { call }) {
+      const re = yield call(removeOrderEmptyItems, payload);
+      message.destroy();
+      if (re.success) {
         if (successCallback && successCallback instanceof Function) {
           successCallback(re);
         }

@@ -3,6 +3,7 @@ import { get } from 'lodash';
 import { Decimal } from 'decimal.js';
 import { Descriptions, Alert, Timeline, Empty, Checkbox, Button, Popconfirm } from 'antd';
 import { ExtIcon, Space } from 'suid';
+import source_empty from '@/assets/source_empty.svg';
 import BudgetMoney from '../../../../../components/BudgetMoney';
 import styles from './index.less';
 
@@ -13,6 +14,7 @@ const SplitItem = ({
   originPoolCode,
   originPoolAmount,
   subDimensionFields,
+  sourceItem,
   items = [],
   itemMoneySaving = false,
   onSaveItemMoney = () => {},
@@ -211,9 +213,30 @@ const SplitItem = ({
     ],
   );
 
+  const onCancelBatchRemove = useCallback(() => {
+    setSelectedKeys([]);
+  }, []);
+
+  const handlerRemoveItem = useCallback(() => {
+    if (onRemoveItem && onRemoveItem instanceof Function) {
+      onRemoveItem(sourceItem, selectedKeys, () => {
+        setSelectedKeys([]);
+      });
+    }
+  }, [onRemoveItem, selectedKeys]);
+
   const renderContent = useMemo(() => {
     if (items.length === 0) {
-      return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂时没有预算分解的目标" />;
+      const msg = get(sourceItem, 'errMsg') || '暂时没有预算分解的目标';
+      return (
+        <Empty image={source_empty} description={msg}>
+          <Popconfirm disabled={removing} title="确定要删除吗？" onConfirm={handlerRemoveItem}>
+            <Button size="small" type="danger" loading={removing}>
+              删除
+            </Button>
+          </Popconfirm>
+        </Empty>
+      );
     }
     return items.map(item => {
       return (
@@ -228,18 +251,6 @@ const SplitItem = ({
       );
     });
   }, [items, renderDescription, renderMasterTitle]);
-
-  const onCancelBatchRemove = useCallback(() => {
-    setSelectedKeys([]);
-  }, []);
-
-  const handlerRemoveItem = useCallback(() => {
-    if (onRemoveItem && onRemoveItem instanceof Function) {
-      onRemoveItem(selectedKeys, () => {
-        setSelectedKeys([]);
-      });
-    }
-  }, [onRemoveItem, selectedKeys]);
 
   const handlerSelectAll = useCallback(
     e => {
