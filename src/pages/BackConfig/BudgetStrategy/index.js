@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
-import { Button } from 'antd';
-import { FormattedMessage } from 'umi-plugin-react/locale';
 import { ExtTable } from 'suid';
 import { StrategyType } from '@/components';
 import { constants } from '@/utils';
@@ -48,17 +46,8 @@ class BudgetStrategy extends Component {
         render: t => t || '-',
       },
     ];
-    const toolBarProps = {
-      left: (
-        <>
-          <Button onClick={this.reloadData}>
-            <FormattedMessage id="global.refresh" defaultMessage="刷新" />
-          </Button>
-        </>
-      ),
-    };
     const tableProps = {
-      toolBar: toolBarProps,
+      toolBar: null,
       columns,
       searchWidth: 260,
       lineNumber: false,

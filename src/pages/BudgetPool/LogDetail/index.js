@@ -1,7 +1,6 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import cls from 'classnames';
 import moment from 'moment';
-import { FormattedMessage } from 'umi-plugin-react/locale';
 import { get, isEmpty, isNumber } from 'lodash';
 import { Input, Tag, Button, Menu, Badge, Drawer } from 'antd';
 import { BannerTitle, ExtIcon, ExtTable, Money, ListCard } from 'suid';
@@ -434,17 +433,8 @@ const LogDetail = ({ poolItem, handlerClose, showLog }) => {
         }
       }
     });
-    const toolBarProps = {
-      left: (
-        <>
-          <Button onClick={reloadData}>
-            <FormattedMessage id="global.refresh" defaultMessage="刷新" />
-          </Button>
-        </>
-      ),
-    };
     const props = {
-      toolBar: toolBarProps,
+      toolBar: null,
       columns,
       bordered: false,
       showSearch: false,

@@ -215,9 +215,6 @@ class BudgetEvent extends Component {
           <Button type="primary" onClick={this.add}>
             <FormattedMessage id="global.add" defaultMessage="新建" />
           </Button>
-          <Button onClick={this.reloadData}>
-            <FormattedMessage id="global.refresh" defaultMessage="刷新" />
-          </Button>
         </>
       ),
     };

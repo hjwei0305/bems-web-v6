@@ -1,6 +1,4 @@
 import React, { useCallback, useMemo, useRef } from 'react';
-import { FormattedMessage } from 'umi-plugin-react/locale';
-import { Button } from 'antd';
 import { ExtTable } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
@@ -46,17 +44,8 @@ const Subject = ({ subjectId, onSelectChange }) => {
         required: true,
       },
     ];
-    const toolBarProps = {
-      left: (
-        <>
-          <Button onClick={reloadData}>
-            <FormattedMessage id="global.refresh" defaultMessage="刷新" />
-          </Button>
-        </>
-      ),
-    };
     return {
-      toolBar: toolBarProps,
+      toolBar: null,
       columns,
       checkbox: true,
       onSelectRow: handerSelectChange,

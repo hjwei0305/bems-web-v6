@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import cls from 'classnames';
 import { get } from 'lodash';
 import { connect } from 'dva';
-import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
+import { formatMessage } from 'umi-plugin-react/locale';
 import { Button, Card, Modal, Tag } from 'antd';
 import { ExtTable, BannerTitle } from 'suid';
 import { FilterView } from '@/components';
@@ -332,9 +332,6 @@ class PeriodList extends Component {
           />
           <Button type="primary" onClick={this.add}>
             新建期间
-          </Button>
-          <Button onClick={this.reloadData}>
-            <FormattedMessage id="global.refresh" defaultMessage="刷新" />
           </Button>
         </>
       ),

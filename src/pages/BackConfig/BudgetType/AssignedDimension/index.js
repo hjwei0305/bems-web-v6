@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
 import { get } from 'lodash';
-import { FormattedMessage } from 'umi-plugin-react/locale';
 import { Button, Card, Drawer, Popconfirm } from 'antd';
 import { ExtTable, BannerTitle, Space } from 'suid';
 import { constants } from '@/utils';
@@ -121,9 +120,6 @@ class AssignedDimension extends Component {
             onClick={this.showAssign}
           >
             分配维度
-          </Button>
-          <Button onClick={this.reloadData}>
-            <FormattedMessage id="global.refresh" defaultMessage="刷新" />
           </Button>
         </>
       ),

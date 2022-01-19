@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef, Suspense, useState, useEffect } from 'react';
 import cls from 'classnames';
 import { get } from 'lodash';
-import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
+import { formatMessage } from 'umi-plugin-react/locale';
 import { Button, Popconfirm } from 'antd';
 import { ExtTable, Space, PageLoader, utils, ExtIcon } from 'suid';
 import { constants } from '@/utils';
@@ -198,14 +198,7 @@ const Period = ({ subjectId, periodType, onSelectChange, actionType }) => {
       });
     }
     const toolBarProps = {
-      left: (
-        <Space>
-          {renderCustomize}
-          <Button onClick={reloadData}>
-            <FormattedMessage id="global.refresh" defaultMessage="刷新" />
-          </Button>
-        </Space>
-      ),
+      left: <Space>{renderCustomize}</Space>,
     };
     const selectedRowKeys = localSelectedKeys ? Object.keys(localSelectedKeys).map(key => key) : [];
     return {

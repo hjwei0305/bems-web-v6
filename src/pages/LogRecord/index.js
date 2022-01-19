@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import cls from 'classnames';
 import { connect, useSelector, useDispatch } from 'dva';
-import { FormattedMessage } from 'umi-plugin-react/locale';
 import { get, isEmpty, isNumber } from 'lodash';
 import { Input, Tag, Button, Menu, Badge } from 'antd';
 import { ExtIcon, ExtTable, Money, Space, ListCard } from 'suid';
@@ -428,9 +427,6 @@ const LogRecord = () => {
       left: (
         <Space>
           <MasterView onChange={handlerMasterSelect} />
-          <Button onClick={reloadData}>
-            <FormattedMessage id="global.refresh" defaultMessage="刷新" />
-          </Button>
         </Space>
       ),
     };

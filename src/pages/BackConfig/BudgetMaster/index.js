@@ -226,9 +226,6 @@ class BudgetMaster extends Component {
               <FormattedMessage id="global.add" defaultMessage="新建" />
             </Button>
           </Dropdown>
-          <Button onClick={this.reloadData}>
-            <FormattedMessage id="global.refresh" defaultMessage="刷新" />
-          </Button>
         </>
       ),
     };

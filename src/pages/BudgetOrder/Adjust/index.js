@@ -480,9 +480,6 @@ class AdjustRequestList extends Component {
           >
             新建单据
           </Button>
-          <Button onClick={this.reloadData}>
-            <FormattedMessage id="global.refresh" defaultMessage="刷新" />
-          </Button>
         </Space>
       ),
       right: (
