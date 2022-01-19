@@ -91,15 +91,9 @@ class FormModal extends PureComponent {
               ],
             })(<Input autoComplete="off" disabled />)}
           </FormItem>
-          <FormItem label="维度策略">
+          <FormItem label="执行策略">
             {getFieldDecorator('strategyName', {
               initialValue: get(rowData, 'strategyName'),
-              rules: [
-                {
-                  required: false,
-                  message: '维度策略不能为空',
-                },
-              ],
             })(<ComboList {...strategyProps} />)}
           </FormItem>
         </Form>
