@@ -103,7 +103,7 @@ class FormModal extends PureComponent {
       orgList.length === 0
     ) {
       message.destroy();
-      message.error('请选择部门');
+      message.error('请选择组织');
       return false;
     }
     form.validateFields((err, formData) => {

@@ -271,13 +271,13 @@ class Organization extends PureComponent {
         placement="rightTop"
         key="list-popover-box"
         destroyTooltipOnHide
-        title="添加部门"
+        title="添加组织"
         onVisibleChange={this.onVisibleChange}
         overlayClassName={styles['list-popover-box']}
         content={this.renderOrgContent()}
       >
         <Button icon="plus" type="link">
-          添加部门
+          添加组织
         </Button>
       </Popover>
     );
