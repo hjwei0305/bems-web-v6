@@ -144,7 +144,7 @@ const SplitItem = ({
               <Checkbox
                 checked={checked}
                 onChange={e => handlerSelectChange(e, item)}
-                style={{ position: 'absolute', left: 4, top: 24 }}
+                style={{ position: 'absolute', left: 4, top: 8 }}
               />
             ) : null}
             <div className="pool-box">
@@ -161,7 +161,7 @@ const SplitItem = ({
             <Checkbox
               checked={checked}
               onChange={e => handlerSelectChange(e, item)}
-              style={{ position: 'absolute', left: 4, top: 24 }}
+              style={{ position: 'absolute', left: 4, top: 8 }}
             />
           ) : null}
           {`${item.periodName} ${item.itemName}`}

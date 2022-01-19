@@ -12,7 +12,7 @@
         top: 60px;
         left: 91px;
         display: block;
-        height: 80px;
+        height: 63px;
         padding: 1px;
         background-color: rgba(0, 0, 0, 0.25);
         content: '';
@@ -76,7 +76,14 @@
     }
     .ant-list-item {
       padding-bottom: 24px !important;
+      background-color: @white !important;
       cursor: default !important;
+      &:hover {
+        background-color: @white !important;
+      }
+    }
+    .suid-list-card .ant-card-body .suid-list-card-body .ant-list-item.selected {
+      background-color: @white !important;
     }
     .suid-money {
       padding-left: 8px;
