@@ -112,21 +112,21 @@ class FormModal extends PureComponent {
   };
 
   handlerFormSubmit = () => {
-    const { orgList } = this.state;
+    const { orgList, isDepartment } = this.state;
     const { form, save, rowData, currentClassification } = this.props;
     if (
+      isDepartment &&
       currentClassification.key === MASTER_CLASSIFICATION.DEPARTMENT.key &&
       orgList.length === 0
     ) {
       message.destroy();
-      message.error('请选择组织');
+      message.error('请选择主体部门');
       return false;
     }
     form.validateFields((err, formData) => {
       if (err) {
         return;
       }
-      const { isDepartment } = this.state;
       const params = {
         ...rowData,
         ...formData,
