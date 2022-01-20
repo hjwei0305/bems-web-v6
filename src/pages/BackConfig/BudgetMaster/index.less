@@ -70,10 +70,32 @@
         line-height: unset;
         background: transparent;
       }
-      .ant-card-body {
-        padding: 0;
-        .ant-list-item {
-          padding: 12px 24px;
+      .ant-card {
+        height: 100%;
+        .ant-card-body {
+          height: calc(100% - 65px);
+          padding: 0;
+          .ant-list-item {
+            padding: 12px 24px;
+            .btn-del {
+              display: inline-block;
+              width: 32px;
+              height: 32px;
+              line-height: 34px;
+              border-radius: 4px;
+              cursor: pointer;
+              transition: all ease-in 0.2s;
+              &:hover {
+                color: @error-color;
+                background-color: fade(@error-color, 15%);
+              }
+              &.ant-popover-open:hover,
+              &.ant-popover-open {
+                color: @error-color;
+                background-color: fade(@error-color, 15%);
+              }
+            }
+          }
         }
       }
     }

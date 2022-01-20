@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { trim, intersectionWith } from 'lodash';
+import { trim, intersectionWith, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Input, Tree, Empty, Button, Popover } from 'antd';
 import { ScrollBar, ListLoader, utils, ExtIcon, message } from 'suid';
@@ -48,11 +48,14 @@ class Organization extends PureComponent {
     onOrgRef(this);
   }
 
-  componentDidUpdate() {
-    const { corpCode } = this.props;
+  componentDidUpdate(preProps) {
+    const { corpCode, orgList } = this.props;
     const { orgShow, loading } = this.state;
     if (corpCode && orgShow && this.loaded === false && loading === false) {
       this.getTreeData();
+    }
+    if (!isEqual(preProps.orgList, orgList)) {
+      this.setState({ checkedKeys: orgList.map(it => it.id) });
     }
   }
 
@@ -271,13 +274,13 @@ class Organization extends PureComponent {
         placement="rightTop"
         key="list-popover-box"
         destroyTooltipOnHide
-        title="添加组织"
+        title="添加部门"
         onVisibleChange={this.onVisibleChange}
         overlayClassName={styles['list-popover-box']}
         content={this.renderOrgContent()}
       >
         <Button icon="plus" type="link">
-          添加组织
+          添加部门
         </Button>
       </Popover>
     );

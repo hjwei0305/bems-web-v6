@@ -1,8 +1,21 @@
 import React, { PureComponent } from 'react';
 import { get, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import { Form, Input, Empty, Switch, Alert, List, message, Layout, Card } from 'antd';
-import { ExtModal, ComboList, utils, ListLoader, ScrollBar } from 'suid';
+import {
+  Form,
+  Input,
+  Empty,
+  Switch,
+  Alert,
+  List,
+  message,
+  Layout,
+  Card,
+  Popconfirm,
+  Row,
+  Col,
+} from 'antd';
+import { ExtModal, ComboList, utils, ListLoader, ScrollBar, ExtIcon } from 'suid';
 import { constants } from '@/utils';
 import OrgAssign from './OrgAssign';
 import styles from './index.less';
@@ -43,6 +56,7 @@ class FormModal extends PureComponent {
     this.state = {
       loading: false,
       orgList: [],
+      isDepartment: false,
     };
   }
 
@@ -56,6 +70,8 @@ class FormModal extends PureComponent {
   componentDidUpdate(preProps) {
     const { rowData } = this.props;
     if (!isEqual(preProps.rowData, rowData)) {
+      const isDepartment = get(rowData, 'isDepartment') || false;
+      this.setState({ isDepartment });
       this.getData();
     }
   }
@@ -110,11 +126,13 @@ class FormModal extends PureComponent {
       if (err) {
         return;
       }
+      const { isDepartment } = this.state;
       const params = {
         ...rowData,
         ...formData,
         orgList,
         classification: currentClassification.key,
+        isDepartment,
       };
       save(params, () => {
         this.initState();
@@ -126,8 +144,16 @@ class FormModal extends PureComponent {
     this.setState({ orgList });
   };
 
+  handlerDelOrgItem = orgItem => {
+    const { orgList: originOrgList } = this.state;
+    const orgList = [...originOrgList].filter(it => it.id !== orgItem.id);
+    this.setState({ orgList });
+  };
+
   renderOrgList = () => {
+    const { rowData } = this.props;
     const { orgList } = this.state;
+    const id = get(rowData, 'id');
     return (
       <>
         <List
@@ -136,6 +162,11 @@ class FormModal extends PureComponent {
           renderItem={it => (
             <List.Item>
               <List.Item.Meta title={it.name} description={it.namePath} />
+              {!id ? (
+                <Popconfirm title="确定要删除吗？" onConfirm={() => this.handlerDelOrgItem(it)}>
+                  <ExtIcon className="btn-del" type="delete" antd />
+                </Popconfirm>
+              ) : null}
             </List.Item>
           )}
         />
@@ -170,14 +201,28 @@ class FormModal extends PureComponent {
     );
   };
 
+  handlerEnableOrgChange = isDepartment => {
+    this.setState({ isDepartment });
+  };
+
+  getTipText = () => {
+    const { currentClassification } = this.props;
+    const tipArr = ['公司', '币种'];
+    if (currentClassification.key === MASTER_CLASSIFICATION.DEPARTMENT.key) {
+      tipArr.push('部门');
+    }
+    return `${tipArr.join('、')}一旦创建将不能修改!`;
+  };
+
   renderContent = () => {
-    const { loading, orgList } = this.state;
+    const { loading, orgList, isDepartment } = this.state;
     const { form, rowData, currentClassification } = this.props;
     const { getFieldDecorator } = form;
     getFieldDecorator('currencyCode', { initialValue: get(rowData, 'currencyCode') });
     getFieldDecorator('strategyId', { initialValue: get(rowData, 'strategyId') });
     getFieldDecorator('corporationCode', { initialValue: get(rowData, 'corporationCode') });
-    const isDepartment = currentClassification.key === MASTER_CLASSIFICATION.DEPARTMENT.key;
+    const isClassificationDepartment =
+      currentClassification.key === MASTER_CLASSIFICATION.DEPARTMENT.key;
     const edit = !!rowData;
     const corporationProps = {
       form,
@@ -193,6 +238,7 @@ class FormModal extends PureComponent {
           currencyName: get(item, 'baseCurrencyName'),
           currencyCode: get(item, 'baseCurrencyCode'),
         });
+        this.setState({ orgList: [] });
       },
       reader: {
         name: 'name',
@@ -240,22 +286,25 @@ class FormModal extends PureComponent {
       <Layout className="auto-height">
         <Header>
           {' '}
-          <Alert message="公司名称、主体分类、部门和币种一旦创建将不能修改！" banner />
+          <Alert message={this.getTipText()} banner />
         </Header>
         <Layout className="auto-height">
-          <Content className="auto-height" style={{ paddingRight: isDepartment ? 4 : 0 }}>
+          <Content
+            className="auto-height"
+            style={{ paddingRight: isClassificationDepartment ? 4 : 0 }}
+          >
             <Form
               {...formItemLayout}
               layout="horizontal"
               style={{ padding: 24, height: '100%', backgroundColor: '#fff' }}
             >
-              <FormItem label="公司名称">
+              <FormItem label="公司">
                 {getFieldDecorator('corporationName', {
                   initialValue: get(rowData, 'corporationName'),
                   rules: [
                     {
                       required: true,
-                      message: '公司名称不能为空',
+                      message: '公司不能为空',
                     },
                   ],
                 })(<ComboList {...corporationProps} />)}
@@ -293,19 +342,39 @@ class FormModal extends PureComponent {
                   ],
                 })(<ComboList {...strategyProps} />)}
               </FormItem>
-              <FormItem label="停用">
-                {getFieldDecorator('frozen', {
-                  valuePropName: 'checked',
-                  initialValue: get(rowData, 'frozen') || false,
-                })(<Switch size="small" />)}
-              </FormItem>
+              <Row>
+                <Col span={12}>
+                  <FormItem label="停用" labelCol={{ span: 12 }} wrapperCol={{ span: 12 }}>
+                    {getFieldDecorator('frozen', {
+                      valuePropName: 'checked',
+                      initialValue: get(rowData, 'frozen') || false,
+                    })(<Switch size="small" />)}
+                  </FormItem>
+                </Col>
+                <Col span={12}>
+                  {isClassificationDepartment ? (
+                    <FormItem label="是部门主体" labelCol={{ span: 12 }} wrapperCol={{ span: 12 }}>
+                      {getFieldDecorator('isDepartment', {
+                        valuePropName: 'checked',
+                        initialValue: get(rowData, 'isDepartment') || false,
+                      })(
+                        <Switch
+                          disabled={edit}
+                          size="small"
+                          onChange={this.handlerEnableOrgChange}
+                        />,
+                      )}
+                    </FormItem>
+                  ) : null}
+                </Col>
+              </Row>
             </Form>
           </Content>
-          {isDepartment ? (
+          {isClassificationDepartment && isDepartment ? (
             <Sider width={380} className="auto-height" theme="light">
               <Card
                 bordered={false}
-                title={`主体部门(${orgList.length})`}
+                title={`部门(${orgList.length})`}
                 extra={this.renderBtnTrigger()}
               >
                 <ScrollBar ref={ref => (this.scrollBarRef = ref)}>{this.renderOrgList()}</ScrollBar>
@@ -318,8 +387,10 @@ class FormModal extends PureComponent {
   };
 
   render() {
+    const { isDepartment } = this.state;
     const { saving, showModal, rowData, currentClassification } = this.props;
-    const isDepartment = currentClassification.key === MASTER_CLASSIFICATION.DEPARTMENT.key;
+    const isClassificationDepartment =
+      currentClassification.key === MASTER_CLASSIFICATION.DEPARTMENT.key;
     const title = rowData ? '修改预算主体' : '新建预算主体';
     return (
       <ExtModal
@@ -328,7 +399,7 @@ class FormModal extends PureComponent {
         visible={showModal}
         maskClosable={false}
         centered
-        width={isDepartment ? 800 : 420}
+        width={isClassificationDepartment && isDepartment ? 800 : 420}
         wrapClassName={styles['form-modal-box']}
         confirmLoading={saving}
         title={title}

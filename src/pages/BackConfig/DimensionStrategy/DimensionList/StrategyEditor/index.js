@@ -92,6 +92,7 @@ const StrategyEditor = props => {
       itemField: {
         avatar: renderTag,
         title: item => item.name,
+        description: item => item.remark,
       },
       store,
       onListCardRef: ref => (listCardRef = ref),

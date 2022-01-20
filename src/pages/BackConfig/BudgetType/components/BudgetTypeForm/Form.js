@@ -66,7 +66,7 @@ class BudgetTypeForm extends PureComponent {
   }
 
   handlerFormSubmit = () => {
-    const { form, save, rowData, handlerPopoverHide } = this.props;
+    const { form, save, rowData, handlerPopoverHide, master } = this.props;
     const { validateFields, getFieldsValue } = form;
     validateFields(errors => {
       if (errors || this.orderCategoryKeys.length === 0) {
@@ -76,6 +76,9 @@ class BudgetTypeForm extends PureComponent {
       Object.assign(params, rowData || {});
       Object.assign(params, getFieldsValue());
       Object.assign(params, { orderCategories: this.orderCategoryKeys });
+      if (master) {
+        Object.assign(params, { classification: get(master, 'classification') });
+      }
       save(params, handlerPopoverHide);
     });
   };
@@ -122,7 +125,7 @@ class BudgetTypeForm extends PureComponent {
 
   render() {
     const { showRoll } = this.state;
-    const { form, rowData, saving } = this.props;
+    const { form, rowData, saving, master } = this.props;
     const { getFieldDecorator } = form;
     getFieldDecorator('periodType', { initialValue: get(rowData, 'periodType') });
     getFieldDecorator('classification', { initialValue: get(rowData, 'classification') });
@@ -161,17 +164,19 @@ class BudgetTypeForm extends PureComponent {
             <BannerTitle title={title} subTitle="预算类型" />
           </div>
           <Form {...formItemLayout}>
-            <FormItem label="预算分类">
-              {getFieldDecorator('classificationName', {
-                initialValue: this.getClassificationName(),
-                rules: [
-                  {
-                    required: true,
-                    message: '预算分类不能为空',
-                  },
-                ],
-              })(<ComboList {...classificationProps} />)}
-            </FormItem>
+            {master ? null : (
+              <FormItem label="预算分类">
+                {getFieldDecorator('classificationName', {
+                  initialValue: this.getClassificationName(),
+                  rules: [
+                    {
+                      required: true,
+                      message: '预算分类不能为空',
+                    },
+                  ],
+                })(<ComboList {...classificationProps} />)}
+              </FormItem>
+            )}
             <FormItem label="预算类型名称">
               {getFieldDecorator('name', {
                 initialValue: get(rowData, 'name'),

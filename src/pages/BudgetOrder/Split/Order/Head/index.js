@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Col, Form, Input, Row, Card, Tag } from 'antd';
 import { ComboTree, ComboList } from 'suid';
 import { constants } from '@/utils';
+import { Classification } from '@/components';
 import styles from './index.less';
 
 const { REQUEST_ORDER_ACTION, SERVER_PATH, PERIOD_TYPE, ORDER_CATEGORY } = constants;
@@ -146,9 +147,29 @@ class RequestHead extends PureComponent {
           });
         }
       },
+      listProps: {
+        renderItem: item => {
+          return (
+            <div
+              style={{
+                display: 'flex',
+                cursor: 'pointer',
+                width: '100%',
+                alignItems: 'center',
+              }}
+            >
+              <div style={{ flexDirection: 'column', width: '100%' }}>
+                <div style={{ alignItems: 'flex-start', flexGrow: 1 }}>{item.name}</div>
+              </div>
+              <div style={{ minWidth: 60 }}>
+                <Classification enumName={item.classification} />
+              </div>
+            </div>
+          );
+        },
+      },
       reader: {
         name: 'name',
-        description: 'code',
         field: ['id', 'currencyCode', 'currencyName'],
       },
       searchProperties: ['code', 'name', 'erpCode'],

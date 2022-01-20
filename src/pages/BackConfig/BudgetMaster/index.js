@@ -224,6 +224,7 @@ class BudgetMaster extends Component {
           <Dropdown overlay={menu} trigger={['click']}>
             <Button type="primary">
               <FormattedMessage id="global.add" defaultMessage="新建" />
+              <ExtIcon type="down" antd />
             </Button>
           </Dropdown>
         </>

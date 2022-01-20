@@ -215,11 +215,12 @@ class BudgetTypeList extends Component {
       return null;
     }
     const { dealId } = this.state;
-    const { loading } = this.props;
+    const { loading, budgetType } = this.props;
+    const { currentMaster } = budgetType;
     const saving = loading.effects['budgetType/save'];
     return (
       <>
-        <BudgetEdit saving={saving} save={this.save} rowData={item} />
+        <BudgetEdit master={currentMaster} saving={saving} save={this.save} rowData={item} />
         <Popconfirm
           title={formatMessage({
             id: 'global.delete.confirm',
@@ -404,7 +405,7 @@ class BudgetTypeList extends Component {
       onListCardRef: ref => (this.listCardRef = ref),
       searchProperties: ['name'],
       selectedKeys,
-      extra: <BudgetAdd saving={saving} save={this.save} />,
+      extra: <BudgetAdd master={currentMaster} saving={saving} save={this.save} />,
       itemField: {
         avatar: ({ item }) => this.renderType(item),
         title: item => this.renderName(item),
