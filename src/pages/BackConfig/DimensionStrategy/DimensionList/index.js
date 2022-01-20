@@ -125,8 +125,8 @@ const DimensionList = props => {
               <StrategyEditor
                 labelTitle="策略设置"
                 store={{
-                  url: `${SERVER_PATH}/bems-v6/strategy/findByCategory`,
-                  params: { category: 'DIMENSION' },
+                  url: `${SERVER_PATH}/bems-v6/strategy/findByDimensionCode`,
+                  params: { dimensionCode: r.code },
                   autoLoad: true,
                 }}
                 dealId={dealId}
