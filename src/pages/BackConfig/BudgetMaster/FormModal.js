@@ -108,6 +108,7 @@ class FormModal extends PureComponent {
     this.setState({
       loading: false,
       orgList: [],
+      isDepartment: false,
     });
   };
 
