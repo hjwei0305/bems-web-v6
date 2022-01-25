@@ -353,7 +353,7 @@ class FormModal extends PureComponent {
                   </FormItem>
                 </Col>
                 <Col span={12}>
-                  {isClassificationDepartment ? (
+                  {isClassificationDepartment && !edit ? (
                     <FormItem label="是部门主体" labelCol={{ span: 12 }} wrapperCol={{ span: 12 }}>
                       {getFieldDecorator('isDepartment', {
                         valuePropName: 'checked',
