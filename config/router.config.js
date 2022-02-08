@@ -17,18 +17,17 @@ export default [
         path: '/budgetConfig',
         name: '预算配置',
         routes: [
-          { path: '/budgetConfig/budgetStrategy', component: './BackConfig/BudgetStrategy' },
+          {
+            path: '/budgetConfig/strategyDefinition',
+            component: './BackConfig/StrategyDefinition',
+          },
           { path: '/budgetConfig/budgetDimension', component: './BackConfig/BudgetDimension' },
           { path: '/budgetConfig/budgetSubject', component: './BackConfig/BudgetSubject' },
-          {
-            path: '/budgetConfig/budgetMasterSubject',
-            component: './BackConfig/BudgetMasterSubject',
-          },
           { path: '/budgetConfig/budgetMaster', component: './BackConfig/BudgetMaster' },
           { path: '/budgetConfig/budgetPeriod', component: './BackConfig/BudgetPeriod' },
           { path: '/budgetConfig/budgetType', component: './BackConfig/BudgetType' },
           { path: '/budgetConfig/budgetEvent', component: './BackConfig/BudgetEvent' },
-          { path: '/budgetConfig/dimensionStrategy', component: './BackConfig/DimensionStrategy' },
+          { path: '/budgetConfig/budgetStrategy', component: './BackConfig/BudgetStrategy' },
         ],
       },
       {

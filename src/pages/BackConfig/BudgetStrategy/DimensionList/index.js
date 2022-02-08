@@ -1,8 +1,8 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { connect, useDispatch, useSelector } from 'dva';
 import { get } from 'lodash';
-import { Switch, Card } from 'antd';
-import { ExtTable, ExtIcon, BannerTitle } from 'suid';
+import { Switch } from 'antd';
+import { ExtTable, ExtIcon } from 'suid';
 import { constants } from '@/utils';
 import StrategyEditor from './StrategyEditor';
 import styles from './index.less';
@@ -12,15 +12,15 @@ let tablRef;
 
 const DimensionList = props => {
   const { loading } = props;
-  const { currentMaster } = useSelector(sel => sel.dimensionStrategy);
+  const { currentMaster } = useSelector(sel => sel.budgetStrategy);
   const [dealId, setDealId] = useState();
   const dispatch = useDispatch();
   const transformSaving = useMemo(() => {
-    return loading.effects['dimensionStrategy/transformSubmit'];
+    return loading.effects['budgetStrategy/transformSubmit'];
   }, [loading.effects]);
 
   const strategySaving = useMemo(() => {
-    return loading.effects['dimensionStrategy/strategySubmit'];
+    return loading.effects['budgetStrategy/strategySubmit'];
   }, [loading.effects]);
 
   const reloadData = () => {
@@ -33,7 +33,7 @@ const DimensionList = props => {
     (strategy, rowItem, callback) => {
       setDealId(rowItem.code);
       dispatch({
-        type: 'dimensionStrategy/strategySubmit',
+        type: 'budgetStrategy/strategySubmit',
         payload: {
           id: rowItem.id,
           strategyId: strategy.id,
@@ -53,7 +53,7 @@ const DimensionList = props => {
     (checked, rowItem) => {
       setDealId(rowItem.code);
       dispatch({
-        type: 'dimensionStrategy/transformSubmit',
+        type: 'budgetStrategy/transformSubmit',
         payload: {
           code: rowItem.code,
           isPrivate: !checked,
@@ -172,16 +172,12 @@ const DimensionList = props => {
   ]);
 
   return (
-    <Card
-      bordered={false}
-      title={<BannerTitle title={get(currentMaster, 'name')} subTitle="维度策略" />}
-      className={styles['list-box']}
-    >
+    <div className={styles['list-box']}>
       <ExtTable {...getExtTableProps()} />
-    </Card>
+    </div>
   );
 };
 
-export default connect(({ dimensionStrategy, loading }) => ({ dimensionStrategy, loading }))(
+export default connect(({ budgetStrategy, loading }) => ({ budgetStrategy, loading }))(
   DimensionList,
 );
