@@ -1,18 +1,20 @@
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
 import { constants } from '@/utils';
-import { del, createNormalPeriod, saveCustomizePeriod, closeAndOpenPeriods } from './service';
+import { del, createNormalPeriod, closeAndOpenPeriods } from './service';
 
 const { PERIOD_TYPE } = constants;
 const PERIOD_TYPE_DATA = Object.keys(PERIOD_TYPE).map(key => PERIOD_TYPE[key]);
 const { dvaModel } = utils;
 const { modelExtend, model } = dvaModel;
 const [defaultPeriodType] = PERIOD_TYPE_DATA;
+const defaultYear = new Date().getFullYear();
 
 export default modelExtend(model, {
   namespace: 'budgetPeriod',
 
   state: {
+    year: defaultYear,
     rowData: null,
     showModal: false,
     currentMaster: null,
@@ -32,11 +34,11 @@ export default modelExtend(model, {
         callback(re);
       }
     },
-    *saveCustomizePeriod({ payload, callback }, { call }) {
-      const re = yield call(saveCustomizePeriod, payload);
+    *batchCreateNormalPeriod({ payload, callback }, { call }) {
+      const re = yield call(createNormalPeriod, payload);
       message.destroy();
       if (re.success) {
-        message.success(formatMessage({ id: 'global.save-success', defaultMessage: '保存成功' }));
+        message.success('批量生成成功');
       } else {
         message.error(re.message);
       }

@@ -1,14 +1,12 @@
 import React, { PureComponent } from 'react';
-import { get, omit } from 'lodash';
 import PropTypes from 'prop-types';
-import moment from 'moment';
-import { Form, Input, Radio, Checkbox } from 'antd';
-import { ExtModal, YearPicker, Space, ScopeDatePicker } from 'suid';
+import { Form, Checkbox } from 'antd';
+import { ExtModal, YearPicker, Space } from 'suid';
 import { constants } from '@/utils';
 import styles from './FormModal.less';
 
 const FormItem = Form.Item;
-const { PERIOD_TYPE, MASTER_CLASSIFICATION } = constants;
+const { PERIOD_TYPE } = constants;
 const formItemLayout = {
   labelCol: {
     span: 24,
@@ -20,8 +18,6 @@ const formItemLayout = {
 const normalTypeData = Object.keys(PERIOD_TYPE)
   .map(key => PERIOD_TYPE[key])
   .filter(t => t.key !== PERIOD_TYPE.ALL.key && t.key !== PERIOD_TYPE.CUSTOMIZE.key);
-const format = 'YYYY-MM-DD';
-const PERIOD_TYPE_GROUP = { NORMAL: 'NORMAL', CUSTOMIZE: 'CUSTOMIZE' };
 
 @Form.create()
 class FormModal extends PureComponent {
@@ -30,7 +26,6 @@ class FormModal extends PureComponent {
   static propTypes = {
     rowData: PropTypes.object,
     showModal: PropTypes.bool,
-    saveCustomizePeriod: PropTypes.func,
     createNormalPeriod: PropTypes.func,
     closeFormModal: PropTypes.func,
     saving: PropTypes.bool,
@@ -40,76 +35,36 @@ class FormModal extends PureComponent {
   constructor(props) {
     super(props);
     this.normalKeys = normalTypeData.map(t => t.key);
-    this.state = {
-      periodType: PERIOD_TYPE_GROUP.NORMAL,
-    };
   }
 
   handlerFormSubmit = () => {
-    const { periodType } = this.state;
-    const { form, saveCustomizePeriod, createNormalPeriod, rowData } = this.props;
+    const { form, createNormalPeriod, rowData } = this.props;
     form.validateFields((err, formData) => {
       if (err) {
         return;
       }
       const params = {};
       Object.assign(params, rowData);
-      Object.assign(params, omit(formData, ['startEndDate']));
-      if (periodType === PERIOD_TYPE_GROUP.CUSTOMIZE) {
-        const [startDate, endDate] = get(formData, 'startEndDate');
-        Object.assign(params, {
-          startDate,
-          endDate,
-        });
-        saveCustomizePeriod(params, () => {
-          this.setState({ periodType: PERIOD_TYPE_GROUP.NORMAL });
-        });
-      } else if (this.normalKeys.length > 0) {
+      Object.assign(params, formData);
+      if (this.normalKeys.length > 0) {
         Object.assign(params, {
           periodTypes: this.normalKeys,
         });
-        createNormalPeriod(params, () => {
-          this.setState({ periodType: PERIOD_TYPE_GROUP.NORMAL });
-        });
+        createNormalPeriod(params);
       }
     });
-  };
-
-  handlerTypeChange = e => {
-    this.setState({ periodType: e.target.value });
   };
 
   closeFormModal = () => {
     const { closeFormModal } = this.props;
     if (closeFormModal) {
       closeFormModal();
-      this.setState({ periodType: PERIOD_TYPE_GROUP.NORMAL });
     }
   };
 
   normalTypeChange = normalKeys => {
     this.normalKeys = normalKeys;
     this.forceUpdate();
-  };
-
-  getStartEndDate = () => {
-    const { rowData } = this.props;
-    let startDate = get(rowData, 'startDate') || '';
-    let endDate = get(rowData, 'endDate') || '';
-    if (startDate) {
-      startDate = moment(startDate).format(format);
-    }
-    if (endDate) {
-      endDate = moment(endDate).format(format);
-    }
-    return [startDate, endDate];
-  };
-
-  validateStartEndDate = (rule, value, callback) => {
-    if (!value || (value && value.filter(v => !!v).length !== 2)) {
-      callback('起止日期不能为空');
-    }
-    callback();
   };
 
   renderNormalType = () => {
@@ -153,11 +108,8 @@ class FormModal extends PureComponent {
   };
 
   render() {
-    const { periodType } = this.state;
-    const { form, saving, showModal, rowData, classification } = this.props;
-    const { getFieldDecorator } = form;
+    const { saving, showModal, rowData } = this.props;
     const title = rowData ? '修改期间' : '新建期间';
-    const isProject = classification === MASTER_CLASSIFICATION.PROJECT.key;
     return (
       <ExtModal
         destroyOnClose
@@ -173,50 +125,8 @@ class FormModal extends PureComponent {
         onOk={this.handlerFormSubmit}
         title={title}
       >
-        <Form {...formItemLayout} layout="horizontal" style={{ margin: '8px 24px' }}>
-          <FormItem label="期间类别">
-            <Radio.Group value={periodType} onChange={this.handlerTypeChange} size="small">
-              <Radio.Button key="NORMAL" value="NORMAL">
-                标准
-              </Radio.Button>
-              {isProject ? (
-                <Radio.Button key="CUSTOMIZE" value="CUSTOMIZE">
-                  自定义
-                </Radio.Button>
-              ) : null}
-            </Radio.Group>
-          </FormItem>
-          {periodType === PERIOD_TYPE_GROUP.NORMAL ? (
-            this.renderNormalType()
-          ) : (
-            <>
-              <FormItem label="期间名称" style={{ width: 360 }}>
-                {getFieldDecorator('name', {
-                  initialValue: get(rowData, 'name'),
-                  rules: [
-                    {
-                      required: true,
-                      message: '期间名称不能为空',
-                    },
-                  ],
-                })(<Input autoComplete="off" />)}
-              </FormItem>
-              <FormItem label="起止日期" style={{ width: 360 }}>
-                {getFieldDecorator('startEndDate', {
-                  initialValue: this.getStartEndDate(),
-                  rules: [
-                    {
-                      required: true,
-                      message: '起止日期不能为空',
-                    },
-                    {
-                      validator: this.validateStartEndDate,
-                    },
-                  ],
-                })(<ScopeDatePicker allowClear={false} />)}
-              </FormItem>
-            </>
-          )}
+        <Form {...formItemLayout} layout="horizontal" style={{ margin: 24 }}>
+          {this.renderNormalType()}
         </Form>
       </ExtModal>
     );

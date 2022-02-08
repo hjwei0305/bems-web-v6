@@ -8,6 +8,7 @@ import empty from '@/assets/item_empty.svg';
 import { Classification } from '@/components';
 import { constants } from '@/utils';
 import PeriodList from './PeriodList';
+import BatchButton from './BatchButton';
 import styles from './index.less';
 
 const { Search } = Input;
@@ -53,18 +54,40 @@ class BudgetPeriod extends Component {
     this.listCardRef.handlerSearch(v);
   };
 
-  renderCustomTool = () => (
-    <>
-      <Search
-        allowClear
-        placeholder="输入预算主体名称关键字"
-        onChange={e => this.handlerSearchChange(e.target.value)}
-        onSearch={this.handlerSearch}
-        onPressEnter={this.handlerPressEnter}
-        style={{ width: '100%' }}
-      />
-    </>
-  );
+  handlerBatchCreateNormalPeriod = (data, callback = () => {}) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'budgetPeriod/batchCreateNormalPeriod',
+      payload: {
+        ...data,
+      },
+      callback: res => {
+        if (res.success) {
+          callback();
+        }
+      },
+    });
+  };
+
+  renderCustomTool = () => {
+    const { loading } = this.props;
+    return (
+      <>
+        <Search
+          allowClear
+          placeholder="输入预算主体名称关键字"
+          onChange={e => this.handlerSearchChange(e.target.value)}
+          onSearch={this.handlerSearch}
+          onPressEnter={this.handlerPressEnter}
+          style={{ width: 220 }}
+        />
+        <BatchButton
+          createNormalPeriod={this.handlerBatchCreateNormalPeriod}
+          loading={loading.effects['budgetPeriod/batchCreateNormalPeriod']}
+        />
+      </>
+    );
+  };
 
   render() {
     const { budgetPeriod } = this.props;

@@ -23,7 +23,7 @@ const menuData = () => [
     disabled: true,
   },
   {
-    title: '停用',
+    title: '关闭',
     key: BUDGET_PERIOD_USER_ACTION.FROZEN,
     disabled: false,
   },

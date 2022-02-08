@@ -5,7 +5,7 @@ import { connect } from 'dva';
 import { formatMessage } from 'umi-plugin-react/locale';
 import { Button, Card, Modal, Tag } from 'antd';
 import { ExtTable, BannerTitle } from 'suid';
-import { FilterView } from '@/components';
+import { FilterView, BudgetYearPicker } from '@/components';
 import { constants } from '@/utils';
 import FormModal from './FormModal';
 import ExtAction from './ExtAction';
@@ -107,8 +107,8 @@ class PeriodList extends Component {
     const { dispatch } = this.props;
     const frozen = get(rowData, 'closed');
     this.confirmModal = Modal.confirm({
-      title: frozen ? `启用【${get(rowData, 'name')}】` : `停用【${get(rowData, 'name')}】`,
-      content: frozen ? `确定要启用吗?` : `确定要停用吗?`,
+      title: frozen ? `启用【${get(rowData, 'name')}】` : `关闭【${get(rowData, 'name')}】`,
+      content: frozen ? `确定要启用吗?` : `确定要关闭吗?`,
       okButtonProps: { type: 'primary' },
       style: { top: '20%' },
       okText: '确定',
@@ -173,30 +173,6 @@ class PeriodList extends Component {
     }
   };
 
-  saveCustomizePeriod = (data, callback = () => {}) => {
-    const { dispatch, budgetPeriod } = this.props;
-    const { currentMaster } = budgetPeriod;
-    dispatch({
-      type: 'budgetPeriod/saveCustomizePeriod',
-      payload: {
-        subjectId: get(currentMaster, 'id'),
-        ...data,
-      },
-      callback: res => {
-        if (res.success) {
-          dispatch({
-            type: 'budgetPeriod/updateState',
-            payload: {
-              showModal: false,
-            },
-          });
-          this.reloadData();
-          callback();
-        }
-      },
-    });
-  };
-
   createNormalPeriod = (data, callback = () => {}) => {
     const { dispatch, budgetPeriod } = this.props;
     const { currentMaster } = budgetPeriod;
@@ -240,6 +216,16 @@ class PeriodList extends Component {
     return null;
   };
 
+  handlerBudgetYearChange = year => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'budgetPeriod/updateState',
+      payload: {
+        year,
+      },
+    });
+  };
+
   renderPeriodName = (t, r) => {
     if (r.closed) {
       return (
@@ -250,7 +236,7 @@ class PeriodList extends Component {
               自定义
             </Tag>
           ) : null}
-          <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
+          <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已关闭</span>
         </>
       );
     }
@@ -275,7 +261,14 @@ class PeriodList extends Component {
 
   render() {
     const { budgetPeriod, loading } = this.props;
-    const { currentMaster, showModal, rowData, selectPeriodType, periodTypeData } = budgetPeriod;
+    const {
+      currentMaster,
+      showModal,
+      rowData,
+      selectPeriodType,
+      periodTypeData,
+      year,
+    } = budgetPeriod;
     const classification = get(currentMaster, 'classification');
     const isProject = classification === MASTER_CLASSIFICATION.PROJECT.key;
     let periodTypeDataList = periodTypeData;
@@ -330,6 +323,7 @@ class PeriodList extends Component {
               value: 'key',
             }}
           />
+          <BudgetYearPicker onYearChange={this.handlerBudgetYearChange} value={year} />
           <Button type="primary" onClick={this.add}>
             新建期间
           </Button>
@@ -344,13 +338,14 @@ class PeriodList extends Component {
       searchProperties: ['name'],
       searchWidth: 260,
       store: {
-        url: `${SERVER_PATH}/bems-v6/period/findBySubject`,
+        url: `${SERVER_PATH}/bems-v6/period/getBySubject`,
       },
       lineNumber: false,
       allowCustomColumns: false,
       cascadeParams: {
         subjectId: get(currentMaster, 'id'),
         type: this.getQueryPeriodType(),
+        year,
       },
     };
     const formModalProps = {
@@ -358,10 +353,7 @@ class PeriodList extends Component {
       rowData,
       classification,
       closeFormModal: this.closeFormModal,
-      saving:
-        loading.effects['budgetPeriod/createNormalPeriod'] ||
-        loading.effects['budgetPeriod/saveCustomizePeriod'],
-      saveCustomizePeriod: this.saveCustomizePeriod,
+      saving: loading.effects['budgetPeriod/createNormalPeriod'],
       createNormalPeriod: this.createNormalPeriod,
     };
     return (
