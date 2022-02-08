@@ -5,7 +5,7 @@ import { ExtModal, ComboList, MoneyInput } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
 
-const { SERVER_PATH, BUDGET_DIMENSION_UI_COMPONENT, STRATEGY_TYPE } = constants;
+const { SERVER_PATH, BUDGET_DIMENSION_UI_COMPONENT } = constants;
 const BUDGET_DIMENSION_UI_COMPONENT_DATA = Object.keys(BUDGET_DIMENSION_UI_COMPONENT).map(
   key => BUDGET_DIMENSION_UI_COMPONENT[key],
 );
@@ -67,11 +67,12 @@ class FormModal extends PureComponent {
       form,
       name: 'strategyName',
       store: {
-        url: `${SERVER_PATH}/bems-v6/strategy/findByCategory`,
-        params: {
-          category: STRATEGY_TYPE.DIMENSION.key,
-        },
+        url: `${SERVER_PATH}/bems-v6/strategy/findByDimensionCode`,
       },
+      cascadeParams: {
+        dimensionCode: form.getFieldValue('code'),
+      },
+      placeholder: '请先选择预算维度',
       showSearch: false,
       pagination: false,
       field: ['strategyId'],
