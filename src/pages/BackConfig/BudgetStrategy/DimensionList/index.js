@@ -144,6 +144,7 @@ const DimensionList = props => {
     ];
     const tbProps = {
       rowKey: 'code',
+      lineNumber: false,
       bordered: false,
       pagination: false,
       showSearch: false,
