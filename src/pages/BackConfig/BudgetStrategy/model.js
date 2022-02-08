@@ -75,7 +75,7 @@ export default modelExtend(model, {
       }
     },
     *checkSubjectInit(_, { call, put, select }) {
-      const { currentMaster } = yield select(sel => sel.budgetMasterSubject);
+      const { currentMaster } = yield select(sel => sel.budgetStrategy);
       const re = yield call(checkSubjectInit, { subjectId: get(currentMaster, 'id') });
       message.destroy();
       if (re.success) {
@@ -91,7 +91,7 @@ export default modelExtend(model, {
     },
     *subjectInit({ payload, callback }, { call, select }) {
       const { referenceId } = payload;
-      const { currentMaster } = yield select(sel => sel.budgetMasterSubject);
+      const { currentMaster } = yield select(sel => sel.budgetStrategy);
       const re = yield call(subjectInit, { referenceId, currentId: get(currentMaster, 'id') });
       message.destroy();
       if (re.success) {
