@@ -102,7 +102,7 @@ export async function strategySubmit(params) {
  */
 export async function subjectPeriodRoll(params) {
   const { id, roll } = params;
-  const url = `${SERVER_PATH}/bems-v6/subjectDimension/setDimensionStrategy/${id}`;
+  const url = `${SERVER_PATH}/bems-v6/subjectPeriod/roll/${id}`;
   return request({
     url,
     method: 'POST',
