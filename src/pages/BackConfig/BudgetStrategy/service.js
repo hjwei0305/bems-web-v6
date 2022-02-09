@@ -106,6 +106,9 @@ export async function subjectPeriodRoll(params) {
   return request({
     url,
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;',
+    },
     data: roll,
   });
 }
@@ -119,6 +122,9 @@ export async function subjectPeriodUse(params) {
   return request({
     url,
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;',
+    },
     data: use,
   });
 }

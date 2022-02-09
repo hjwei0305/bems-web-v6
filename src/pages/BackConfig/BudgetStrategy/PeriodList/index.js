@@ -37,7 +37,7 @@ const PeriodList = props => {
         type: 'budgetStrategy/subjectPeriodRoll',
         payload: {
           id: rowItem.id,
-          roll: !checked,
+          roll: checked,
         },
         callback: res => {
           if (res.success) {
@@ -56,7 +56,7 @@ const PeriodList = props => {
         type: 'budgetStrategy/subjectPeriodUse',
         payload: {
           id: rowItem.id,
-          use: !checked,
+          use: checked,
         },
         callback: res => {
           if (res.success) {
