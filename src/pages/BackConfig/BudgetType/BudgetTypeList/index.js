@@ -338,22 +338,10 @@ class BudgetTypeList extends Component {
               期间类型: <Tag style={{ borderColor: 'transparent' }}>{get(periodType, 'title')}</Tag>
             </span>
             <span>
-              预算分类:{' '}
+              预算分类:
               <Tag style={{ borderColor: 'transparent' }}>{get(classification, 'title')}</Tag>
             </span>
           </Space>
-        </div>
-        <div>
-          {item.roll ? (
-            <Tag color="magenta" style={{ borderColor: 'transparent' }}>
-              可结转
-            </Tag>
-          ) : null}
-          {item.use ? (
-            <Tag color="cyan" style={{ borderColor: 'transparent' }}>
-              业务可用
-            </Tag>
-          ) : null}
         </div>
       </>
     );

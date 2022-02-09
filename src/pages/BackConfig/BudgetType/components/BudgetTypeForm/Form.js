@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import cls from 'classnames';
 import { get, isEqual } from 'lodash';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import { Button, Form, Input, Row, Col, Switch, Checkbox } from 'antd';
+import { Button, Form, Input, Checkbox } from 'antd';
 import { BannerTitle, ComboList, Space } from 'suid';
 import { constants } from '@/utils';
 import styles from './Form.less';
@@ -24,14 +24,6 @@ const formItemLayout = {
     span: 24,
   },
 };
-const formItemInlineLayout = {
-  labelCol: {
-    span: 14,
-  },
-  wrapperCol: {
-    span: 10,
-  },
-};
 
 @Form.create()
 class BudgetTypeForm extends PureComponent {
@@ -44,23 +36,11 @@ class BudgetTypeForm extends PureComponent {
       ? get(rowData, 'orderCategories')
       : orderCategoryData.map(t => t.key);
     this.orderCategoryKeys = orderCategoryKeys;
-    const periodType = get(rowData, 'periodType');
-    let showRoll = true;
-    if (periodType === PERIOD_TYPE.CUSTOMIZE.key) {
-      showRoll = false;
-    }
-    this.state = {
-      showRoll,
-    };
   }
 
   componentDidUpdate(prevProps) {
     const { rowData } = this.props;
     if (rowData && !isEqual(prevProps.rowData, rowData)) {
-      const periodType = get(rowData, 'periodType');
-      if (periodType === PERIOD_TYPE.CUSTOMIZE.key) {
-        this.setState({ showRoll: false });
-      }
       this.orderCategoryKeys = get(rowData, 'orderCategories');
     }
   }
@@ -110,21 +90,7 @@ class BudgetTypeForm extends PureComponent {
     this.forceUpdate();
   };
 
-  handlerPeriodTypeChange = periodType => {
-    const { form } = this.props;
-    if (periodType.key === PERIOD_TYPE.CUSTOMIZE.key) {
-      this.setState({ showRoll: false });
-    } else {
-      this.setState({ showRoll: true });
-    }
-    const { roll } = form.getFieldsValue();
-    if (roll !== undefined && roll !== null) {
-      form.setFieldsValue({ roll: false });
-    }
-  };
-
   render() {
-    const { showRoll } = this.state;
     const { form, rowData, saving, master } = this.props;
     const { getFieldDecorator } = form;
     getFieldDecorator('periodType', { initialValue: get(rowData, 'periodType') });
@@ -137,7 +103,6 @@ class BudgetTypeForm extends PureComponent {
       field: ['periodType'],
       showSearch: false,
       pagination: false,
-      afterSelect: this.handlerPeriodTypeChange,
       reader: {
         name: 'title',
         field: ['key'],
@@ -218,29 +183,6 @@ class BudgetTypeForm extends PureComponent {
                   ))}
                 </Space>
               </Checkbox.Group>
-            </FormItem>
-            <FormItem label="预算池选项">
-              <Row>
-                {showRoll ? (
-                  <Col span={10}>
-                    <FormItem {...formItemInlineLayout} style={{ marginBottom: 0 }} label="可结转">
-                      {getFieldDecorator('roll', {
-                        initialValue: get(rowData, 'roll') || false,
-                        valuePropName: 'checked',
-                      })(<Switch size="small" />)}
-                    </FormItem>
-                  </Col>
-                ) : null}
-
-                <Col span={10}>
-                  <FormItem label="业务可用" {...formItemInlineLayout} style={{ marginBottom: 0 }}>
-                    {getFieldDecorator('use', {
-                      initialValue: get(rowData, 'use') || false,
-                      valuePropName: 'checked',
-                    })(<Switch size="small" />)}
-                  </FormItem>
-                </Col>
-              </Row>
             </FormItem>
             <FormItem wrapperCol={{ span: 4 }} className="btn-submit" style={{ marginBottom: 0 }}>
               <Button type="primary" loading={saving} onClick={this.handlerFormSubmit}>

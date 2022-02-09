@@ -1,0 +1,23 @@
+@import '../../../../themes/vars.less';
+.list-box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  :global {
+    .suid-panel {
+      height: 100%;
+      .panel-body {
+        height: 100% !important;
+        max-height: 100% !important;
+      }
+    }
+    .padding-zero {
+      padding: 0 8px !important;
+    }
+    .ant-table-tbody > tr:last-child > td {
+      border-bottom-color: transparent;
+    }
+  }
+}

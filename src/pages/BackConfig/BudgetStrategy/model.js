@@ -10,6 +10,8 @@ import {
   frozen,
   checkSubjectInit,
   subjectInit,
+  subjectPeriodRoll,
+  subjectPeriodUse,
 } from './service';
 
 const { dvaModel } = utils;
@@ -117,6 +119,30 @@ export default modelExtend(model, {
     },
     *strategySubmit({ payload, callback }, { call }) {
       const re = yield call(strategySubmit, payload);
+      message.destroy();
+      if (re.success) {
+        message.success('操作成功');
+      } else {
+        message.error(re.message);
+      }
+      if (callback && callback instanceof Function) {
+        callback(re);
+      }
+    },
+    *subjectPeriodRoll({ payload, callback }, { call }) {
+      const re = yield call(subjectPeriodRoll, payload);
+      message.destroy();
+      if (re.success) {
+        message.success('操作成功');
+      } else {
+        message.error(re.message);
+      }
+      if (callback && callback instanceof Function) {
+        callback(re);
+      }
+    },
+    *subjectPeriodUse({ payload, callback }, { call }) {
+      const re = yield call(subjectPeriodUse, payload);
       message.destroy();
       if (re.success) {
         message.success('操作成功');

@@ -9,6 +9,7 @@ import { Classification } from '@/components';
 import { constants } from '@/utils';
 import DimensionList from './DimensionList';
 import SubjectList from './SubjectList';
+import PeriodList from './PeriodList';
 import styles from './index.less';
 
 const { TabPane } = Tabs;
@@ -123,6 +124,9 @@ class BudgetStrategy extends Component {
                 <Tabs type="card" animated={false}>
                   <TabPane tab="维度策略" key="dimension" forceRender>
                     <DimensionList />
+                  </TabPane>
+                  <TabPane tab="期间策略" key="period">
+                    <PeriodList />
                   </TabPane>
                   <TabPane tab="执行策略" key="execute">
                     <SubjectList />

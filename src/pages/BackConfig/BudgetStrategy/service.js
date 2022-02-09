@@ -96,3 +96,29 @@ export async function strategySubmit(params) {
     data: {},
   });
 }
+
+/**
+ * 维护是否可结转
+ */
+export async function subjectPeriodRoll(params) {
+  const { id, roll } = params;
+  const url = `${SERVER_PATH}/bems-v6/subjectDimension/setDimensionStrategy/${id}`;
+  return request({
+    url,
+    method: 'POST',
+    data: roll,
+  });
+}
+
+/**
+ * 维护业务是否可使用
+ */
+export async function subjectPeriodUse(params) {
+  const { id, use } = params;
+  const url = `${SERVER_PATH}/bems-v6/subjectPeriod/use/${id}`;
+  return request({
+    url,
+    method: 'POST',
+    data: use,
+  });
+}
