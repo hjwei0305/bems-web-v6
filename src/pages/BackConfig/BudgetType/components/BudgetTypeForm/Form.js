@@ -98,6 +98,7 @@ class BudgetTypeForm extends PureComponent {
     const title = rowData ? '编辑' : '新建';
     const periodTypeProps = {
       form,
+      disabled: !!rowData,
       name: 'periodTypeName',
       dataSource: periodTypeData,
       field: ['periodType'],
