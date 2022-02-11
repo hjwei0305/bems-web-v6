@@ -113,7 +113,17 @@ const DimensionList = props => {
         required: true,
       },
       {
-        title: '维度策略',
+        title: (
+          <>
+            维度策略
+            <ExtIcon
+              type="question-circle"
+              style={{ marginLeft: 4 }}
+              antd
+              tooltip={{ title: '设置为私有后可以更改策略' }}
+            />
+          </>
+        ),
         dataIndex: 'strategyName',
         width: 220,
         required: true,
