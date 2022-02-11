@@ -31,8 +31,11 @@ export default {
       }
       if (err.statusCode === -1) {
         notification.info({
-          message: formatMessage({ id: 'app.request.info', defaultMessage: '接口请求提示' }),
-          description: err.message,
+          message: formatMessage({ id: 'app.request.info', defaultMessage: '接口请求忽略' }),
+          description: formatMessage({
+            id: err.message,
+            defaultMessage: '上一次请求未完成',
+          }),
         });
       } else {
         notification.error({
