@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { connect, useDispatch, useSelector } from 'dva';
 import { get } from 'lodash';
-import { Switch } from 'antd';
+import { Switch, Tooltip } from 'antd';
 import { ExtTable, ExtIcon } from 'suid';
 import { constants } from '@/utils';
 import StrategyEditor from './StrategyEditor';
@@ -74,15 +74,11 @@ const DimensionList = props => {
       {
         title: (
           <div>
-            <span className="tag-state">通用</span>
-            <span className="tag-state personal">私有</span>
+            <Tooltip title="点击下方列表开关按钮进行通用与私有转换">
+              <span className="tag-state">通用</span>
+              <span className="tag-state personal">私有</span>
+            </Tooltip>
           </div>
-          // <ExtIcon
-          //   type="question-circle"
-          //   style={{ color: '#666' }}
-          //   antd
-          //   tooltip={{ title: '可以直接点击列表开关按钮进行通用与私有转换' }}
-          // />
         ),
         dataIndex: 'id',
         width: 90,
