@@ -362,7 +362,7 @@ class ExecutionAnalysis extends Component {
       {
         title: (
           <Space>
-            误差额
+            调整额
             <ExtIcon type="question-circle" antd tooltip={{ title: deviationTip }} />
           </Space>
         ),
@@ -377,7 +377,7 @@ class ExecutionAnalysis extends Component {
       {
         title: (
           <Space>
-            误差率
+            调整率
             <ExtIcon type="question-circle" antd tooltip={{ title: deviationRateTip }} />
           </Space>
         ),

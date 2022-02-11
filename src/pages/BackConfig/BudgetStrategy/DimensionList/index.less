@@ -19,6 +19,18 @@
     .ant-table-tbody > tr:last-child > td {
       border-bottom-color: transparent;
     }
+    .tag-state {
+      padding: 2px 4px;
+      color: @white;
+      font-size: 12px;
+      background-color: @primary-color;
+      border-radius: 10px 0 0 10px;
+      user-select: none;
+      &.personal {
+        background-color: @warning-color;
+        border-radius: 0 10px 10px 0;
+      }
+    }
     .ant-switch {
       background-color: @warning-color;
       &.ant-switch-checked {

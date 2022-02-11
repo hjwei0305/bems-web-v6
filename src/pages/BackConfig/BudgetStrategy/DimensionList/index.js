@@ -73,12 +73,16 @@ const DimensionList = props => {
     const columns = [
       {
         title: (
-          <ExtIcon
-            type="question-circle"
-            style={{ color: '#666' }}
-            antd
-            tooltip={{ title: '可以直接点击列表开关按钮进行通用与私有转换' }}
-          />
+          <div>
+            <span className="tag-state">通用</span>
+            <span className="tag-state personal">私有</span>
+          </div>
+          // <ExtIcon
+          //   type="question-circle"
+          //   style={{ color: '#666' }}
+          //   antd
+          //   tooltip={{ title: '可以直接点击列表开关按钮进行通用与私有转换' }}
+          // />
         ),
         dataIndex: 'id',
         width: 90,
@@ -93,9 +97,8 @@ const DimensionList = props => {
             );
           return (
             <Switch
+              size="small"
               onChange={checked => handlerTransformSave(checked, r)}
-              checkedChildren="通用"
-              unCheckedChildren="私有"
               checked={!chk}
             />
           );
