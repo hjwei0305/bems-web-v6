@@ -20,6 +20,7 @@ const bindFormFields = [
   'orderCategory',
   'periodType',
 ];
+const { Meta } = Card;
 const FormItem = Form.Item;
 const formItemLayout = {
   style: { margin: '0 auto' },
@@ -159,7 +160,7 @@ class RequestHead extends PureComponent {
               }}
             >
               <div style={{ flexDirection: 'column', width: '100%' }}>
-                <div style={{ alignItems: 'flex-start', flexGrow: 1 }}>{item.name}</div>
+                <Meta title={item.name} description={item.corporationName} />
               </div>
               <div style={{ minWidth: 60 }}>
                 <Classification enumName={item.classification} />

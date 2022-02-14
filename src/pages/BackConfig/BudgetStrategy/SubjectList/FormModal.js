@@ -64,7 +64,7 @@ class FormModal extends PureComponent {
         wrapClassName={styles['form-modal-box']}
         bodyStyle={{ padding: 0 }}
         confirmLoading={saving}
-        title="修改预算科目"
+        title="修改执行策略"
         cancelButtonProps={{ disabled: saving }}
         onOk={this.handlerFormSubmit}
       >
