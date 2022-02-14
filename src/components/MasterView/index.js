@@ -4,6 +4,7 @@ import { get } from 'lodash';
 import { Dropdown, Input, Tooltip } from 'antd';
 import { ExtIcon, ListCard } from 'suid';
 import { constants } from '@/utils';
+import Classification from '../Classification';
 import styles from './index.less';
 
 const { SERVER_PATH } = constants;
@@ -65,6 +66,11 @@ const MasterView = ({ style, defaultTitle, onChange, readTitle = 'name' }) => {
       itemField: {
         title: item => item.name,
         description: item => item.corporationName,
+        extra: item => (
+          <div style={{ minWidth: 60 }}>
+            <Classification enumName={item.classification} />
+          </div>
+        ),
       },
     };
     return (

@@ -160,7 +160,11 @@ class RequestHead extends PureComponent {
               }}
             >
               <div style={{ flexDirection: 'column', width: '100%' }}>
-                <Meta title={item.name} description={item.corporationName} />
+                <Meta
+                  className={styles['meta-title']}
+                  title={item.name}
+                  description={item.corporationName}
+                />
               </div>
               <div style={{ minWidth: 60 }}>
                 <Classification enumName={item.classification} />
