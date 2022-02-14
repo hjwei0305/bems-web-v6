@@ -281,7 +281,7 @@ class SubjectList extends Component {
         title: '执行策略',
         dataIndex: 'strategyName',
         width: 180,
-        render: (t, r) => this.renderDisabled(t || '默认主体执行策略', r),
+        render: (t, r) => this.renderDisabled(t || '继承主体执行策略', r),
       },
     ];
     const formModalProps = {
