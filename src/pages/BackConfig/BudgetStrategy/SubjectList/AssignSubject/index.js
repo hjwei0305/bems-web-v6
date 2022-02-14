@@ -154,6 +154,7 @@ class AssignSubject extends PureComponent {
       showArrow: false,
       showSearch: false,
       remotePaging: true,
+      pagination: { pageSize: 200 },
       store: {
         type: 'POST',
         url: `${SERVER_PATH}/bems-v6/subjectItem/getUnassigned/${get(currentMaster, 'id')}`,
