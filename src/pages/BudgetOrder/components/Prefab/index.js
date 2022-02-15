@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import cls from 'classnames';
 import { get } from 'lodash';
 import { Button, Popconfirm, Tag, Badge, Alert } from 'antd';
@@ -14,6 +14,18 @@ const Prefab = ({
   trashing = false,
   onRecovery = () => {},
 }) => {
+  const [dealItem, setDealItem] = useState(null);
+
+  const handlerTrash = useCallback(
+    item => {
+      setDealItem(item);
+      onTrash(item, () => {
+        setDealItem(null);
+      });
+    },
+    [onTrash],
+  );
+
   const renderItemAction = useCallback(
     item => {
       const processing = get(item, 'processing') || false;
@@ -23,9 +35,9 @@ const Prefab = ({
             <Popconfirm
               disabled={trashing}
               title="确定要删除吗？提示:删除后不能恢复"
-              onConfirm={() => onTrash(item)}
+              onConfirm={() => handlerTrash(item)}
             >
-              <Button size="small" loading={trashing} type="danger">
+              <Button size="small" loading={trashing && dealItem.id === item.id} type="danger">
                 删除
               </Button>
             </Popconfirm>
@@ -36,7 +48,7 @@ const Prefab = ({
         </Space>
       );
     },
-    [onRecovery, onTrash, trashing],
+    [dealItem.id, handlerTrash, onRecovery, trashing],
   );
 
   const renderTitle = useCallback(item => {

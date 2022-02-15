@@ -44,8 +44,8 @@ const subDimensionsCols = {
   ],
 };
 
-const deviationRateTip = '误差率=(|总注入-首次注入|/首次注入)*100%';
-const deviationTip = '误差额=|总注入-首次注入|';
+const deviationRateTip = '增减率=(|总注入-首次注入|/首次注入)*100%';
+const deviationTip = '增减额=|总注入-首次注入|';
 
 const formatMoney = rate => {
   const percent = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
@@ -71,7 +71,7 @@ const getDeviationRate = (initInjectAmount, injectAmount, format = false) => {
       return formatMoney(rate);
     }
     const reate = new Decimal(rate).mul(new Decimal(100)).toFixed(2);
-    return `${reate}%`;
+    return `${reate}`;
   }
   return 'N/A';
 };
@@ -235,9 +235,9 @@ class ExecutionAnalysis extends Component {
         ...exportSubCols,
         '总注入',
         '总使用',
-        '使用占比(总使用/总注入)',
-        `误差额【${deviationTip}】`,
-        `误差率【${deviationRateTip}】`,
+        '执行率(总使用/总注入)',
+        `增减额【${deviationTip}】`,
+        `增减率【${deviationRateTip}】`,
       ];
       const data = [];
       (this.localData || []).forEach(r => {
@@ -325,11 +325,11 @@ class ExecutionAnalysis extends Component {
       {
         title: (
           <Space>
-            使用占比
+            执行率
             <ExtIcon
               type="question-circle"
               antd
-              tooltip={{ title: '使用占比=(总使用/总注入)*100%' }}
+              tooltip={{ title: '执行率=(总使用/总注入)*100%' }}
             />
           </Space>
         ),
@@ -362,7 +362,7 @@ class ExecutionAnalysis extends Component {
       {
         title: (
           <Space>
-            误差额
+            增减额
             <ExtIcon type="question-circle" antd tooltip={{ title: deviationTip }} />
           </Space>
         ),
@@ -377,7 +377,7 @@ class ExecutionAnalysis extends Component {
       {
         title: (
           <Space>
-            误差率
+            增减率
             <ExtIcon type="question-circle" antd tooltip={{ title: deviationRateTip }} />
           </Space>
         ),

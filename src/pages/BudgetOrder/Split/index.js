@@ -265,7 +265,7 @@ class SplitRequestList extends Component {
     });
   };
 
-  handlerTrash = item => {
+  handlerTrash = (item, callback = () => {}) => {
     const { dispatch, splitRequestList } = this.props;
     const { prefabData: originPrefabData } = splitRequestList;
     const orderId = get(item, 'id');
@@ -276,6 +276,7 @@ class SplitRequestList extends Component {
       },
       callback: res => {
         if (res.success) {
+          callback();
           const prefabData = originPrefabData.filter(it => it.id !== orderId);
           dispatch({
             type: 'splitRequestList/updateState',

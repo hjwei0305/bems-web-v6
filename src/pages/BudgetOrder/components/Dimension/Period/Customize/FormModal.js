@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { get, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { Form, Input } from 'antd';
+import { Form } from 'antd';
 import { ExtModal, ScopeDatePicker } from 'suid';
 import styles from './FormModal.less';
 
@@ -93,18 +93,7 @@ class FormModal extends PureComponent {
         onOk={this.handlerFormSubmit}
         title={title}
       >
-        <Form {...formItemLayout} layout="horizontal" style={{ margin: '8px 24px' }}>
-          <FormItem label="期间名称" style={{ width: 360 }}>
-            {getFieldDecorator('name', {
-              initialValue: get(rowData, 'name'),
-              rules: [
-                {
-                  required: true,
-                  message: '期间名称不能为空',
-                },
-              ],
-            })(<Input autoComplete="off" />)}
-          </FormItem>
+        <Form {...formItemLayout} layout="horizontal" style={{ margin: '24px' }}>
           <FormItem label="起止日期" style={{ width: 360 }}>
             {getFieldDecorator('startEndDate', {
               initialValue: this.getStartEndDate(),

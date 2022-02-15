@@ -181,7 +181,7 @@ class AdjustRequestList extends Component {
     });
   };
 
-  handlerTrash = item => {
+  handlerTrash = (item, callback = () => {}) => {
     const { dispatch, adjustRequestList } = this.props;
     const { prefabData: originPrefabData } = adjustRequestList;
     const orderId = get(item, 'id');
@@ -192,6 +192,7 @@ class AdjustRequestList extends Component {
       },
       callback: res => {
         if (res.success) {
+          callback();
           const prefabData = originPrefabData.filter(it => it.id !== orderId);
           dispatch({
             type: 'adjustRequestList/updateState',

@@ -186,7 +186,7 @@ class InjectionRequestList extends Component {
     });
   };
 
-  handlerTrash = item => {
+  handlerTrash = (item, callback = () => {}) => {
     const { dispatch, injectionRequestList } = this.props;
     const { prefabData: originPrefabData } = injectionRequestList;
     const orderId = get(item, 'id');
@@ -197,6 +197,7 @@ class InjectionRequestList extends Component {
       },
       callback: res => {
         if (res.success) {
+          callback();
           const prefabData = originPrefabData.filter(it => it.id !== orderId);
           dispatch({
             type: 'injectionRequestList/updateState',
