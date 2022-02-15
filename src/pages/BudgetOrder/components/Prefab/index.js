@@ -29,6 +29,7 @@ const Prefab = ({
   const renderItemAction = useCallback(
     item => {
       const processing = get(item, 'processing') || false;
+      const dealItemId = get(dealItem, 'id');
       return (
         <Space>
           {processing ? null : (
@@ -37,7 +38,7 @@ const Prefab = ({
               title="确定要删除吗？提示:删除后不能恢复"
               onConfirm={() => handlerTrash(item)}
             >
-              <Button size="small" loading={trashing && dealItem.id === item.id} type="danger">
+              <Button size="small" loading={trashing && dealItemId === item.id} type="danger">
                 删除
               </Button>
             </Popconfirm>
@@ -48,7 +49,7 @@ const Prefab = ({
         </Space>
       );
     },
-    [dealItem.id, handlerTrash, onRecovery, trashing],
+    [dealItem, handlerTrash, onRecovery, trashing],
   );
 
   const renderTitle = useCallback(item => {
