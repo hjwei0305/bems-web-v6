@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
-import { trim, isEqual, uniq, intersectionWith, get } from 'lodash';
+import { trim, isEqual, uniq, intersectionWith, get, without, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
-import { Input, Tree } from 'antd';
-import { ScrollBar, ListLoader, utils, ExtIcon } from 'suid';
-import { constants } from '@/utils';
+import { Input, Tree, Checkbox, Button } from 'antd';
+import { ScrollBar, ListLoader, utils, ExtIcon, Space } from 'suid';
+import { constants, getAllChildIdsByNode } from '@/utils';
 import styles from './index.less';
 
 const { Search } = Input;
@@ -129,19 +129,8 @@ class Organization extends PureComponent {
     });
   };
 
-  handlerCheck = (chkKeys, e) => {
-    let keys = [];
-    const { checkedKeys } = this.state;
-    const { checked: nodeChecked } = e;
+  triggerSelectChange = keys => {
     const { onSelectChange } = this.props;
-    const { checked } = chkKeys;
-    if (nodeChecked) {
-      keys = [...checkedKeys, ...checked];
-    } else {
-      const nodeId = get(e, 'node.props.eventKey', null) || null;
-      keys = checkedKeys.filter(id => id !== nodeId);
-    }
-    this.setState({ checkedKeys: uniq(keys) });
     const checkedData = intersectionWith(this.flatData, keys, (o, orgId) => o.id === orgId).map(
       it => {
         const { id, name } = it;
@@ -154,6 +143,24 @@ class Organization extends PureComponent {
     if (onSelectChange && onSelectChange instanceof Function) {
       onSelectChange(checkedData);
     }
+  };
+
+  handlerCheck = (chkKeys, e) => {
+    const { checked: nodeChecked } = e;
+    const { checked: checkedKeys } = chkKeys;
+    const nodeId = get(e, 'node.props.eventKey', null) || null;
+    let originCheckedKeys = [...checkedKeys];
+    const cids = getAllChildIdsByNode(this.data, nodeId);
+    if (nodeChecked) {
+      // 选中：所有子节点选中
+      originCheckedKeys.push(...cids);
+    } else {
+      // 取消：父节点状态不变，所有子节点取消选中
+      originCheckedKeys = without(originCheckedKeys, [nodeId]);
+    }
+    const keys = uniqBy([...originCheckedKeys], id => id);
+    this.setState({ checkedKeys: uniq(keys) });
+    this.triggerSelectChange(keys);
   };
 
   renderTreeNodes = treeData => {
@@ -193,11 +200,80 @@ class Organization extends PureComponent {
     });
   };
 
+  handlerSelectAll = e => {
+    let checkedKeys = [];
+    if (e.target.checked) {
+      const { treeData } = this.state;
+      const allData = getFlatTree(treeData);
+      checkedKeys = allData.map(it => it.id);
+    } else {
+      checkedKeys = [];
+    }
+    this.setState({ checkedKeys });
+    this.triggerSelectChange(checkedKeys);
+  };
+
+  handlerOnlySelect = level => {
+    let checkedKeys = [];
+    if (level === 2) {
+      this.data.forEach(root => {
+        const rootNodeLevel = get(root, 'nodeLevel');
+        const childrenData = get(root, childFieldKey) || [];
+        const targetLevel = rootNodeLevel + 1;
+        const keys = getFlatTree(childrenData, childFieldKey, [])
+          .filter(it => it.nodeLevel === targetLevel)
+          .map(it => it.id);
+        checkedKeys = checkedKeys.concat(keys);
+      });
+    } else if (level === 3) {
+      this.data.forEach(root => {
+        const rootNodeLevel = get(root, 'nodeLevel');
+        const childrenData = get(root, childFieldKey) || [];
+        const targetLevel = rootNodeLevel + 2;
+        const keys = getFlatTree(childrenData, childFieldKey, [])
+          .filter(it => it.nodeLevel === targetLevel)
+          .map(it => it.id);
+        checkedKeys = checkedKeys.concat(keys);
+      });
+    } else if (level === -1) {
+      const keys = getFlatTree(this.data, childFieldKey, [])
+        .filter(it => it[childFieldKey] === null)
+        .map(it => it.id);
+      checkedKeys = checkedKeys.concat(keys);
+    }
+    this.setState({ checkedKeys });
+    this.triggerSelectChange(checkedKeys);
+  };
+
   render() {
     const { loading, allValue, treeData, expandedKeys, checkedKeys, autoExpandParent } = this.state;
+    const allData = getFlatTree(treeData);
+    const indeterminate = checkedKeys.length > 0 && checkedKeys.length < allData.length;
+    const checked = checkedKeys.length > 0 && checkedKeys.length === allData.length;
     return (
       <div className={styles['container-box']}>
         <div className="header-tool-box">
+          <div className="action-tool">
+            <Space>
+              <Checkbox
+                disabled={allData.length === 0}
+                checked={checked}
+                indeterminate={indeterminate}
+                onChange={this.handlerSelectAll}
+              >
+                全选
+              </Checkbox>
+              <Button size="small" onClick={() => this.handlerOnlySelect(2)}>
+                仅选二级
+              </Button>
+              <Button size="small" onClick={() => this.handlerOnlySelect(3)}>
+                仅选三级
+              </Button>
+              <Button size="small" onClick={() => this.handlerOnlySelect(-1)}>
+                仅选末级
+              </Button>
+            </Space>
+          </div>
           <Search
             allowClear
             placeholder="输入名称关键字查询"
@@ -205,6 +281,7 @@ class Organization extends PureComponent {
             onChange={e => this.handlerSearchChange(e.target.value)}
             onSearch={this.handlerSearch}
             onPressEnter={this.handlerPressEnter}
+            style={{ width: 260 }}
           />
         </div>
         <div className="tree-body">

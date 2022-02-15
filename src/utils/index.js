@@ -17,4 +17,72 @@ const exportXls = (fileTitle, cols, data) => {
   XLSX.writeFile(wb, `${fileTitle}.xlsx`);
 };
 
-export { constants, userUtils, wsocket, exportXls };
+const getAllNodeKeys = treeData => {
+  const ids = [];
+  const getKeys = (tree, idKeys) => {
+    for (const data of tree) {
+      idKeys.push(data.id);
+      if (data.children) {
+        getKeys(data.children, idKeys);
+      }
+    }
+  };
+  getKeys(treeData, ids);
+  return ids;
+};
+
+const getAllParentIdsByNode = (treeData, nodeId) => {
+  const treeFindPath = (tree, func, path = []) => {
+    if (!tree) return [];
+    for (const data of tree) {
+      path.push(data.id);
+      if (func(data)) {
+        path.pop();
+        return path;
+      }
+      if (data.children) {
+        const findChildren = treeFindPath(data.children, func, path);
+        if (findChildren.length) return findChildren;
+      }
+      path.pop();
+    }
+    return [];
+  };
+  const ids = treeFindPath(treeData, data => data.id === nodeId);
+  return ids;
+};
+
+const getAllChildIdsByNode = (treeData, nodeId) => {
+  const childNodesDeep = (nodes, arr) => {
+    if (nodes)
+      nodes.forEach(ele => {
+        arr.push(ele.id);
+        if (ele.children) {
+          childNodesDeep(ele.children, arr);
+        }
+      });
+  };
+  const getChild = (nodes, id, arr) => {
+    for (const el of nodes) {
+      if (el.id === id && el.children) {
+        childNodesDeep(el.children, arr);
+      } else if (el.children) {
+        getChild(el.children, id, arr);
+      }
+    }
+    return arr;
+  };
+  const ids = [];
+  getChild(treeData, nodeId, ids);
+  return ids;
+};
+
+export {
+  constants,
+  userUtils,
+  wsocket,
+  exportXls,
+  getAllParentIdsByNode,
+  getAllChildIdsByNode,
+  getAllNodeKeys,
+};
