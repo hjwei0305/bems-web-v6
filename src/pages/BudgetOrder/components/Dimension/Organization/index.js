@@ -215,14 +215,20 @@ class Organization extends PureComponent {
 
   handlerOnlySelect = level => {
     let checkedKeys = [];
+    const { expandedKeys: expKeys } = this.state;
+    const expandedKeys = [...expKeys];
     if (level === 2) {
       this.data.forEach(root => {
         const rootNodeLevel = get(root, 'nodeLevel');
         const childrenData = get(root, childFieldKey) || [];
         const targetLevel = rootNodeLevel + 1;
-        const keys = getFlatTree(childrenData, childFieldKey, [])
-          .filter(it => it.nodeLevel === targetLevel)
-          .map(it => it.id);
+        const treeData = getFlatTree(childrenData, childFieldKey, []);
+        const keys = treeData.filter(it => it.nodeLevel === targetLevel).map(it => it.id);
+        treeData
+          .filter(it => it.nodeLevel < targetLevel)
+          .forEach(it => {
+            expandedKeys.push(it.id);
+          });
         checkedKeys = checkedKeys.concat(keys);
       });
     } else if (level === 3) {
@@ -230,18 +236,26 @@ class Organization extends PureComponent {
         const rootNodeLevel = get(root, 'nodeLevel');
         const childrenData = get(root, childFieldKey) || [];
         const targetLevel = rootNodeLevel + 2;
-        const keys = getFlatTree(childrenData, childFieldKey, [])
-          .filter(it => it.nodeLevel === targetLevel)
-          .map(it => it.id);
+        const treeData = getFlatTree(childrenData, childFieldKey, []);
+        const keys = treeData.filter(it => it.nodeLevel === targetLevel).map(it => it.id);
+        treeData
+          .filter(it => it.nodeLevel < targetLevel)
+          .forEach(it => {
+            expandedKeys.push(it.id);
+          });
         checkedKeys = checkedKeys.concat(keys);
       });
     } else if (level === -1) {
-      const keys = getFlatTree(this.data, childFieldKey, [])
-        .filter(it => it[childFieldKey] === null)
-        .map(it => it.id);
+      const treeData = getFlatTree(this.data, childFieldKey, []);
+      const keys = treeData.filter(it => it[childFieldKey] === null).map(it => it.id);
+      treeData
+        .filter(it => it[childFieldKey] !== null)
+        .forEach(it => {
+          expandedKeys.push(it.id);
+        });
       checkedKeys = checkedKeys.concat(keys);
     }
-    this.setState({ checkedKeys });
+    this.setState({ checkedKeys, expandedKeys });
     this.triggerSelectChange(checkedKeys);
   };
 
