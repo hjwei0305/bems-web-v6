@@ -8,12 +8,6 @@ const { SERVER_PATH } = constants;
 const Subject = ({ subjectId, onSelectChange }) => {
   const tablRef = useRef();
 
-  const reloadData = useCallback(() => {
-    if (tablRef && tablRef.current) {
-      tablRef.current.remoteDataRefresh();
-    }
-  }, []);
-
   const handerSelectChange = useCallback(
     (_keys, items) => {
       if (onSelectChange && onSelectChange instanceof Function) {
@@ -62,7 +56,7 @@ const Subject = ({ subjectId, onSelectChange }) => {
         subjectId,
       },
     };
-  }, [subjectId, handerSelectChange, reloadData]);
+  }, [subjectId, handerSelectChange]);
 
   return (
     <div className={styles['container-box']}>

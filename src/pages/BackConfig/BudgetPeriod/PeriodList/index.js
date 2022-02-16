@@ -310,6 +310,7 @@ class PeriodList extends Component {
       },
     ];
     const toolBarProps = {
+      layout: { leftSpan: 18, rightSpan: 6 },
       left: (
         <>
           <FilterView
@@ -334,9 +335,7 @@ class PeriodList extends Component {
       toolBar: toolBarProps,
       columns,
       onTableRef: ref => (this.tableRef = ref),
-      searchPlaceHolder: '输入期间名称关键字',
-      searchProperties: ['name'],
-      searchWidth: 260,
+      showSearch: false,
       store: {
         url: `${SERVER_PATH}/bems-v6/period/getBySubject`,
       },

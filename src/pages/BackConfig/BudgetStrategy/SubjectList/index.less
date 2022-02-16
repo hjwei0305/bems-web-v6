@@ -1,54 +1,40 @@
 @import '../../../../themes/vars.less';
-.contanter-box {
+.list-box {
   position: relative;
   width: 100%;
   height: 100%;
   padding: 0;
   overflow: hidden;
-  background-color: @page-background-color;
   :global {
-    .ant-table-bordered.ant-table-empty .ant-table-placeholder {
-      border-right-color: transparent;
-      border-left-color: transparent;
-    }
     .suid-panel {
       height: 100%;
       .panel-body {
-        width: 100%;
         height: 100% !important;
         max-height: 100% !important;
-        .ant-table-row-expand-icon-cell {
-          padding: 0;
-          i {
-            display: inline-block;
-            width: 32px;
-            height: 32px;
-            margin-right: 8px;
-            color: fade(@black, 45%);
-            line-height: 34px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all ease-in 0.2s;
-            &:hover {
-              color: @primary-color;
-              background-color: fade(@black, 5%);
-            }
-          }
-        }
-        .ant-table-expanded-row {
-          background-color: @white;
-          td {
-            padding: 0;
-          }
-          .suid-list-loader.spinning {
-            justify-content: flex-start;
-          }
-        }
       }
     }
-    .suid-tool-bar {
-      button {
-        margin-right: 8px;
+    .padding-zero {
+      padding: 0 8px !important;
+    }
+    .ant-table-tbody > tr:last-child > td {
+      border-bottom-color: transparent;
+    }
+    .tag-state {
+      padding: 2px 4px;
+      color: @white;
+      font-size: 12px;
+      background-color: @primary-color;
+      border-radius: 10px 0 0 10px;
+      user-select: none;
+      &.personal {
+        background-color: @warning-color;
+        border-radius: 0 10px 10px 0;
+      }
+    }
+    .ant-switch {
+      background-color: @warning-color;
+      &.ant-switch-checked {
+        background-color: @primary-color;
       }
     }
   }

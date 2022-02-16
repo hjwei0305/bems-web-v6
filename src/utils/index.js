@@ -3,6 +3,23 @@ import constants from './constants';
 import * as userUtils from './user';
 import wsocket from './websocket';
 
+const downFile = (blob, fileName) => {
+  if (window.navigator.msSaveOrOpenBlob) {
+    navigator.msSaveBlob(blob, fileName);
+  } else {
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = fileName;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      window.URL.revokeObjectURL(link.href);
+      document.body.removeChild(link);
+    }, 50);
+  }
+};
+
 const exportXls = (fileTitle, cols, data) => {
   const header = [];
   cols.forEach(t => {
@@ -85,4 +102,5 @@ export {
   getAllParentIdsByNode,
   getAllChildIdsByNode,
   getAllNodeKeys,
+  downFile,
 };

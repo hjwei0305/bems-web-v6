@@ -154,6 +154,7 @@ class ExtAction extends PureComponent {
       selectedKeys: '',
       menuShow: false,
     });
+
     if (e.key !== ADJUST_REQUEST_BTN_KEY.START_FLOW) {
       if (manuallyEffective && e.key === ADJUST_REQUEST_BTN_KEY.FLOW_HISTORY) {
         message.destroy();
@@ -164,15 +165,15 @@ class ExtAction extends PureComponent {
     }
   };
 
-  getMenu = (menus, record) => {
-    const { recordItem } = this.props;
+  getMenu = (menus, recordItem) => {
     const { manuallyEffective } = this.state;
     const menuId = getUUID();
+    console.log(menus);
     return (
       <Menu
         id={menuId}
         className={cls(styles['action-menu-box'])}
-        onClick={e => this.onActionOperation(e, record)}
+        onClick={e => this.onActionOperation(e, recordItem)}
       >
         {menus.map(m => {
           if (m.key === ADJUST_REQUEST_BTN_KEY.START_FLOW) {

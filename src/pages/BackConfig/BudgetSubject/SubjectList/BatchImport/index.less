@@ -1,0 +1,29 @@
+@import '../../../../../themes/vars.less';
+
+.batch-import-box {
+  :global {
+    .import-start {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .row-item {
+        width: 100%;
+        margin-bottom: 16px;
+      }
+    }
+    .progress-box {
+      .desc {
+        margin-top: 16px;
+        color: fade(@black, 65%);
+        .ant-btn-link {
+          color: fade(@error-color, 85%);
+          &:hover,
+          &:active,
+          &.active {
+            color: @error-color;
+          }
+        }
+      }
+    }
+  }
+}

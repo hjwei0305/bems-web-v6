@@ -1,355 +1,191 @@
-import React, { Component, Suspense } from 'react';
-import { connect } from 'dva';
-import cls from 'classnames';
+import React, { useCallback, useState, useMemo } from 'react';
+import { connect, useDispatch, useSelector } from 'dva';
 import { get } from 'lodash';
-import { Button, Modal } from 'antd';
-import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { ExtTable, PageLoader } from 'suid';
+import { Switch, Tooltip } from 'antd';
+import { ExtTable, ExtIcon } from 'suid';
 import { constants } from '@/utils';
-import FormModal from './FormModal';
-import ExtAction from './ExtAction';
+import StrategyEditor from './StrategyEditor';
 import styles from './index.less';
 
-const { SERVER_PATH, BUDGET_SUBJECT_USER_ACTION } = constants;
-const AssignSubject = React.lazy(() => import('./AssignSubject'));
-const CopySubject = React.lazy(() => import('./CopySubject'));
+const { SERVER_PATH } = constants;
+let tablRef;
 
-@connect(({ budgetStrategy, loading }) => ({ budgetStrategy, loading }))
-class SubjectList extends Component {
-  static tablRef;
+const SubjectList = props => {
+  const { loading } = props;
+  const { currentMaster } = useSelector(sel => sel.budgetStrategy);
+  const [dealId, setDealId] = useState();
+  const dispatch = useDispatch();
+  const transformSaving = useMemo(() => {
+    return loading.effects['budgetStrategy/transformSubmit'];
+  }, [loading.effects]);
 
-  static confirmModal;
+  const strategySaving = useMemo(() => {
+    return loading.effects['budgetStrategy/strategySubmit'];
+  }, [loading.effects]);
 
-  reloadData = () => {
-    if (this.tablRef) {
-      this.tablRef.remoteDataRefresh();
+  const reloadData = () => {
+    if (tablRef) {
+      tablRef.remoteDataRefresh();
     }
   };
 
-  showInitSubject = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'budgetStrategy/checkSubjectInit',
-    });
-  };
+  const handlerStrategySave = useCallback(
+    (strategy, rowItem, callback) => {
+      setDealId(rowItem.code);
+      dispatch({
+        type: 'budgetStrategy/strategySubmit',
+        payload: {
+          id: rowItem.id,
+          strategyId: strategy.id,
+        },
+        callback: res => {
+          if (res.success) {
+            reloadData();
+            callback();
+          }
+        },
+      });
+    },
+    [dispatch],
+  );
 
-  initSubject = referenceId => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'budgetStrategy/subjectInit',
-      payload: {
-        referenceId,
-      },
-      callback: res => {
-        if (res.success) {
-          this.closeModal();
-          this.reloadData();
-        }
-      },
-    });
-  };
+  const handlerTransformSave = useCallback(
+    (checked, rowItem) => {
+      setDealId(rowItem.code);
+      dispatch({
+        type: 'budgetStrategy/transformSubmit',
+        payload: {
+          code: rowItem.code,
+          isPrivate: !checked,
+          subjectId: get(currentMaster, 'id'),
+        },
+        callback: res => {
+          if (res.success) {
+            reloadData();
+          }
+        },
+      });
+    },
+    [currentMaster, dispatch],
+  );
 
-  add = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'budgetStrategy/updateState',
-      payload: {
-        showAssign: true,
-        rowData: null,
-      },
-    });
-  };
-
-  edit = rowData => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'budgetStrategy/updateState',
-      payload: {
-        showModal: true,
-        rowData,
-      },
-    });
-  };
-
-  save = data => {
-    const { dispatch, budgetStrategy } = this.props;
-    const { currentMaster } = budgetStrategy;
-    dispatch({
-      type: 'budgetStrategy/save',
-      payload: {
-        subjectId: get(currentMaster, 'id'),
-        ...data,
-      },
-      callback: res => {
-        if (res.success) {
-          dispatch({
-            type: 'budgetStrategy/updateState',
-            payload: {
-              showModal: false,
-            },
-          });
-          this.reloadData();
-        }
-      },
-    });
-  };
-
-  delConfirm = rowData => {
-    const { dispatch } = this.props;
-    this.confirmModal = Modal.confirm({
-      title: `删除确认`,
-      content: `提示：删除后不可恢复!`,
-      okButtonProps: { type: 'primary' },
-      style: { top: '20%' },
-      okText: '确定',
-      onOk: () => {
-        return new Promise(resolve => {
-          this.confirmModal.update({
-            okButtonProps: { type: 'primary', loading: true },
-            cancelButtonProps: { disabled: true },
-          });
-          dispatch({
-            type: 'budgetStrategy/del',
-            payload: {
-              id: rowData.id,
-            },
-            callback: res => {
-              if (res.success) {
-                resolve();
-                this.reloadData();
-              } else {
-                this.confirmModal.update({
-                  okButtonProps: { loading: false },
-                  cancelButtonProps: { disabled: false },
-                });
-              }
-            },
-          });
-        });
-      },
-      cancelText: '取消',
-      onCancel: () => {
-        this.confirmModal.destroy();
-        this.confirmModal = null;
-      },
-    });
-  };
-
-  closeModal = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'budgetStrategy/updateState',
-      payload: {
-        showModal: false,
-        showAssign: false,
-        showInit: false,
-        rowData: null,
-      },
-    });
-  };
-
-  handlerAssign = (itemCodes, callback) => {
-    const { dispatch, budgetStrategy } = this.props;
-    const { currentMaster } = budgetStrategy;
-    dispatch({
-      type: 'budgetStrategy/assign',
-      payload: {
-        subjectId: get(currentMaster, 'id'),
-        itemCodes,
-      },
-      callback: res => {
-        if (res.success) {
-          this.closeModal();
-          this.reloadData();
-          callback();
-        }
-      },
-    });
-  };
-
-  frozen = rowData => {
-    const { dispatch } = this.props;
-    const frozen = get(rowData, 'frozen');
-    this.confirmModal = Modal.confirm({
-      title: frozen ? `启用科目【${get(rowData, 'name')}】` : `停用科目【${get(rowData, 'name')}】`,
-      content: frozen ? `确定要启用吗?` : `确定要停用吗?`,
-      okButtonProps: { type: 'primary' },
-      style: { top: '20%' },
-      okText: '确定',
-      onOk: () => {
-        return new Promise(resolve => {
-          this.confirmModal.update({
-            okButtonProps: { type: 'primary', loading: true },
-            cancelButtonProps: { disabled: true },
-          });
-          dispatch({
-            type: 'budgetStrategy/frozen',
-            payload: {
-              id: rowData.id,
-              freezing: !frozen,
-            },
-            callback: res => {
-              if (res.success) {
-                resolve();
-                this.reloadData();
-              } else {
-                this.confirmModal.update({
-                  okButtonProps: { loading: false },
-                  cancelButtonProps: { disabled: false },
-                });
-              }
-            },
-          });
-        });
-      },
-      cancelText: '取消',
-      onCancel: () => {
-        this.confirmModal.destroy();
-        this.confirmModal = null;
-      },
-    });
-  };
-
-  handlerAction = (key, rowData) => {
-    switch (key) {
-      case BUDGET_SUBJECT_USER_ACTION.EDIT:
-        this.edit(rowData);
-        break;
-      case BUDGET_SUBJECT_USER_ACTION.DELETE:
-        this.delConfirm(rowData);
-        break;
-      case BUDGET_SUBJECT_USER_ACTION.FROZEN:
-      case BUDGET_SUBJECT_USER_ACTION.UNFROZEN:
-        this.frozen(rowData);
-        break;
-      default:
-    }
-  };
-
-  renderSubjectName = (t, r) => {
-    if (r.frozen) {
-      return (
-        <>
-          <span style={{ color: 'rgba(0,0,0,0.35)' }}>{t}</span>
-          <span style={{ color: '#f5222d', fontSize: 12, marginLeft: 8 }}>已停用</span>
-        </>
-      );
-    }
-    return t;
-  };
-
-  renderDisabled = (t, r) => {
-    if (r.frozen) {
-      return <span style={{ color: 'rgba(0,0,0,0.35)' }}>{t}</span>;
-    }
-    return t || '-';
-  };
-
-  render() {
-    const { budgetStrategy, loading } = this.props;
-    const { showModal, rowData, currentMaster, showInit, showAssign } = budgetStrategy;
+  const getExtTableProps = useCallback(() => {
     const columns = [
       {
-        title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
-        key: 'operation',
-        width: 80,
-        align: 'center',
-        dataIndex: 'id',
-        className: 'action',
-        required: true,
-        render: (text, record) => (
-          <span className={cls('action-box')}>
-            <ExtAction key={record.id} onAction={this.handlerAction} recordItem={record} />
-          </span>
+        title: (
+          <div>
+            <Tooltip title="点击下方列表开关按钮进行通用与私有转换">
+              <span className="tag-state">通用</span>
+              <span className="tag-state personal">私有</span>
+            </Tooltip>
+          </div>
         ),
+        dataIndex: 'id',
+        width: 90,
+        required: true,
+        align: 'center',
+        render: (chk, r) => {
+          if (dealId === r.code && transformSaving)
+            return (
+              <div className="allow-edit">
+                <ExtIcon type="loading" antd spin style={{ marginLeft: 4 }} />
+              </div>
+            );
+          return (
+            <Switch
+              size="small"
+              onChange={checked => handlerTransformSave(checked, r)}
+              checked={!chk}
+            />
+          );
+        },
       },
       {
         title: '科目代码',
         dataIndex: 'code',
         width: 120,
         required: true,
-        render: (t, r) => this.renderDisabled(t, r),
       },
       {
         title: '科目名称',
         dataIndex: 'name',
-        width: 420,
+        width: 180,
         required: true,
-        render: (t, r) => this.renderSubjectName(t, r),
       },
       {
-        title: '执行策略',
+        title: (
+          <>
+            执行策略
+            <ExtIcon
+              type="question-circle"
+              style={{ marginLeft: 4 }}
+              antd
+              tooltip={{ title: '设置为私有后可以更改策略' }}
+            />
+          </>
+        ),
         dataIndex: 'strategyName',
-        width: 180,
-        render: (t, r) => this.renderDisabled(t || '继承主体执行策略', r),
+        width: 220,
+        required: true,
+        className: 'padding-zero',
+        render: (t, r) => {
+          if (r.id) {
+            return (
+              <StrategyEditor
+                labelTitle="策略设置"
+                store={{
+                  url: `${SERVER_PATH}/bems-v6/strategy/findByDimensionCode`,
+                  params: { dimensionCode: r.code },
+                  autoLoad: true,
+                }}
+                dealId={dealId}
+                rowData={r}
+                displayName={t}
+                fieldId={r.strategyId}
+                onSave={handlerStrategySave}
+                saving={strategySaving}
+              />
+            );
+          }
+          return <span style={{ paddingLeft: 4 }}>{t}</span>;
+        },
       },
     ];
-    const formModalProps = {
-      save: this.save,
-      rowData,
-      showModal,
-      closeModal: this.closeModal,
-      saving: loading.effects['budgetStrategy/save'],
-    };
-    const assignSubjectProps = {
-      currentMaster,
-      showModal: showAssign,
-      assign: this.handlerAssign,
-      initLoading: loading.effects['budgetStrategy/assign'],
-      closeModal: this.closeModal,
-    };
-    const copySubjectProps = {
-      currentMaster,
-      showModal: showInit,
-      init: this.initSubject,
-      initLoading: loading.effects['budgetStrategy/subjectInit'],
-      closeModal: this.closeModal,
-    };
-    const toolBarProps = {
-      left: (
-        <>
-          <Button type="primary" onClick={this.add}>
-            <FormattedMessage id="global.add" defaultMessage="新建" />
-          </Button>
-          <Button
-            loading={loading.effects['budgetStrategy/checkSubjectInit']}
-            onClick={this.showInitSubject}
-          >
-            参考引用
-          </Button>
-        </>
-      ),
-    };
-    const tableProps = {
-      toolBar: toolBarProps,
-      columns,
-      searchWidth: 260,
+    const tbProps = {
+      rowKey: 'code',
       lineNumber: false,
-      searchPlaceHolder: '输入科目代码、名称关键字',
-      remotePaging: true,
+      bordered: false,
+      pagination: false,
+      showSearch: false,
       allowCustomColumns: false,
-      onTableRef: ref => (this.tablRef = ref),
-      store: {
-        type: 'POST',
-        url: `${SERVER_PATH}/bems-v6/subjectItem/getAssigned`,
-      },
-      cascadeParams: {
-        filters: [{ fieldName: 'subjectId', operator: 'EQ', value: get(currentMaster, 'id') }],
-      },
+      onTableRef: ref => (tablRef = ref),
+      columns,
     };
-    return (
-      <div className={cls(styles['contanter-box'])}>
-        <ExtTable {...tableProps} />
-        <FormModal {...formModalProps} />
-        <Suspense fallback={<PageLoader />}>
-          <AssignSubject {...assignSubjectProps} />
-        </Suspense>
-        <Suspense fallback={<PageLoader />}>
-          <CopySubject {...copySubjectProps} />
-        </Suspense>
-      </div>
-    );
-  }
-}
+    if (currentMaster) {
+      Object.assign(tbProps, {
+        store: {
+          url: `${SERVER_PATH}/bems-v6/subjectDimension/getDimensions`,
+        },
+        cascadeParams: {
+          subjectId: get(currentMaster, 'id'),
+        },
+      });
+    }
+    return tbProps;
+  }, [
+    currentMaster,
+    dealId,
+    handlerStrategySave,
+    handlerTransformSave,
+    strategySaving,
+    transformSaving,
+  ]);
 
-export default SubjectList;
+  return (
+    <div className={styles['list-box']}>
+      <ExtTable {...getExtTableProps()} />
+    </div>
+  );
+};
+
+export default connect(({ budgetStrategy, loading }) => ({ budgetStrategy, loading }))(SubjectList);

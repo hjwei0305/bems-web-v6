@@ -185,7 +185,12 @@ class RequestItem extends PureComponent {
               清空明细
             </Button>
           </Popconfirm>
-          <Button loading={exporting} onClick={() => dataExport(orderId)} size="small">
+          <Button
+            disabled={!orderId}
+            loading={exporting}
+            onClick={() => dataExport(orderId)}
+            size="small"
+          >
             数据导出
           </Button>
           <Button

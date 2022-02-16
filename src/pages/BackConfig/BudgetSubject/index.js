@@ -1,198 +1,123 @@
-import React, { Component } from 'react';
+import React, { Component, Suspense } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
-import { get } from 'lodash';
-import { Button, Popconfirm } from 'antd';
-import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { ExtTable, ExtIcon } from 'suid';
+import { Layout, Empty } from 'antd';
+import { PageLoader } from 'suid';
+import empty from '@/assets/item_empty.svg';
+import { FilterView } from '@/components';
 import { constants } from '@/utils';
-import FormModal from './FormModal';
 import styles from './index.less';
 
-const { SERVER_PATH } = constants;
+const { Sider, Content } = Layout;
+const { TYPE_CLASS } = constants;
+const SubjectList = React.lazy(() => import('./SubjectList'));
+const CorperationList = React.lazy(() => import('./CorperationList'));
 
 @connect(({ budgetSubject, loading }) => ({ budgetSubject, loading }))
 class BudgetSubject extends Component {
-  static tablRef;
+  static subjectListRef;
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      delRowId: null,
-    };
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'budgetSubject/updateState',
+      payload: {
+        rowData: null,
+        showModal: false,
+        currentCorperation: null,
+        selectedSubject: null,
+        selectTypeClass: TYPE_CLASS.GENERAL,
+      },
+    });
   }
 
-  reloadData = () => {
-    if (this.tablRef) {
-      this.tablRef.remoteDataRefresh();
-    }
-  };
-
-  add = () => {
+  handlerBudgetSubjectChange = selectTypeClass => {
     const { dispatch } = this.props;
     dispatch({
       type: 'budgetSubject/updateState',
       payload: {
-        showModal: true,
+        selectTypeClass,
         rowData: null,
+        showModal: false,
+        currentCorperation: null,
+        selectedSubject: null,
+        showImport: false,
       },
     });
   };
 
-  edit = rowData => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'budgetSubject/updateState',
-      payload: {
-        showModal: true,
-        rowData,
-      },
-    });
-  };
-
-  save = data => {
-    const { dispatch, budgetSubject } = this.props;
-    const { currentMaster } = budgetSubject;
-    dispatch({
-      type: 'budgetSubject/save',
-      payload: {
-        subjectId: get(currentMaster, 'id'),
-        ...data,
-      },
-      callback: res => {
-        if (res.success) {
-          dispatch({
-            type: 'budgetSubject/updateState',
-            payload: {
-              showModal: false,
-            },
-          });
-          this.reloadData();
-        }
-      },
-    });
-  };
-
-  del = record => {
-    const { dispatch } = this.props;
-    this.setState(
-      {
-        delRowId: record.id,
-      },
-      () => {
-        dispatch({
-          type: 'budgetSubject/del',
-          payload: {
-            id: record.id,
-          },
-          callback: res => {
-            if (res.success) {
-              this.setState({
-                delRowId: null,
-              });
-              this.reloadData();
-            }
-          },
-        });
-      },
+  renderFilterView = () => {
+    const {
+      budgetSubject: { selectTypeClass, typeClassData },
+    } = this.props;
+    return (
+      <FilterView
+        title="科目视图"
+        currentViewType={selectTypeClass}
+        viewTypeData={typeClassData}
+        onAction={this.handlerBudgetSubjectChange}
+        reader={{
+          title: 'title',
+          value: 'key',
+        }}
+      />
     );
   };
 
-  closeFormModal = () => {
+  handlerCorperationChange = currentCorperation => {
     const { dispatch } = this.props;
     dispatch({
       type: 'budgetSubject/updateState',
       payload: {
-        showModal: false,
-        rowData: null,
+        currentCorperation,
+        selectedBudgetType: null,
       },
     });
   };
 
-  renderDelBtn = row => {
-    const { loading } = this.props;
-    const { delRowId } = this.state;
-    if (loading.effects['budgetSubject/del'] && delRowId === row.id) {
-      return <ExtIcon className="del-loading" type="loading" antd />;
+  renderBody = () => {
+    const {
+      budgetSubject: { selectTypeClass, currentCorperation },
+    } = this.props;
+    if (selectTypeClass.key === TYPE_CLASS.GENERAL.key) {
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <SubjectList onRef={ref => (this.subjectListRef = ref)} />
+        </Suspense>
+      );
     }
-    return <ExtIcon className="del" type="delete" antd />;
+    if (selectTypeClass.key === TYPE_CLASS.PRIVATE.key) {
+      return (
+        <Layout className="auto-height">
+          <Sider width={380} className="auto-height" theme="light">
+            <Suspense fallback={<PageLoader />}>
+              <CorperationList
+                currentCorperation={currentCorperation}
+                selectChange={this.handlerCorperationChange}
+              />
+            </Suspense>
+          </Sider>
+          <Content className={cls('main-content', 'auto-height')} style={{ paddingLeft: 1 }}>
+            {currentCorperation ? (
+              <Suspense fallback={<PageLoader />}>
+                <SubjectList onRef={ref => (this.subjectListRef = ref)} />
+              </Suspense>
+            ) : (
+              <div className="blank-empty">
+                <Empty image={empty} description="选择预算主体来配置预算类型" />
+              </div>
+            )}
+          </Content>
+        </Layout>
+      );
+    }
   };
 
   render() {
-    const { budgetSubject, loading } = this.props;
-    const { showModal, rowData } = budgetSubject;
-    const columns = [
-      {
-        title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
-        key: 'operation',
-        width: 100,
-        align: 'center',
-        dataIndex: 'id',
-        className: 'action',
-        required: true,
-        render: (text, record) => (
-          <span className={cls('action-box')}>
-            <ExtIcon className="edit" onClick={() => this.edit(record)} type="edit" antd />
-            <Popconfirm
-              placement="topLeft"
-              title={formatMessage({
-                id: 'global.delete.confirm',
-                defaultMessage: '确定要删除吗？提示：删除后不可恢复',
-              })}
-              onConfirm={() => this.del(record)}
-            >
-              {this.renderDelBtn(record)}
-            </Popconfirm>
-          </span>
-        ),
-      },
-      {
-        title: '科目代码',
-        dataIndex: 'code',
-        width: 120,
-        required: true,
-      },
-      {
-        title: '科目名称',
-        dataIndex: 'name',
-        width: 420,
-        required: true,
-      },
-    ];
-    const formModalProps = {
-      save: this.save,
-      rowData,
-      showModal,
-      closeFormModal: this.closeFormModal,
-      saving: loading.effects['budgetSubject/save'],
-    };
-    const toolBarProps = {
-      left: (
-        <>
-          <Button type="primary" onClick={this.add}>
-            <FormattedMessage id="global.add" defaultMessage="新建" />
-          </Button>
-        </>
-      ),
-    };
-    const tableProps = {
-      toolBar: toolBarProps,
-      columns,
-      searchWidth: 260,
-      lineNumber: false,
-      allowCustomColumns: false,
-      searchPlaceHolder: '输入科目代码、名称关键字',
-      remotePaging: true,
-      onTableRef: ref => (this.tablRef = ref),
-      store: {
-        type: 'POST',
-        url: `${SERVER_PATH}/bems-v6/item/findByPage`,
-      },
-    };
     return (
-      <div className={cls(styles['contanter-box'])}>
-        <ExtTable {...tableProps} />
-        <FormModal {...formModalProps} />
+      <div className={styles['container-box']}>
+        <div className="box-header">{this.renderFilterView()}</div>
+        <div className="box-body">{this.renderBody()}</div>
       </div>
     );
   }

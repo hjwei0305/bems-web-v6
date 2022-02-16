@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo, useEffect } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import cls from 'classnames';
 import moment from 'moment';
 import { get, isEmpty, isNumber } from 'lodash';
@@ -10,7 +10,6 @@ import styles from './index.less';
 
 const { SERVER_PATH, POOL_OPERATION, SEARCH_DATE_TIME_PERIOD } = constants;
 const POOL_OPERATION_DATA = Object.keys(POOL_OPERATION).map(key => POOL_OPERATION[key]);
-let tableRef;
 let searchInput;
 let tmpFilterData;
 let listCardRef;
@@ -37,20 +36,6 @@ const initOpTime = getDefaultTimeViewType();
 const LogDetail = ({ poolItem, handlerClose, showLog }) => {
   const [filter, setFilter] = useState({ opTime: initOpTime });
   const [currentTimeViewType, setCurrentTimeViewType] = useState(SEARCH_DATE_TIME_PERIOD.ALL);
-
-  const reloadData = useCallback(() => {
-    if (tableRef) {
-      tableRef.remoteDataRefresh();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (poolItem) {
-      setTimeout(() => {
-        reloadData();
-      }, 100);
-    }
-  }, [poolItem, reloadData]);
 
   const handlerFitlerDate = useCallback(
     (dataIndex, currentDate, confirm) => {
@@ -438,32 +423,27 @@ const LogDetail = ({ poolItem, handlerClose, showLog }) => {
       columns,
       bordered: false,
       showSearch: false,
-      remotePaging: true,
       lineNumber: false,
       searchWidth: 260,
       storageId: '36e28135-9faa-4094-ae62-f994d3ab4fdf',
       sort: {
         field: { opTime: 'desc' },
       },
-    };
-    if (poolCode) {
-      Object.assign(props, {
-        store: {
-          type: 'POST',
-          url: `${SERVER_PATH}/bems-v6/pool/findRecordByPage`,
-          params: {
-            filters: getFilters,
-          },
+      remotePaging: true,
+      store: {
+        type: 'POST',
+        url: `${SERVER_PATH}/bems-v6/pool/findRecordByPage`,
+        params: {
+          filters: getFilters,
         },
-      });
-    }
+      },
+    };
     return props;
   }, [
     filter,
     getColumnSearchProps,
     getFilters,
     poolItem,
-    reloadData,
     renderColumnEventName,
     renderColumnTimestamp,
   ]);
@@ -480,7 +460,7 @@ const LogDetail = ({ poolItem, handlerClose, showLog }) => {
       onClose={handlerClose}
       style={{ position: 'absolute' }}
     >
-      <ExtTable onTableRef={ref => (tableRef = ref)} {...getExtTableProps()} />
+      {poolItem ? <ExtTable {...getExtTableProps()} /> : null}
     </Drawer>
   );
 };

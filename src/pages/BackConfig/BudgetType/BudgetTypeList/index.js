@@ -291,7 +291,7 @@ class BudgetTypeList extends Component {
               </>
             ) : (
               <Popconfirm
-                title="确定转成为私有预算类型吗?"
+                title="确定转为私有预算类型吗?"
                 onConfirm={e => this.privateReference(item, e)}
               >
                 {loading.effects['budgetType/privateReference'] && dealId === item.id ? (

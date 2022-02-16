@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2022-01-19 14:59:33
+ * @Last Modified time: 2022-02-16 11:42:49
  */
 import { base } from '../../public/app.config.json';
 
@@ -184,6 +184,7 @@ const ADJUST_REQUEST_BTN_KEY = {
   VIEW: 'BEMS-ADJUST-XS',
   DELETE: 'BEMS-ADJUST-SC',
   START_FLOW: 'BEMS-ADJUST-QDLC',
+  FLOW_HISTORY: 'BEMS-ADJUST-LCLS',
   EFFECT: 'BEMS-ADJUST-EFFECT',
 };
 

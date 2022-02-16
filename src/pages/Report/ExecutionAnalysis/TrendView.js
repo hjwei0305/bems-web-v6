@@ -166,7 +166,7 @@ const TrendView = props => {
       },
     };
     return extChartProps;
-  }, [rowData, seriesData, titles]);
+  }, [rowData, seriesData, subjectName, titles]);
 
   return (
     <Drawer
