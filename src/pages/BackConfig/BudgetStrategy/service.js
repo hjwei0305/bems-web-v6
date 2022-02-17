@@ -85,10 +85,10 @@ export async function transformSubmit(params) {
 }
 
 /**
- * 维度策略设置
+ * 策略设置
  */
 export async function strategySubmit(params) {
-  const url = `${SERVER_PATH}/bems-v6/subjectDimension/setDimensionStrategy`;
+  const url = `${SERVER_PATH}/bems-v6/strategyItem/setStrategy`;
   return request({
     url,
     method: 'POST',
@@ -126,5 +126,16 @@ export async function subjectPeriodUse(params) {
       'Content-Type': 'application/json;',
     },
     data: use,
+  });
+}
+
+/** 主体预算科目通用与私有转换操作 */
+export async function turnPrivate(params) {
+  const url = `${SERVER_PATH}/bems-v6/strategyItem/turnPrivate`;
+  return request({
+    url,
+    method: 'POST',
+    params,
+    data: {},
   });
 }

@@ -12,6 +12,7 @@ import {
   subjectInit,
   subjectPeriodRoll,
   subjectPeriodUse,
+  turnPrivate,
 } from './service';
 
 const { dvaModel } = utils;
@@ -107,6 +108,18 @@ export default modelExtend(model, {
     },
     *transformSubmit({ payload, callback }, { call }) {
       const re = yield call(transformSubmit, payload);
+      message.destroy();
+      if (re.success) {
+        message.success('操作成功');
+      } else {
+        message.error(re.message);
+      }
+      if (callback && callback instanceof Function) {
+        callback(re);
+      }
+    },
+    *turnPrivate({ payload, callback }, { call }) {
+      const re = yield call(turnPrivate, payload);
       message.destroy();
       if (re.success) {
         message.success('操作成功');

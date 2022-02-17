@@ -7,7 +7,7 @@ import { constants } from '@/utils';
 import StrategyEditor from './StrategyEditor';
 import styles from './index.less';
 
-const { SERVER_PATH } = constants;
+const { SERVER_PATH, STRATEGY_TYPE } = constants;
 let tablRef;
 
 const SubjectList = props => {
@@ -15,8 +15,8 @@ const SubjectList = props => {
   const { currentMaster } = useSelector(sel => sel.budgetStrategy);
   const [dealId, setDealId] = useState();
   const dispatch = useDispatch();
-  const transformSaving = useMemo(() => {
-    return loading.effects['budgetStrategy/transformSubmit'];
+  const turnPrivateSaving = useMemo(() => {
+    return loading.effects['budgetStrategy/turnPrivate'];
   }, [loading.effects]);
 
   const strategySaving = useMemo(() => {
@@ -35,8 +35,9 @@ const SubjectList = props => {
       dispatch({
         type: 'budgetStrategy/strategySubmit',
         payload: {
-          id: rowItem.id,
+          itemCode: rowItem.code,
           strategyId: strategy.id,
+          subjectId: get(currentMaster, 'id'),
         },
         callback: res => {
           if (res.success) {
@@ -46,16 +47,16 @@ const SubjectList = props => {
         },
       });
     },
-    [dispatch],
+    [currentMaster, dispatch],
   );
 
-  const handlerTransformSave = useCallback(
+  const handlerTurnPrivateSave = useCallback(
     (checked, rowItem) => {
       setDealId(rowItem.code);
       dispatch({
-        type: 'budgetStrategy/transformSubmit',
+        type: 'budgetStrategy/turnPrivate',
         payload: {
-          code: rowItem.code,
+          itemCode: rowItem.code,
           isPrivate: !checked,
           subjectId: get(currentMaster, 'id'),
         },
@@ -85,7 +86,7 @@ const SubjectList = props => {
         required: true,
         align: 'center',
         render: (chk, r) => {
-          if (dealId === r.code && transformSaving)
+          if (dealId === r.code && turnPrivateSaving)
             return (
               <div className="allow-edit">
                 <ExtIcon type="loading" antd spin style={{ marginLeft: 4 }} />
@@ -94,7 +95,7 @@ const SubjectList = props => {
           return (
             <Switch
               size="small"
-              onChange={checked => handlerTransformSave(checked, r)}
+              onChange={checked => handlerTurnPrivateSave(checked, r)}
               checked={!chk}
             />
           );
@@ -134,8 +135,8 @@ const SubjectList = props => {
               <StrategyEditor
                 labelTitle="策略设置"
                 store={{
-                  url: `${SERVER_PATH}/bems-v6/strategy/findByDimensionCode`,
-                  params: { dimensionCode: r.code },
+                  url: `${SERVER_PATH}/bems-v6/strategy/findByCategory`,
+                  params: { category: STRATEGY_TYPE.EXECUTION.key },
                   autoLoad: true,
                 }}
                 dealId={dealId}
@@ -147,7 +148,7 @@ const SubjectList = props => {
               />
             );
           }
-          return <span style={{ paddingLeft: 4 }}>{t}</span>;
+          return <span style={{ paddingLeft: 4 }}>继承主体执行策略</span>;
         },
       },
     ];
@@ -155,7 +156,6 @@ const SubjectList = props => {
       rowKey: 'code',
       lineNumber: false,
       bordered: false,
-      pagination: false,
       showSearch: false,
       allowCustomColumns: false,
       onTableRef: ref => (tablRef = ref),
@@ -164,8 +164,10 @@ const SubjectList = props => {
     if (currentMaster) {
       Object.assign(tbProps, {
         store: {
-          url: `${SERVER_PATH}/bems-v6/subjectDimension/getDimensions`,
+          type: 'POST',
+          url: `${SERVER_PATH}/bems-v6/strategyItem/findPageBySubject`,
         },
+        remotePaging: true,
         cascadeParams: {
           subjectId: get(currentMaster, 'id'),
         },
@@ -176,9 +178,9 @@ const SubjectList = props => {
     currentMaster,
     dealId,
     handlerStrategySave,
-    handlerTransformSave,
+    handlerTurnPrivateSave,
     strategySaving,
-    transformSaving,
+    turnPrivateSaving,
   ]);
 
   return (

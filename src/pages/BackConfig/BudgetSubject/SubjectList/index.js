@@ -2,14 +2,14 @@ import React, { Component, Suspense } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
 import { get } from 'lodash';
-import { Button, Popconfirm, Card, Drawer } from 'antd';
+import { Button, Popconfirm, Card, Drawer, Radio, Divider } from 'antd';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
 import { ExtTable, ExtIcon, BannerTitle, Space, PageLoader } from 'suid';
 import { constants } from '@/utils';
 import FormModal from './FormModal';
 import styles from './index.less';
 
-const { SERVER_PATH, TYPE_CLASS } = constants;
+const { SERVER_PATH, TYPE_CLASS, FILTER_ENABLE_DISABLE } = constants;
 const BatchImport = React.lazy(() => import('./BatchImport'));
 
 @connect(({ budgetSubject, loading }) => ({ budgetSubject, loading }))
@@ -21,6 +21,7 @@ class BudgetSubjectList extends Component {
     this.state = {
       selectedRowKeys: [],
       dealId: null,
+      rowState: FILTER_ENABLE_DISABLE.ALL.key,
     };
   }
 
@@ -276,6 +277,39 @@ class BudgetSubjectList extends Component {
     return item.name;
   };
 
+  handlerStateChange = e => {
+    this.setState({ rowState: e.target.value });
+  };
+
+  renderQuickFilter = () => {
+    const { rowState } = this.state;
+    const ds = Object.keys(FILTER_ENABLE_DISABLE).map(key => FILTER_ENABLE_DISABLE[key]);
+    return (
+      <span className="filter-state">
+        <span className="label">科目状态</span>
+        <Radio.Group onChange={this.handlerStateChange} defaultValue={rowState} size="small">
+          {ds.map(it => (
+            <Radio.Button key={it.key} value={it.key}>
+              {it.title}
+            </Radio.Button>
+          ))}
+        </Radio.Group>
+      </span>
+    );
+  };
+
+  getRowStateFilter = () => {
+    const { rowState } = this.state;
+    const stateFilter = [];
+    if (rowState === FILTER_ENABLE_DISABLE.ENABLE.key) {
+      stateFilter.push({ fieldName: 'frozen', operator: 'EQ', value: false });
+    }
+    if (rowState === FILTER_ENABLE_DISABLE.DISABLE.key) {
+      stateFilter.push({ fieldName: 'frozen', operator: 'EQ', value: true });
+    }
+    return stateFilter;
+  };
+
   renderContent = () => {
     const { selectedRowKeys } = this.state;
     const { budgetSubject } = this.props;
@@ -324,6 +358,8 @@ class BudgetSubjectList extends Component {
       const toolBarProps = {
         left: (
           <Space>
+            {this.renderQuickFilter()}
+            <Divider type="vertical" />
             <Button type="primary" onClick={this.add}>
               <FormattedMessage id="global.add" defaultMessage="新建" />
             </Button>
@@ -335,6 +371,9 @@ class BudgetSubjectList extends Component {
       Object.assign(tableProps, {
         toolBar: toolBarProps,
         columns,
+        cascadeParams: {
+          filters: this.getRowStateFilter(),
+        },
         store: {
           type: 'POST',
           url: `${SERVER_PATH}/bems-v6/item/findByGeneral`,
@@ -351,7 +390,11 @@ class BudgetSubjectList extends Component {
       );
     }
     if (selectTypeClass.key === TYPE_CLASS.PRIVATE.key) {
+      const toolBarProps = {
+        left: this.renderQuickFilter(),
+      };
       Object.assign(tableProps, {
+        toolBar: toolBarProps,
         columns,
         store: {
           type: 'POST',
@@ -362,6 +405,7 @@ class BudgetSubjectList extends Component {
         },
         cascadeParams: {
           corpCode: get(currentCorperation, 'code'),
+          filters: this.getRowStateFilter(),
         },
       });
       return (

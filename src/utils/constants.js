@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2022-02-16 11:42:49
+ * @Last Modified time: 2022-02-17 09:14:48
  */
 import { base } from '../../public/app.config.json';
 
@@ -140,6 +140,13 @@ const REQUEST_ITEM_STATUS = {
   ALL: { key: 'ALL', title: '全部', color: '' },
   NORMAL: { key: 'NORMAL', title: '正常', color: 'green' },
   ERROR: { key: 'ERROR', title: '异常', color: 'red' },
+};
+
+/** 全部、启用、停用枚举 */
+const FILTER_ENABLE_DISABLE = {
+  ALL: { key: 'ALL', title: '全部' },
+  ENABLE: { key: 'ENABLE', title: '启用' },
+  DISABLE: { key: 'DISABLE', title: '停用' },
 };
 
 const MASTER_CLASSIFICATION = {
@@ -289,4 +296,5 @@ export default {
   POOL_OPERATION,
   SEARCH_DATE_TIME_PERIOD,
   MASTER_CLASSIFICATION,
+  FILTER_ENABLE_DISABLE,
 };

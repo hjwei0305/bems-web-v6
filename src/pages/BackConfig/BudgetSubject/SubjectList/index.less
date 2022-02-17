@@ -7,6 +7,14 @@
   overflow: hidden;
   background-color: @page-background-color;
   :global {
+    .filter-state {
+      .label {
+        &::after {
+          padding: 0 4px;
+          content: ':';
+        }
+      }
+    }
     .ant-drawer-top.ant-drawer-open .ant-drawer-content-wrapper {
       box-shadow: none;
     }

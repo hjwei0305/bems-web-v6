@@ -104,7 +104,7 @@ class BudgetSubject extends Component {
               </Suspense>
             ) : (
               <div className="blank-empty">
-                <Empty image={empty} description="选择预算主体来配置预算类型" />
+                <Empty image={empty} description="选择公司来配置预算科目" />
               </div>
             )}
           </Content>
