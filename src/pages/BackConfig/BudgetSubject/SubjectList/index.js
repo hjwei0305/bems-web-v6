@@ -395,14 +395,6 @@ class BudgetSubjectList extends Component {
       };
       Object.assign(tableProps, {
         toolBar: toolBarProps,
-        checkbox: {
-          getCheckboxProps: item => {
-            if (item.frozen) {
-              return { disabled: true };
-            }
-            return { disabled: false };
-          },
-        },
         columns,
         store: {
           type: 'POST',
