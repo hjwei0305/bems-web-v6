@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2022-02-17 09:14:48
+ * @Last Modified time: 2022-02-17 17:14:38
  */
 import { base } from '../../public/app.config.json';
 
@@ -145,8 +145,8 @@ const REQUEST_ITEM_STATUS = {
 /** 全部、启用、停用枚举 */
 const FILTER_ENABLE_DISABLE = {
   ALL: { key: 'ALL', title: '全部' },
-  ENABLE: { key: 'ENABLE', title: '启用' },
-  DISABLE: { key: 'DISABLE', title: '停用' },
+  ENABLE: { key: 'ENABLE', title: '已启用' },
+  DISABLE: { key: 'DISABLE', title: '已停用' },
 };
 
 const MASTER_CLASSIFICATION = {
