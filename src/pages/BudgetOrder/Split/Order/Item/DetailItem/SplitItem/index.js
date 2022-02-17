@@ -223,7 +223,7 @@ const SplitItem = ({
         setSelectedKeys([]);
       });
     }
-  }, [onRemoveItem, selectedKeys]);
+  }, [onRemoveItem, selectedKeys, sourceItem]);
 
   const renderContent = useMemo(() => {
     if (items.length === 0) {
@@ -250,7 +250,7 @@ const SplitItem = ({
         </Timeline.Item>
       );
     });
-  }, [items, renderDescription, renderMasterTitle]);
+  }, [handlerRemoveItem, items, removing, renderDescription, renderMasterTitle, sourceItem]);
 
   const handlerSelectAll = useCallback(
     e => {
