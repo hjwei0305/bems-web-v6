@@ -298,6 +298,16 @@ class BudgetSubjectList extends Component {
     );
   };
 
+  getRowEnableAndDisable = () => {
+    const { rowState } = this.state;
+    if (rowState === FILTER_ENABLE_DISABLE.ENABLE.key) {
+      return false;
+    }
+    if (rowState === FILTER_ENABLE_DISABLE.DISABLE.key) {
+      return true;
+    }
+  };
+
   getRowStateFilter = () => {
     const { rowState } = this.state;
     const stateFilter = [];
@@ -405,7 +415,7 @@ class BudgetSubjectList extends Component {
         },
         cascadeParams: {
           corpCode: get(currentCorperation, 'code'),
-          filters: this.getRowStateFilter(),
+          disabled: this.getRowEnableAndDisable(),
         },
       });
       return (

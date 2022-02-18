@@ -217,6 +217,9 @@ class Organization extends PureComponent {
     let checkedKeys = [];
     const { expandedKeys: expKeys } = this.state;
     const expandedKeys = [...expKeys];
+    if (level === 1) {
+      checkedKeys = this.data.map(it => it.id);
+    }
     if (level === 2) {
       this.data.forEach(root => {
         const rootNodeLevel = get(root, 'nodeLevel');
@@ -277,6 +280,9 @@ class Organization extends PureComponent {
               >
                 全选
               </Checkbox>
+              <Button size="small" onClick={() => this.handlerOnlySelect(1)}>
+                仅选一级
+              </Button>
               <Button size="small" onClick={() => this.handlerOnlySelect(2)}>
                 仅选二级
               </Button>
