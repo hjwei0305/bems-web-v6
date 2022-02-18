@@ -175,8 +175,8 @@ const SplitItem = ({
     item => {
       const itemId = get(item, 'id');
       const itemSplit = getSplitItem(itemId);
-      const amount = get(itemSplit, 'amount') || get(item, 'amount');
-      const errMsg = get(itemSplit, 'errMsg') || get(item, 'errMsg');
+      const amount = get(itemSplit || item, 'amount');
+      const errMsg = get(itemSplit || item, 'errMsg');
       const poolAmount = get(item, 'poolAmount');
       return (
         <>
