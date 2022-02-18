@@ -186,7 +186,7 @@ const SplitItem = ({
               className="inject-money"
               amount={amount}
               title="分解金额"
-              rowItem={item}
+              rowItem={itemSplit || item}
               maxAmount={maxAmount}
               minAmount={-poolAmount}
               onFocus={it => setCurrentItemMaxAmount(it)}

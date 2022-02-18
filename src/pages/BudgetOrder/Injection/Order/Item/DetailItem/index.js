@@ -128,7 +128,10 @@ class DetailItem extends PureComponent {
     const { onRemoveItem } = this.props;
     if (onRemoveItem && onRemoveItem instanceof Function) {
       onRemoveItem(selectedKeys, () => {
-        this.setState({ selectedKeys: [] }, this.reloadData);
+        this.setState({ selectedKeys: [] }, () => {
+          this.pagingData = {};
+          this.reloadData();
+        });
       });
     }
   };
