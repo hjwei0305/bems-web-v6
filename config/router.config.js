@@ -61,6 +61,11 @@ export default [
             component: './BudgetOrder/Injection/Flow/ViewOrder',
           },
           {
+            name: '预算下达申请-显示',
+            path: '/budgetOrderFlow/injectionLinkView',
+            component: './BudgetOrder/Injection/Flow/LinkView',
+          },
+          {
             name: '预算下达申请-修改',
             path: '/budgetOrderFlow/injectionUpdate',
             component: './BudgetOrder/Injection/Flow/UpdateOrder',
@@ -76,6 +81,11 @@ export default [
             component: './BudgetOrder/Adjust/Flow/ViewOrder',
           },
           {
+            name: '预算调整申请-显示',
+            path: '/budgetOrderFlow/adjustLinkView',
+            component: './BudgetOrder/Adjust/Flow/LinkView',
+          },
+          {
             name: '预算调整申请-修改',
             path: '/budgetOrderFlow/adjustUpdate',
             component: './BudgetOrder/Adjust/Flow/UpdateOrder',
@@ -89,6 +99,11 @@ export default [
             name: '预算分解申请-显示',
             path: '/budgetOrderFlow/splitView',
             component: './BudgetOrder/Split/Flow/ViewOrder',
+          },
+          {
+            name: '预算分解申请-显示',
+            path: '/budgetOrderFlow/splitLinkView',
+            component: './BudgetOrder/Split/Flow/LinkView',
           },
           {
             name: '预算分解申请-修改',

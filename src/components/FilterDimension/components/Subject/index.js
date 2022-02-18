@@ -125,7 +125,7 @@ const Subject = props => {
       },
       store: {
         type: 'POST',
-        url: `${SERVER_PATH}/bems-v6/item/getBudgetItems`,
+        url: `${SERVER_PATH}/bems-v6/item/findBySubject`,
       },
       cascadeParams: {
         subjectId,
