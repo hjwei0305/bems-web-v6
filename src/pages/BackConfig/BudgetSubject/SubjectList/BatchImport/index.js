@@ -3,8 +3,9 @@ import * as XLSX from 'xlsx';
 import PropTypes from 'prop-types';
 import cls from 'classnames';
 import { get } from 'lodash';
-import { Button } from 'antd';
-import { ExtModal, BannerTitle, message, ListLoader } from 'suid';
+import { Button, Empty } from 'antd';
+import { ExtModal, BannerTitle, message, ListLoader, Space } from 'suid';
+import empty from '@/assets/data_import.svg';
 import styles from './index.less';
 
 const FIELDS = [
@@ -18,6 +19,7 @@ class BatchItems extends Component {
   static propTypes = {
     closeBatchImport: PropTypes.func,
     downloadImportTemplate: PropTypes.func,
+    templateDownloding: PropTypes.bool,
     sendImportData: PropTypes.func,
     showImport: PropTypes.bool,
     importDoing: PropTypes.bool,
@@ -80,6 +82,9 @@ class BatchItems extends Component {
             if (data.length > 10001) {
               message.error('导入条数大于1万条，禁止导入');
             } else {
+              if (data.length <= 1) {
+                message.error('模板没有明细数据');
+              }
               this.setState({ importData: data });
             }
           } else {
@@ -170,56 +175,76 @@ class BatchItems extends Component {
   };
 
   renderImportStart = () => {
+    const { importData } = this.state;
+    const { templateDownloding, importDoing } = this.props;
+    const importCount = importData.length > 1 ? importData.length - 1 : 0;
     return (
-      <div className="vertical import-start">
-        <div className="row-item">
-          1、下载《预算科目导入模板》进行填写,
-          <Button type="link" onClick={this.handleDownloadClick}>
-            下载模板
-          </Button>
+      <>
+        <Space direction="vertical" size={32} style={{ width: '100%', marginTop: 64 }}>
+          <Empty
+            key="data-empty"
+            className="data-empty"
+            image={empty}
+            description="选择模板电子表格文件(.xlsx, .xls)"
+          >
+            <Space>
+              <Button type="primary" ghost size="small" onClick={this.onSelectFile}>
+                选择文件
+                <input
+                  style={{ display: 'none' }}
+                  ref={node => (this.btnFile = node)}
+                  type="file"
+                  accept=".xlsx, .xls"
+                  onChange={this.onImportExcel}
+                />
+              </Button>
+              <Button
+                type="primary"
+                disabled={importData.length <= 1}
+                loading={importDoing}
+                size="small"
+                onClick={this.handlerImportData}
+              >
+                {`开始导入(${importCount})`}
+              </Button>
+            </Space>
+          </Empty>
+        </Space>
+        <div className="tool-box">
+          <Space>
+            <Button
+              size="small"
+              onClick={this.handleDownloadClick}
+              loading={templateDownloding}
+              type="link"
+            >
+              导入模板下载
+            </Button>
+          </Space>
         </div>
-        <div className="row-item">
-          2、
-          <Button icon="select" className="ant-btn-import" onClick={this.onSelectFile}>
-            选择文件
-            <input
-              style={{ display: 'none' }}
-              ref={node => (this.btnFile = node)}
-              type="file"
-              accept=".xlsx, .xls"
-              onChange={this.onImportExcel}
-            />
-          </Button>
-        </div>
-      </div>
+      </>
     );
   };
 
   render() {
-    const { importData } = this.state;
     const { showImport, importDoing } = this.props;
-    const importCount = importData.length > 1 ? importData.length - 1 : 0;
     return (
       <ExtModal
         destroyOnClose
-        closable={false}
+        closable={!importDoing}
         keyboard={false}
         visible={showImport}
         centered
+        footer={null}
         wrapClassName={cls(styles['batch-import-box'])}
         maskClosable={false}
-        bodyStyle={{ paddingBottom: 0, height: 220 }}
+        bodyStyle={{ padding: 0, height: 420 }}
         title={<BannerTitle title="预算科目" subTitle="批量导入" />}
-        confirmLoading={importDoing}
-        onOk={this.handlerImportData}
-        okText={`导入 (${importCount})`}
-        okButtonProps={{ disabled: importData.length === 0 }}
-        cancelButtonProps={{ disabled: importDoing }}
         onCancel={this.handlerCloseImport}
       >
         {importDoing ? (
           <div className="vertical progress-box">
-            正在导入
+            正在导入...
             <ListLoader />
           </div>
         ) : (
