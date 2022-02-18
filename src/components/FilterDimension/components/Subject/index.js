@@ -125,11 +125,11 @@ const Subject = props => {
       },
       store: {
         type: 'POST',
-        url: `${SERVER_PATH}/bems-v6/subjectItem/getAssigned`,
+        url: `${SERVER_PATH}/bems-v6/item/getBudgetItems`,
       },
       cascadeParams: {
+        subjectId,
         filters: [
-          { fieldName: 'subjectId', operator: 'EQ', value: subjectId },
           { fieldName: 'code', operator: 'NOTIN', value: assignedItems.map(it => it.code) },
         ],
       },
