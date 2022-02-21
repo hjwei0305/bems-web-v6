@@ -168,7 +168,6 @@ class ExtAction extends PureComponent {
   getMenu = (menus, recordItem) => {
     const { manuallyEffective } = this.state;
     const menuId = getUUID();
-    console.log(menus);
     return (
       <Menu
         id={menuId}
