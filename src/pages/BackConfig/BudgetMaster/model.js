@@ -1,7 +1,7 @@
 import { formatMessage } from 'umi-plugin-react/locale';
 import { utils, message } from 'suid';
 import { constants } from '@/utils';
-import { del, save } from './service';
+import { del, save, batchSave } from './service';
 
 const { MASTER_CLASSIFICATION } = constants;
 const MASTER_CLASSIFICATION_DATA = Object.keys(MASTER_CLASSIFICATION)
@@ -18,13 +18,20 @@ export default modelExtend(model, {
     showModal: false,
     classificationData: MASTER_CLASSIFICATION_DATA,
     currentClassification: {},
+    showBatchModal: false,
   },
   effects: {
-    *save({ payload, callback }, { call }) {
+    *save({ payload, callback }, { call, put }) {
       const re = yield call(save, payload);
       message.destroy();
       if (re.success) {
         message.success(formatMessage({ id: 'global.save-success', defaultMessage: '保存成功' }));
+        yield put({
+          type: 'updateState',
+          payload: {
+            showModal: false,
+          },
+        });
       } else {
         message.error(re.message);
       }
@@ -37,6 +44,24 @@ export default modelExtend(model, {
       message.destroy();
       if (re.success) {
         message.success(formatMessage({ id: 'global.delete-success', defaultMessage: '删除成功' }));
+      } else {
+        message.error(re.message);
+      }
+      if (callback && callback instanceof Function) {
+        callback(re);
+      }
+    },
+    *batchSave({ payload, callback }, { call, put }) {
+      const re = yield call(batchSave, payload);
+      message.destroy();
+      if (re.success) {
+        message.success(formatMessage({ id: 'global.save-success', defaultMessage: '保存成功' }));
+        yield put({
+          type: 'updateState',
+          payload: {
+            showBatchModal: false,
+          },
+        });
       } else {
         message.error(re.message);
       }

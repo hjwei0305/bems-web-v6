@@ -23,3 +23,17 @@ export async function del(params) {
     method: 'DELETE',
   });
 }
+
+/** 批量创建保存
+ * @classification string
+ * @corpCodes array
+ * @strategyId string
+ */
+export async function batchSave(data) {
+  const url = `${SERVER_PATH}/bems-v6/subject/batchCreate`;
+  return request({
+    url,
+    method: 'POST',
+    data,
+  });
+}

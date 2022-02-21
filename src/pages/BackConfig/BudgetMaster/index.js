@@ -1,16 +1,17 @@
-import React, { Component } from 'react';
+import React, { Component, Suspense } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
 import { get } from 'lodash';
 import { Button, Popconfirm, Tag, Badge, Dropdown, Menu } from 'antd';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { ExtTable, ExtIcon } from 'suid';
+import { ExtTable, ExtIcon, Space, PageLoader } from 'suid';
 import { Classification } from '@/components';
 import { constants } from '@/utils';
 import FormModal from './FormModal';
 import styles from './index.less';
 
-const { SERVER_PATH } = constants;
+const BatchFormModal = React.lazy(() => import('./BatchFormModal'));
+const { SERVER_PATH, MASTER_CLASSIFICATION } = constants;
 
 @connect(({ budgetMaster, loading }) => ({ budgetMaster, loading }))
 class BudgetMaster extends Component {
@@ -56,12 +57,22 @@ class BudgetMaster extends Component {
       callback: res => {
         if (res.success) {
           callback();
-          dispatch({
-            type: 'budgetMaster/updateState',
-            payload: {
-              showModal: false,
-            },
-          });
+          this.reloadData();
+        }
+      },
+    });
+  };
+
+  batchSave = (data, callback = () => {}) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'budgetMaster/batchSave',
+      payload: {
+        ...data,
+      },
+      callback: res => {
+        if (res.success) {
+          callback();
           this.reloadData();
         }
       },
@@ -99,6 +110,7 @@ class BudgetMaster extends Component {
       type: 'budgetMaster/updateState',
       payload: {
         showModal: false,
+        showBatchModal: false,
         rowData: null,
         currentClassification: {},
       },
@@ -128,9 +140,29 @@ class BudgetMaster extends Component {
     });
   };
 
+  handlerBatchClassificationAction = e => {
+    const { dispatch, budgetMaster } = this.props;
+    const { classificationData } = budgetMaster;
+    const [classification] = classificationData.filter(it => it.key === e.key);
+    dispatch({
+      type: 'budgetMaster/updateState',
+      payload: {
+        showBatchModal: true,
+        rowData: null,
+        currentClassification: classification,
+      },
+    });
+  };
+
   render() {
     const { budgetMaster, loading } = this.props;
-    const { showModal, rowData, classificationData, currentClassification } = budgetMaster;
+    const {
+      showModal,
+      showBatchModal,
+      rowData,
+      classificationData,
+      currentClassification,
+    } = budgetMaster;
     const columns = [
       {
         title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
@@ -211,6 +243,13 @@ class BudgetMaster extends Component {
       closeFormModal: this.closeFormModal,
       saving: loading.effects['budgetMaster/save'],
     };
+    const batchFormModalProps = {
+      save: this.batchSave,
+      showModal: showBatchModal,
+      currentClassification,
+      closeFormModal: this.closeFormModal,
+      saving: loading.effects['budgetMaster/batchSave'],
+    };
     const menu = (
       <Menu onClick={this.handlerClassificationAction} className={styles['action-box']}>
         {classificationData.map(it => {
@@ -218,16 +257,31 @@ class BudgetMaster extends Component {
         })}
       </Menu>
     );
+    const batchMenu = (
+      <Menu onClick={this.handlerBatchClassificationAction} className={styles['action-box']}>
+        {classificationData
+          .filter(it => it.key !== MASTER_CLASSIFICATION.DEPARTMENT.key)
+          .map(it => {
+            return <Menu.Item key={it.key}>{it.title}</Menu.Item>;
+          })}
+      </Menu>
+    );
     const toolBarProps = {
       left: (
-        <>
+        <Space>
           <Dropdown overlay={menu} trigger={['click']}>
             <Button type="primary">
               <FormattedMessage id="global.add" defaultMessage="新建" />
               <ExtIcon type="down" antd />
             </Button>
           </Dropdown>
-        </>
+          <Dropdown overlay={batchMenu} trigger={['click']}>
+            <Button>
+              批量创建
+              <ExtIcon type="down" antd />
+            </Button>
+          </Dropdown>
+        </Space>
       ),
     };
     const tableProps = {
@@ -248,6 +302,9 @@ class BudgetMaster extends Component {
       <div className={cls(styles['container-box'])}>
         <ExtTable {...tableProps} />
         <FormModal {...formModalProps} />
+        <Suspense fallback={<PageLoader />}>
+          <BatchFormModal {...batchFormModalProps} />
+        </Suspense>
       </div>
     );
   }
