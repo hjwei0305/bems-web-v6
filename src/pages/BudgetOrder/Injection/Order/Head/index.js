@@ -261,9 +261,15 @@ class RequestHead extends PureComponent {
               </FormItem>
             </Col>
             <Col span={12}>
-              <FormItem label="备注说明">
+              <FormItem label="注入说明">
                 {getFieldDecorator('remark', {
                   initialValue: get(headData, 'remark'),
+                  rules: [
+                    {
+                      required: true,
+                      message: '注入说明不能为空！',
+                    },
+                  ],
                 })(
                   <Input
                     disabled={globalDisabled}
