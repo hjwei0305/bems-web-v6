@@ -27,6 +27,7 @@ export default modelExtend(model, {
 
   state: {
     year: new Date().getFullYear(),
+    includeZero: false,
     currentMaster: null,
     recordItem: null,
     subDimensionFields: [],

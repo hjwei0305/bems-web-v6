@@ -1,7 +1,7 @@
 import React, { Component, Suspense } from 'react';
 import { connect } from 'dva';
 import cls from 'classnames';
-import { get } from 'lodash';
+import { get, orderBy, toLower } from 'lodash';
 import { Button, Popconfirm, Tag, Badge, Dropdown, Menu } from 'antd';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
 import { ExtTable, ExtIcon, Space, PageLoader } from 'suid';
@@ -11,7 +11,7 @@ import FormModal from './FormModal';
 import styles from './index.less';
 
 const BatchFormModal = React.lazy(() => import('./BatchFormModal'));
-const { SERVER_PATH, MASTER_CLASSIFICATION } = constants;
+const { SERVER_PATH } = constants;
 
 @connect(({ budgetMaster, loading }) => ({ budgetMaster, loading }))
 class BudgetMaster extends Component {
@@ -152,6 +152,28 @@ class BudgetMaster extends Component {
         currentClassification: classification,
       },
     });
+    dispatch({
+      type: 'budgetMaster/getBatchCorpData',
+      payload: {
+        classification: classification.key,
+      },
+    });
+  };
+
+  handlerSortChange = (sort, st) => {
+    const {
+      dispatch,
+      budgetMaster: { corpData: originCorpData },
+    } = this.props;
+    const corpData = orderBy([...originCorpData], [sort.fieldName], [toLower(st)]);
+    dispatch({
+      type: 'budgetMaster/updateState',
+      payload: {
+        sortType: st,
+        currentSort: sort,
+        corpData,
+      },
+    });
   };
 
   render() {
@@ -162,6 +184,10 @@ class BudgetMaster extends Component {
       rowData,
       classificationData,
       currentClassification,
+      currentSort,
+      sortType,
+      sortData,
+      corpData,
     } = budgetMaster;
     const columns = [
       {
@@ -249,6 +275,12 @@ class BudgetMaster extends Component {
       currentClassification,
       closeFormModal: this.closeFormModal,
       saving: loading.effects['budgetMaster/batchSave'],
+      currentSort,
+      sortType,
+      sortData,
+      corpData,
+      corpLoading: loading.effects['budgetMaster/getBatchCorpData'],
+      sortChange: this.handlerSortChange,
     };
     const menu = (
       <Menu onClick={this.handlerClassificationAction} className={styles['action-box']}>
@@ -259,11 +291,9 @@ class BudgetMaster extends Component {
     );
     const batchMenu = (
       <Menu onClick={this.handlerBatchClassificationAction} className={styles['action-box']}>
-        {classificationData
-          .filter(it => it.key !== MASTER_CLASSIFICATION.DEPARTMENT.key)
-          .map(it => {
-            return <Menu.Item key={it.key}>{it.title}</Menu.Item>;
-          })}
+        {classificationData.map(it => {
+          return <Menu.Item key={it.key}>{it.title}</Menu.Item>;
+        })}
       </Menu>
     );
     const toolBarProps = {

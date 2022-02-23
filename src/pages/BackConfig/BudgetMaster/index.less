@@ -116,9 +116,26 @@
     .ant-modal-body {
       padding: 0;
       .corp-box {
-        height: 360px;
+        height: 320px;
         .suid-list-card .ant-card-body .suid-list-card-body .ant-list-item {
           padding: 8px 24px;
+        }
+        .ant-card-extra {
+          padding: 0;
+        }
+        .suid-list-card .ant-card-body {
+          height: calc(100% - 36px);
+        }
+        .ant-card-head {
+          height: 36px;
+          min-height: 36px;
+          padding-right: 0;
+          color: rgba(0, 0, 0, 0.85);
+          font-size: 14px;
+          line-height: 36px;
+          .ant-card-head-title {
+            padding: 0;
+          }
         }
       }
     }

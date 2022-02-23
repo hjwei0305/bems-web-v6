@@ -37,3 +37,15 @@ export async function batchSave(data) {
     data,
   });
 }
+
+/**
+ * 获取可以批量创建预算公司
+ * @classification string
+ */
+export async function getBatchCorpData(params) {
+  const url = `${SERVER_PATH}/bems-v6/subject/findCorporations`;
+  return request({
+    url,
+    params,
+  });
+}

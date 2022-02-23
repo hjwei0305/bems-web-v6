@@ -332,6 +332,7 @@ class DetailItem extends PureComponent {
     const errMsg = get(this.pagingData[rowKey], 'errMsg') || '';
     const poolAmount = get(item, 'poolAmount');
     const afterAmount = new Decimal(poolAmount).add(new Decimal(amount));
+    const poolCode = get(item, 'poolCode') || get(this.pagingData[rowKey], 'poolCode');
     return (
       <>
         {this.renderSubField(item)}
@@ -348,7 +349,7 @@ class DetailItem extends PureComponent {
             title="调整金额"
             rowItem={item}
             loading={itemMoneySaving}
-            allowEdit={!globalDisabled}
+            allowEdit={!globalDisabled && !!poolCode}
             onSave={this.handlerSaveMoney}
           />
           <div className="field-item">

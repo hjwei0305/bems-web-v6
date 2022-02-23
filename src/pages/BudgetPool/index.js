@@ -15,6 +15,7 @@ import {
   Divider,
   Statistic,
   Badge,
+  Checkbox,
 } from 'antd';
 import { ListCard, Space, PageLoader } from 'suid';
 import {
@@ -289,6 +290,16 @@ class BudgetPool extends Component {
     });
   };
 
+  handlerBalanceZero = e => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'budgetPool/updateState',
+      payload: {
+        includeZero: e.target.checked,
+      },
+    });
+  };
+
   getFilters = () => {
     const { budgetPool } = this.props;
     const { filterData, selectPeriodType, year } = budgetPool;
@@ -351,6 +362,8 @@ class BudgetPool extends Component {
             year={year}
             periodType={selectPeriodType}
           />
+          <Divider type="vertical" />
+          <Checkbox onChange={this.handlerBalanceZero}>可用余额包含0</Checkbox>
         </div>
         <Space>
           <Search
@@ -549,7 +562,7 @@ class BudgetPool extends Component {
 
   render() {
     const { budgetPool } = this.props;
-    const { filterData, recordItem, showLog } = budgetPool;
+    const { filterData, recordItem, showLog, includeZero } = budgetPool;
     const { filters } = this.getFilters();
     const listProps = {
       simplePagination: false,
@@ -576,6 +589,7 @@ class BudgetPool extends Component {
         remotePaging: true,
         cascadeParams: {
           ...filters,
+          includeZero,
         },
         store: {
           type: 'POST',

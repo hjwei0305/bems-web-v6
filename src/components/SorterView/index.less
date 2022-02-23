@@ -22,7 +22,6 @@
 .view-box {
   position: relative;
   display: inline-block;
-  margin-right: 16px;
   cursor: pointer;
   :global {
     .view-label {
@@ -36,10 +35,22 @@
       }
     }
     .view-content {
-      margin-right: 8px;
+      margin-right: 4px;
       color: fade(@black, 85%);
       font-weight: 700;
       font-size: 14px;
+    }
+    .btn-sort {
+      width: 32px;
+      height: 32px;
+      line-height: 34px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all ease-in 0.2s;
+      &:hover {
+        color: @primary-color;
+        background-color: fade(@black, 5%);
+      }
     }
   }
 }

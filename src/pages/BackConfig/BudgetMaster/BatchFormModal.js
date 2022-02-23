@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Form, message, Layout } from 'antd';
 import { ExtModal, ComboList, ListCard } from 'suid';
+import { SorterView } from '@/components';
 import { constants } from '@/utils';
 import styles from './index.less';
 
@@ -25,6 +26,12 @@ class BatchFormModal extends PureComponent {
     currentClassification: PropTypes.object,
     closeFormModal: PropTypes.func,
     saving: PropTypes.bool,
+    sortChange: PropTypes.func,
+    corpData: PropTypes.array,
+    sortData: PropTypes.array,
+    currentSort: PropTypes.object,
+    sortType: PropTypes.string,
+    corpLoading: PropTypes.bool,
   };
 
   constructor(props) {
@@ -67,10 +74,19 @@ class BatchFormModal extends PureComponent {
   };
 
   renderContent = () => {
-    const { form, currentClassification } = this.props;
+    const {
+      form,
+      currentClassification,
+      currentSort,
+      sortType,
+      corpData,
+      sortData,
+      sortChange,
+      corpLoading,
+    } = this.props;
     const { getFieldDecorator } = form;
     getFieldDecorator('strategyId', { initialValue: null });
-
+    getFieldDecorator('currencyCode', { initialValue: null });
     const strategyProps = {
       form,
       name: 'strategyName',
@@ -94,12 +110,12 @@ class BatchFormModal extends PureComponent {
       showArrow: false,
       pagination: false,
       rowKey: 'code',
+      title: '公司',
       checkbox: true,
       onSelectChange: this.handlerSelect,
       searchProperties: ['name'],
-      store: {
-        url: `${SERVER_PATH}/bems-v6/subject/findCorporations`,
-      },
+      dataSource: corpData,
+      loading: corpLoading,
       itemField: {
         title: item => item.name,
         extra: item => <span style={{ color: '#999' }}>{item.code}</span>,
@@ -107,19 +123,68 @@ class BatchFormModal extends PureComponent {
       cascadeParams: {
         classification: currentClassification.key,
       },
+      extra: (
+        <SorterView
+          title="排序"
+          style={{ minWidth: 140 }}
+          rowKey="fieldName"
+          currentViewType={currentSort}
+          viewTypeData={sortData}
+          sortType={sortType}
+          onAction={sortChange}
+          reader={{
+            title: 'title',
+            value: 'fieldName',
+          }}
+        />
+      ),
+    };
+    const currencyProps = {
+      form,
+      name: 'currencyName',
+      store: {
+        url: `${SERVER_PATH}/bems-v6/subject/findCurrencies`,
+        autoLoad: true,
+      },
+      showSearch: false,
+      pagination: false,
+      afterLoaded: data => {
+        const [defaultCurrency] = data;
+        if (defaultCurrency) {
+          form.setFieldsValue({
+            currencyCode: defaultCurrency.code,
+            currencyName: defaultCurrency.name,
+          });
+        }
+      },
+      field: ['currencyCode'],
+      reader: {
+        name: 'name',
+        field: ['code'],
+        description: 'code',
+      },
     };
     return (
       <Layout className="auto-height">
         <Content className="auto-height">
+          <div className="corp-box">
+            <ListCard {...listCardProps} />
+          </div>
           <Form
             {...formItemLayout}
             layout="horizontal"
             style={{ padding: '8px 24px', height: '100%', backgroundColor: '#fff' }}
           >
-            <FormItem label="公司">
-              <div className="corp-box">
-                <ListCard {...listCardProps} />
-              </div>
+            <FormItem label="币种">
+              {getFieldDecorator('currencyName', {
+                initialValue: null,
+                rules: [
+                  {
+                    required: true,
+                    message: '币种不能为空',
+                  },
+                ],
+              })(<ComboList {...currencyProps} />)}
             </FormItem>
             <FormItem label="执行策略">
               {getFieldDecorator('strategyName', {

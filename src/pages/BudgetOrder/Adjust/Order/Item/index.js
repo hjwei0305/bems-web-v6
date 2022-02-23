@@ -55,7 +55,10 @@ class RequestItem extends PureComponent {
       activeKey: 'item',
       showBatch: false,
       fileList: [],
-      allowEdit: action === REQUEST_ORDER_ACTION.ADD || action === REQUEST_ORDER_ACTION.EDIT,
+      allowEdit:
+        action === REQUEST_ORDER_ACTION.ADD ||
+        action === REQUEST_ORDER_ACTION.EDIT ||
+        action === REQUEST_ORDER_ACTION.UPDATE_APPROVE_FLOW,
     };
   }
 

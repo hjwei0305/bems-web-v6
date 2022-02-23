@@ -8,6 +8,7 @@ import BudgetYearPicker from './BudgetYearPicker';
 import MasterView from './MasterView';
 import Classification from './Classification';
 import OrderSlider from './OrderSlider';
+import SorterView from './SorterView';
 
 export {
   Loader,
@@ -20,4 +21,5 @@ export {
   MasterView,
   Classification,
   OrderSlider,
+  SorterView,
 };

@@ -9,14 +9,14 @@ import styles from './index.less';
 const { getUUID } = utils;
 const { Item } = Menu;
 
-class SortView extends PureComponent {
+class FilterView extends PureComponent {
   static propTypes = {
     style: PropTypes.object,
     title: PropTypes.string,
     viewTypeData: PropTypes.array,
     currentViewType: PropTypes.object,
+    sortType: PropTypes.string,
     onAction: PropTypes.func,
-    iconType: PropTypes.string,
     extra: PropTypes.node,
     showColor: PropTypes.bool,
     extraTitle: PropTypes.string,
@@ -29,9 +29,9 @@ class SortView extends PureComponent {
 
   static defaultProps = {
     extra: null,
-    iconType: 'eye',
     rowKey: 'key',
-    title: '视图',
+    title: '排序',
+    sortType: 'DESC',
     reader: {
       title: 'title',
       value: 'value',
@@ -40,20 +40,26 @@ class SortView extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { viewTypeData, currentViewType, rowKey } = props;
+    const { viewTypeData, currentViewType, rowKey, sortType } = props;
     const selectedKey = get(currentViewType, rowKey);
     this.state = {
       menuShow: false,
       selectedKey,
       menusData: viewTypeData,
+      sortType,
     };
   }
 
   componentDidUpdate(prevProps) {
-    const { viewTypeData } = this.props;
+    const { viewTypeData, sortType } = this.props;
     if (!isEqual(prevProps.viewTypeData, viewTypeData)) {
       this.setState({
         menusData: viewTypeData,
+      });
+    }
+    if (!isEqual(prevProps.sortType, sortType)) {
+      this.setState({
+        sortType,
       });
     }
   }
@@ -71,11 +77,23 @@ class SortView extends PureComponent {
       });
       const { onAction, rowKey } = this.props;
       if (onAction) {
-        const { menusData } = this.state;
+        const { menusData, sortType } = this.state;
         const [currentViewType] = menusData.filter(f => get(f, rowKey) === e.key);
-        onAction(currentViewType);
+        onAction(currentViewType, sortType);
       }
     }
+  };
+
+  handlerSortChange = e => {
+    if (e) {
+      e.stopPropagation();
+    }
+    const { currentViewType, onAction } = this.props;
+    const { sortType } = this.state;
+    const sort = sortType === 'DESC' ? 'ASC' : 'DESC';
+    this.setState({ sortType: sort }, () => {
+      onAction(currentViewType, sort);
+    });
   };
 
   getMenu = menus => {
@@ -114,7 +132,7 @@ class SortView extends PureComponent {
 
   render() {
     const { currentViewType, reader, title, iconType, extraTitle, style, showColor } = this.props;
-    const { menuShow, menusData } = this.state;
+    const { menuShow, menusData, sortType } = this.state;
     let currentViewTitle = `${get(currentViewType, get(reader, 'title')) || '无可用视图'}`;
     if (extraTitle) {
       currentViewTitle = (
@@ -160,7 +178,12 @@ class SortView extends PureComponent {
                 <em>{title}</em>
               </span>
               <span className="view-content">{currentViewTitle}</span>
-              <ExtIcon type="down" antd />
+              <ExtIcon
+                className="btn-sort"
+                tooltip={{ title: sortType === 'DESC' ? '降序' : '升序' }}
+                type={sortType === 'DESC' ? 'desc' : 'asc'}
+                onClick={this.handlerSortChange}
+              />
             </span>
           </Dropdown>
         )}
@@ -169,4 +192,4 @@ class SortView extends PureComponent {
   }
 }
 
-export default SortView;
+export default FilterView;
