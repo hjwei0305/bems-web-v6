@@ -97,7 +97,7 @@ class BudgetSubject extends Component {
               />
             </Suspense>
           </Sider>
-          <Content className={cls('main-content', 'auto-height')} style={{ paddingLeft: 1 }}>
+          <Content className={cls('main-content', 'auto-height')} style={{ paddingLeft: 4 }}>
             {currentCorperation ? (
               <Suspense fallback={<PageLoader />}>
                 <SubjectList onRef={ref => (this.subjectListRef = ref)} />
