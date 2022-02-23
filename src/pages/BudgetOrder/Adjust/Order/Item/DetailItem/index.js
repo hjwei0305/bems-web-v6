@@ -307,7 +307,7 @@ class DetailItem extends PureComponent {
     const subFields = this.getDisplaySubDimensionFields(item);
     if (subFields.length > 0) {
       return (
-        <Descriptions key={`sub${item.id}`} column={1} bordered={false}>
+        <Descriptions key={`sub${item.id}`} column={2} bordered={false}>
           {subFields.map(f => {
             return (
               <Descriptions.Item key={`sub${item.id}${f.dimension}`} label={f.title}>
