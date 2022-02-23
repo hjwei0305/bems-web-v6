@@ -3,12 +3,14 @@ import cls from 'classnames';
 import PropTypes from 'prop-types';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
 import { get, isEqual } from 'lodash';
-import { Drawer, Form, Button } from 'antd';
+import { Drawer, Form, Button, Card } from 'antd';
 import { ScrollBar, ComboList, ComboTree } from 'suid';
+import { Classification } from '@/components';
 import { constants } from '@/utils';
 import styles from './index.less';
 
 const { SERVER_PATH } = constants;
+const { Meta } = Card;
 const FormItem = Form.Item;
 const formItemLayout = {
   labelCol: {
@@ -98,6 +100,31 @@ class Filter extends PureComponent {
       },
       name: 'subjectName',
       field: ['subjectId'],
+      listProps: {
+        renderItem: item => {
+          return (
+            <div
+              style={{
+                display: 'flex',
+                cursor: 'pointer',
+                width: '100%',
+                alignItems: 'center',
+              }}
+            >
+              <div style={{ flexDirection: 'column', width: '100%' }}>
+                <Meta
+                  className={styles['meta-title']}
+                  title={item.name}
+                  description={item.corporationName}
+                />
+              </div>
+              <div style={{ minWidth: 60 }}>
+                <Classification enumName={item.classification} />
+              </div>
+            </div>
+          );
+        },
+      },
       reader: {
         name: 'name',
         description: 'code',
