@@ -86,7 +86,6 @@ class BatchFormModal extends PureComponent {
     } = this.props;
     const { getFieldDecorator } = form;
     getFieldDecorator('strategyId', { initialValue: null });
-    getFieldDecorator('currencyCode', { initialValue: null });
     const strategyProps = {
       form,
       name: 'strategyName',
@@ -139,31 +138,6 @@ class BatchFormModal extends PureComponent {
         />
       ),
     };
-    const currencyProps = {
-      form,
-      name: 'currencyName',
-      store: {
-        url: `${SERVER_PATH}/bems-v6/subject/findCurrencies`,
-        autoLoad: true,
-      },
-      showSearch: false,
-      pagination: false,
-      afterLoaded: data => {
-        const [defaultCurrency] = data;
-        if (defaultCurrency) {
-          form.setFieldsValue({
-            currencyCode: defaultCurrency.code,
-            currencyName: defaultCurrency.name,
-          });
-        }
-      },
-      field: ['currencyCode'],
-      reader: {
-        name: 'name',
-        field: ['code'],
-        description: 'code',
-      },
-    };
     return (
       <Layout className="auto-height">
         <Content className="auto-height">
@@ -175,17 +149,6 @@ class BatchFormModal extends PureComponent {
             layout="horizontal"
             style={{ padding: '8px 24px', height: '100%', backgroundColor: '#fff' }}
           >
-            <FormItem label="币种">
-              {getFieldDecorator('currencyName', {
-                initialValue: null,
-                rules: [
-                  {
-                    required: true,
-                    message: '币种不能为空',
-                  },
-                ],
-              })(<ComboList {...currencyProps} />)}
-            </FormItem>
             <FormItem label="执行策略">
               {getFieldDecorator('strategyName', {
                 initialValue: null,
