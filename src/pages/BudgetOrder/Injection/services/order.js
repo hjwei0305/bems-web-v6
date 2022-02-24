@@ -25,6 +25,7 @@ export async function saveItemMoney(params) {
     url,
     method: 'POST',
     params,
+    headers: { neverCancel: true },
     data: {},
   });
 }
