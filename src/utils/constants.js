@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2022-03-14 16:22:11
+ * @Last Modified time: 2022-03-14 16:27:20
  */
 import { base } from '../../public/app.config.json';
 
@@ -208,8 +208,8 @@ const SPLIT_REQUEST_BTN_KEY = {
 
 const ORDER_BTN_KEY = {
   INJECTION_BHTRDJ: `BEMS-V6-HTPZ-INJECTION-BHTRDJ`,
-  ADJUST_BHTRDJ: `SOMS-V6-HTPZ-ADJUST-BHTRDJ`,
-  SPLIT_BHTRDJ: `SOMS-V6-HTPZ-SPLIT-BHTRDJ`,
+  ADJUST_BHTRDJ: `BEMS-V6-HTPZ-ADJUST-BHTRDJ`,
+  SPLIT_BHTRDJ: `BEMS-V6-HTPZ-SPLIT-BHTRDJ`,
 };
 
 /** 日期枚举 */
