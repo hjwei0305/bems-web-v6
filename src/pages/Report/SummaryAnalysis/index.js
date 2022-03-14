@@ -99,6 +99,7 @@ class SummaryAnalysis extends Component {
       };
       chartProps.option = option;
     } else {
+      let barWidth = 80;
       let xAxisData = [];
       let seriesData = [];
       if (selectPeriodType.key === PERIOD_TYPE.SEMIANNUAL.key) {
@@ -108,6 +109,7 @@ class SummaryAnalysis extends Component {
         xAxisData = ['第一季度', '第二季度', '第三季度', '第四季度'];
       }
       if (selectPeriodType.key === PERIOD_TYPE.MONTHLY.key) {
+        barWidth = null;
         xAxisData = [
           '1月',
           '2月',
@@ -129,9 +131,17 @@ class SummaryAnalysis extends Component {
           name: `${year}年-余额`,
           type: 'bar',
           stack: `${year}`,
-          barWidth: 80,
+          barWidth,
           label: {
             show: true,
+            position: 'top',
+            formatter: params => {
+              const { value } = params;
+              if (value !== 0) {
+                return value;
+              }
+              return '';
+            },
           },
           emphasis: {
             focus: 'series',
@@ -142,7 +152,19 @@ class SummaryAnalysis extends Component {
           name: `${year}年-已使用`,
           type: 'bar',
           stack: `${year}`,
-          label: { show: true, position: 'top', color: 'auto' },
+          barWidth,
+          label: {
+            show: true,
+            position: 'top',
+            color: 'auto',
+            formatter: params => {
+              const { value } = params;
+              if (value !== 0) {
+                return value;
+              }
+              return '';
+            },
+          },
           emphasis: {
             focus: 'series',
           },
