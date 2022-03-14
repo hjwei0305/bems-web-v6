@@ -4,8 +4,8 @@ import { get, isEmpty, isNumber, isEqual } from 'lodash';
 import cls from 'classnames';
 import moment from 'moment';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import { Button, Modal } from 'antd';
-import { ExtTable, ExtIcon, Money, PageLoader, Space } from 'suid';
+import { Button, Modal, Switch } from 'antd';
+import { ExtTable, ExtIcon, Money, PageLoader, Space, utils } from 'suid';
 import { FilterView, FilterDate } from '@/components';
 import { constants } from '@/utils';
 import ExtAction from './components/ExtAction';
@@ -22,9 +22,12 @@ const {
   INJECTION_REQUEST_BTN_KEY,
   REQUEST_VIEW_STATUS,
   SEARCH_DATE_PERIOD,
+  ORDER_BTN_KEY,
 } = constants;
 const startFormat = 'YYYY-MM-DD 00:00:00';
 const endFormat = 'YYYY-MM-DD 23:59:59';
+
+const { authAction } = utils;
 
 const filterFields = {
   subjectId: { fieldName: 'subjectId', operation: 'EQ' },
@@ -399,9 +402,40 @@ class InjectionRequestList extends Component {
     return { filters, hasFilter };
   };
 
+  handlerIncludeChange = includeOther => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'injectionRequestList/updateState',
+      payload: {
+        includeOther,
+      },
+    });
+  };
+
+  renderFilterInclude = () => {
+    const hasInclude = !!authAction(<span authCode={ORDER_BTN_KEY.INJECTION_BHTRDJ} />);
+    if (hasInclude) {
+      const { injectionRequestList } = this.props;
+      const { includeOther } = injectionRequestList;
+      return (
+        <Space style={{ padding: '8px 0' }}>
+          包含他人单据
+          <Switch size="small" checked={includeOther} onChange={this.handlerIncludeChange} />
+        </Space>
+      );
+    }
+    return null;
+  };
+
   getExtTableProps = () => {
     const { injectionRequestList, loading } = this.props;
-    const { currentViewType, viewTypeData, viewDateData, currentViewDate } = injectionRequestList;
+    const {
+      currentViewType,
+      viewTypeData,
+      viewDateData,
+      currentViewDate,
+      includeOther,
+    } = injectionRequestList;
     const columns = [
       {
         title: '操作',
@@ -480,6 +514,7 @@ class InjectionRequestList extends Component {
         <Space>
           <FilterView
             title="单据视图"
+            extra={this.renderFilterInclude()}
             currentViewType={currentViewType}
             viewTypeData={viewTypeData}
             onAction={this.handlerViewTypeChange}
@@ -551,6 +586,7 @@ class InjectionRequestList extends Component {
           url: `${SERVER_PATH}/bems-v6/order/findInjectionByPage`,
         },
         cascadeParams: {
+          includeOther,
           filters,
         },
       });

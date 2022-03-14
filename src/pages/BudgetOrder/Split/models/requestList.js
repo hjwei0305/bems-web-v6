@@ -30,6 +30,7 @@ export default modelExtend(model, {
     showPrefab: false,
     prefabData: [],
     filterData: {},
+    includeOther: false,
   },
   effects: {
     *del({ payload, callback }, { call }) {

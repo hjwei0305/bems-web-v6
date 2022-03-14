@@ -2,7 +2,7 @@
  * @Author: Eason
  * @Date: 2020-02-21 18:03:16
  * @Last Modified by: Eason
- * @Last Modified time: 2022-02-17 17:14:38
+ * @Last Modified time: 2022-03-14 16:22:11
  */
 import { base } from '../../public/app.config.json';
 
@@ -206,6 +206,12 @@ const SPLIT_REQUEST_BTN_KEY = {
   EFFECT: 'BEMS-SPLIT-EFFECT',
 };
 
+const ORDER_BTN_KEY = {
+  INJECTION_BHTRDJ: `BEMS-V6-HTPZ-INJECTION-BHTRDJ`,
+  ADJUST_BHTRDJ: `SOMS-V6-HTPZ-ADJUST-BHTRDJ`,
+  SPLIT_BHTRDJ: `SOMS-V6-HTPZ-SPLIT-BHTRDJ`,
+};
+
 /** 日期枚举 */
 const SEARCH_DATE_PERIOD = {
   THIS_MONTH: {
@@ -297,4 +303,5 @@ export default {
   SEARCH_DATE_TIME_PERIOD,
   MASTER_CLASSIFICATION,
   FILTER_ENABLE_DISABLE,
+  ORDER_BTN_KEY,
 };

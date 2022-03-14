@@ -4,8 +4,8 @@ import { get, isEmpty, isNumber, isEqual } from 'lodash';
 import cls from 'classnames';
 import moment from 'moment';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import { Button, Modal } from 'antd';
-import { ExtTable, ExtIcon, PageLoader, Space } from 'suid';
+import { Button, Modal, Switch } from 'antd';
+import { ExtTable, ExtIcon, PageLoader, Space, utils } from 'suid';
 import { FilterView, FilterDate } from '@/components';
 import { constants } from '@/utils';
 import ExtAction from './components/ExtAction';
@@ -17,7 +17,13 @@ const CreateRequestOrder = React.lazy(() => import('./Request/CreateOrder'));
 const UpdateRequestOrder = React.lazy(() => import('./Request/UpdateOrder'));
 const ViewRequestOrder = React.lazy(() => import('./Request/ViewOrder'));
 const Prefab = React.lazy(() => import('../components/Prefab'));
-const { SERVER_PATH, ADJUST_REQUEST_BTN_KEY, REQUEST_VIEW_STATUS, SEARCH_DATE_PERIOD } = constants;
+const {
+  SERVER_PATH,
+  ADJUST_REQUEST_BTN_KEY,
+  REQUEST_VIEW_STATUS,
+  SEARCH_DATE_PERIOD,
+  ORDER_BTN_KEY,
+} = constants;
 const startFormat = 'YYYY-MM-DD 00:00:00';
 const endFormat = 'YYYY-MM-DD 23:59:59';
 
@@ -25,6 +31,8 @@ const filterFields = {
   subjectId: { fieldName: 'subjectId', operation: 'EQ' },
   applyOrgId: { fieldName: 'applyOrgId', operation: 'EQ' },
 };
+
+const { authAction } = utils;
 
 @connect(({ adjustRequestList, loading }) => ({ adjustRequestList, loading }))
 class AdjustRequestList extends Component {
@@ -393,9 +401,40 @@ class AdjustRequestList extends Component {
     return { filters, hasFilter };
   };
 
+  handlerIncludeChange = includeOther => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'adjustRequestList/updateState',
+      payload: {
+        includeOther,
+      },
+    });
+  };
+
+  renderFilterInclude = () => {
+    const hasInclude = !!authAction(<span authCode={ORDER_BTN_KEY.ADJUST_BHTRDJ} />);
+    if (hasInclude) {
+      const { adjustRequestList } = this.props;
+      const { includeOther } = adjustRequestList;
+      return (
+        <Space style={{ padding: '8px 0' }}>
+          包含他人单据
+          <Switch size="small" checked={includeOther} onChange={this.handlerIncludeChange} />
+        </Space>
+      );
+    }
+    return null;
+  };
+
   getExtTableProps = () => {
     const { adjustRequestList, loading } = this.props;
-    const { currentViewType, viewTypeData, viewDateData, currentViewDate } = adjustRequestList;
+    const {
+      currentViewType,
+      viewTypeData,
+      viewDateData,
+      currentViewDate,
+      includeOther,
+    } = adjustRequestList;
     const columns = [
       {
         title: '操作',
@@ -465,6 +504,7 @@ class AdjustRequestList extends Component {
         <Space>
           <FilterView
             title="单据视图"
+            extra={this.renderFilterInclude()}
             currentViewType={currentViewType}
             viewTypeData={viewTypeData}
             onAction={this.handlerViewTypeChange}
@@ -536,6 +576,7 @@ class AdjustRequestList extends Component {
           url: `${SERVER_PATH}/bems-v6/order/findAdjustmentByPage`,
         },
         cascadeParams: {
+          includeOther,
           filters,
         },
       });
