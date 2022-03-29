@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import cls from 'classnames';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import { BarCode } from 'suid';
 import { userUtils } from '@/utils';
 import RequestViewState from '../../../components/RequestViewState';
 import Action from './Action';
@@ -31,19 +30,16 @@ class Banner extends Component {
     return (
       <div className={cls(styles['banner-box'], 'horizontal')}>
         <div className="banner-content row-start horizontal">
-          <BarCode
-            text={get(headData, 'code') || 'No.-'}
-            textAlign="left"
-            height={42}
-            width={0.92}
-            wrapperClassName="bar-code"
-          />
           <div className="banner-detail vertical">
             <div className="title">
               {title}
               <span className="status">{this.renderStatus()}</span>
             </div>
             <div className="sub-title">
+              <span className="title-item">
+                <span className="label">单据号</span>
+                <span className="creator">{get(headData, 'code') || '-'}</span>
+              </span>
               <span className="title-item">
                 <span className="label">制单人</span>
                 <span className="creator">
