@@ -23,3 +23,12 @@ export async function del(params) {
     method: 'DELETE',
   });
 }
+
+/** 获取所有的维度 */
+export async function getAllDimension() {
+  const url = `${SERVER_PATH}/bems-v6/dimension/findAllCodes`;
+  return request({
+    url,
+    method: 'GET',
+  });
+}

@@ -131,7 +131,7 @@ class BudgetDimension extends Component {
 
   render() {
     const { budgetDimension, loading } = this.props;
-    const { showModal, rowData } = budgetDimension;
+    const { showModal, rowData, allDimensionData } = budgetDimension;
     const columns = [
       {
         title: formatMessage({ id: 'global.operation', defaultMessage: '操作' }),
@@ -200,6 +200,7 @@ class BudgetDimension extends Component {
       save: this.save,
       rowData,
       showModal,
+      allDimensionData,
       closeFormModal: this.closeFormModal,
       saving: loading.effects['budgetDimension/save'],
     };

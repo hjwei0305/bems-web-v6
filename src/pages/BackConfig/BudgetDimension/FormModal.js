@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
-import { get } from 'lodash';
-import { Form } from 'antd';
+import { get, isEqual } from 'lodash';
+import { Form, Input } from 'antd';
 import { ExtModal, ComboList, MoneyInput } from 'suid';
 import { constants } from '@/utils';
 import styles from './index.less';
@@ -21,6 +21,13 @@ const formItemLayout = {
 
 @Form.create()
 class FormModal extends PureComponent {
+  componentDidUpdate(preProps) {
+    const { rowData, form } = this.props;
+    if (!isEqual(preProps.rowData, rowData)) {
+      form.setFieldsValue({ aliasName: this.getDefalutAliasName() });
+    }
+  }
+
   handlerFormSubmit = () => {
     const { form, save, rowData } = this.props;
     form.validateFields((err, formData) => {
@@ -34,18 +41,27 @@ class FormModal extends PureComponent {
     });
   };
 
+  getDefalutAliasName = () => {
+    const { rowData, allDimensionData } = this.props;
+    if (rowData) {
+      const [dimensionItem] = allDimensionData.filter(it => it.key === rowData.code);
+      if (dimensionItem) {
+        return get(dimensionItem, 'value');
+      }
+    }
+    return null;
+  };
+
   render() {
-    const { form, rowData, closeFormModal, saving, showModal } = this.props;
+    const { form, rowData, closeFormModal, saving, showModal, allDimensionData } = this.props;
     const { getFieldDecorator } = form;
     getFieldDecorator('strategyId', { initialValue: get(rowData, 'strategyId') });
     getFieldDecorator('code', { initialValue: get(rowData, 'code') });
     const title = rowData ? '修改预算维度' : '新建预算维度';
     const budgetDimensionProps = {
       form,
-      name: 'name',
-      store: {
-        url: `${SERVER_PATH}/bems-v6/dimension/findAllCodes`,
-      },
+      name: 'aliasName',
+      dataSource: allDimensionData,
       field: ['code'],
       pagination: false,
       showSearch: false,
@@ -108,8 +124,8 @@ class FormModal extends PureComponent {
       >
         <Form {...formItemLayout} layout="horizontal" style={{ margin: 24 }}>
           <FormItem label="预算维度">
-            {getFieldDecorator('name', {
-              initialValue: get(rowData, 'name'),
+            {getFieldDecorator('aliasName', {
+              initialValue: this.getDefalutAliasName(),
               rules: [
                 {
                   required: true,
@@ -117,6 +133,17 @@ class FormModal extends PureComponent {
                 },
               ],
             })(<ComboList {...budgetDimensionProps} />)}
+          </FormItem>
+          <FormItem label="维度名称">
+            {getFieldDecorator('name', {
+              initialValue: get(rowData, 'name'),
+              rules: [
+                {
+                  required: true,
+                  message: '维度别名不能为空',
+                },
+              ],
+            })(<Input autoComplete="off" />)}
           </FormItem>
           <FormItem label="维度策略">
             {getFieldDecorator('strategyName', {
