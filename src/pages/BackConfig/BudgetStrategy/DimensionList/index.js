@@ -35,8 +35,9 @@ const DimensionList = props => {
       dispatch({
         type: 'budgetStrategy/strategySubmit',
         payload: {
-          id: rowItem.id,
+          itemCode: rowItem.code,
           strategyId: strategy.id,
+          subjectId: get(currentMaster, 'id'),
         },
         callback: res => {
           if (res.success) {
@@ -46,7 +47,7 @@ const DimensionList = props => {
         },
       });
     },
-    [dispatch],
+    [currentMaster, dispatch],
   );
 
   const handlerTransformSave = useCallback(
