@@ -60,7 +60,7 @@ class FormModal extends PureComponent {
               ],
             })(
               <Input
-                disabled={!rowData}
+                disabled={!!rowData}
                 maxLength={10}
                 autoComplete="off"
                 placeholder="最大长度为10个字符"
