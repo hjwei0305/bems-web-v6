@@ -58,7 +58,14 @@ class FormModal extends PureComponent {
                   message: '科目代码不能为空',
                 },
               ],
-            })(<Input maxLength={10} autoComplete="off" placeholder="最大长度为10个字符" />)}
+            })(
+              <Input
+                disabled={!rowData}
+                maxLength={10}
+                autoComplete="off"
+                placeholder="最大长度为10个字符"
+              />,
+            )}
           </FormItem>
           <FormItem label="科目名称">
             {getFieldDecorator('name', {
