@@ -16,13 +16,13 @@ const CopySubject = React.lazy(() => import('./CopySubject'));
 
 @connect(({ budgetMasterSubject, loading }) => ({ budgetMasterSubject, loading }))
 class SubjectList extends Component {
-  static tablRef;
+  static tableRef;
 
   static confirmModal;
 
   reloadData = () => {
-    if (this.tablRef) {
-      this.tablRef.remoteDataRefresh();
+    if (this.tableRef) {
+      this.tableRef.remoteDataRefresh();
     }
   };
 
@@ -328,7 +328,7 @@ class SubjectList extends Component {
       searchPlaceHolder: '输入科目代码、名称关键字',
       remotePaging: true,
       allowCustomColumns: false,
-      onTableRef: ref => (this.tablRef = ref),
+      onTableRef: ref => (this.tableRef = ref),
       store: {
         type: 'POST',
         url: `${SERVER_PATH}/bems-v6/subjectItem/getAssigned`,
